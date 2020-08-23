@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-18 17:57:32
+ * @LastEditTime: 2020-08-23 20:32:31
  */
 
 import {
@@ -16,18 +16,23 @@ import {
   Body,
   Query,
 } from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
+// import { FileInterceptor } from '@nestjs/platform-express'
+// import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
 import { RedisService } from 'nestjs-redis'
+const OSS = require('ali-oss')
 
 import { ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { ResponseRO } from 'src/shared/interface/response.interface'
-import { guid } from 'src/shared/utils/index'
+// import { guid } from 'src/shared/utils/index'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'
 import { SourceService } from './source/source.service'
-import { emitWarning } from 'process'
+
+const sts = new OSS.STS({
+  accessKeyId: process.env.ALIYUN_RAM_ACCESSKEYID,
+  accessKeySecret: process.env.ALIYUN_RAM_ACCESSKEYSECRET,
+})
 
 @ApiTags('Common')
 @Controller()
@@ -35,7 +40,7 @@ export class AppController {
   constructor(
     private readonly projectService: ProjectService,
     private readonly sourceService: SourceService,
-    private readonly ossService: AlicloudOssService,
+    // private readonly ossService: AlicloudOssService,
     private readonly redisService: RedisService,
   ) {}
 
@@ -48,39 +53,84 @@ export class AppController {
     }
   }
 
-  // 文件上传
-  @ApiOperation({ summary: 'oss文件上传' })
-  @ApiResponse({ status: 201, description: 'Upload file successful.' })
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('upload')
-  async uploadedFile(
-    @UploadedFile()
-    file: UploadedFileMetadata,
-  ): Promise<ResponseRO> {
-    file = {
-      ...file,
-      customName: `${guid()}.${file.originalname}`,
-      // folder: 'a/b/c',
-      // bucket: 'nest-alicloud-oss-demo3',
-    }
+  /**
+   * @description OSS授权临时访问
+   * 接口调用有限制，每1S最多100QPS
+   */
+  @ApiOperation({ summary: 'OSS授权临时访问' })
+  @Get('oss-sts')
+  async assumeRole(): Promise<ResponseRO> {
+    try {
+      const token = await sts.assumeRole(
+        process.env.ALIYUN_RAM_ARN,
+        // 'acs:ram::1501092948750966:role/webossuploadrole',
+        {
+          Statement: [
+            {
+              Action: ['oss:PutObject'],
+              Effect: 'Allow',
+              Resource: [`acs:oss:*:*:${process.env.OSS_BUCKET}/*`, `acs:oss:*:*:${process.env.OSS_BUCKET}`],
+            },
+          ],
+          Version: '1',
+        },
+        60 * 60,
+        '',
+      )
 
-    await this.ossService.upload(file)
-
-    if (file) {
       return {
         success: true,
         statusCode: 200,
-        message: '上传成功',
-        data: file,
+        message: '成功',
+        data: {
+          ...token.credentials,
+          region: process.env.OSS_REGION,
+          bucket: process.env.OSS_BUCKET,
+        },
       }
-    } else {
+    } catch (e) {
+      console.log(e)
       return {
         success: false,
-        statusCode: 200,
-        message: '上传失败',
+        statusCode: e.status,
+        message: e.message,
       }
     }
   }
+
+  // 文件上传
+  // @ApiOperation({ summary: 'oss文件上传' })
+  // @ApiResponse({ status: 201, description: 'Upload file successful.' })
+  // @UseInterceptors(FileInterceptor('file'))
+  // @Post('upload')
+  // async uploadedFile(
+  //   @UploadedFile()
+  //   file: UploadedFileMetadata,
+  // ): Promise<ResponseRO> {
+  //   file = {
+  //     ...file,
+  //     customName: `${guid()}.${file.originalname}`,
+  //     // folder: 'a/b/c',
+  //     // bucket: 'nest-alicloud-oss-demo3',
+  //   }
+
+  //   await this.ossService.upload(file)
+
+  //   if (file) {
+  //     return {
+  //       success: true,
+  //       statusCode: 200,
+  //       message: '上传成功',
+  //       data: file,
+  //     }
+  //   } else {
+  //     return {
+  //       success: false,
+  //       statusCode: 200,
+  //       message: '上传失败',
+  //     }
+  //   }
+  // }
 
   // 检查更新
   @ApiOperation({ summary: '检查更新' })
@@ -121,7 +171,9 @@ export class AppController {
       type: type + 2,
       status: 1,
     })
-    native && native.type !== 4 && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
+    native &&
+      native.type !== 4 &&
+      Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
 
     // 存入redis
 

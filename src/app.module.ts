@@ -3,13 +3,13 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-18 17:16:24
+ * @LastEditTime: 2020-08-23 20:57:14
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { AlicloudOssModule } from 'nestjs-alicloud-oss'
+// import { AlicloudOssModule } from 'nestjs-alicloud-oss'
 import { RedisModule } from 'nestjs-redis'
 // import { ScheduleModule } from '@nestjs/schedule';
 
@@ -43,16 +43,16 @@ import { AppController } from './app.controller'
       synchronize: true,
       logging: false,
     }),
-    AlicloudOssModule.withConfig({
-      options: {
-        accessKeyId: process.env.OSS_ACCESSKEYID,
-        accessKeySecret: process.env.OSS_ACCESSKEYSECRET,
-        // the bucket data region location, doc demo used 'oss-cn-beijing'.
-        region: process.env.OSS_REGION,
-        // the default bucket you want to access, doc demo used 'nest-alicloud-oss-demo'.
-        bucket: process.env.OSS_BUCKET,
-      },
-    }),
+    // AlicloudOssModule.withConfig({
+    //   options: {
+    //     accessKeyId: process.env.OSS_ACCESSKEYID,
+    //     accessKeySecret: process.env.OSS_ACCESSKEYSECRET,
+    //     // the bucket data region location, doc demo used 'oss-cn-beijing'.
+    //     region: process.env.OSS_REGION,
+    //     // the default bucket you want to access, doc demo used 'nest-alicloud-oss-demo'.
+    //     bucket: process.env.OSS_BUCKET,
+    //   },
+    // }),
     UserModule,
     ProjectModule,
     SourceModule,
