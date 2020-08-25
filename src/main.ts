@@ -3,11 +3,12 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-17 15:39:07
+ * @LastEditTime: 2020-08-25 17:23:39
  */
 
 import 'src/shared/utils/bootstrap'
 import * as chalk from 'chalk'
+import * as helmet from 'helmet';
 
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
@@ -40,7 +41,7 @@ async function bootstrap() {
   )
   // app.use(logger)
   // app.use(SignMiddleware)
-  // app.use(helmet())
+  app.use(helmet())
   app.setGlobalPrefix('api')
 
   let docTips = ''
