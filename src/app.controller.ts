@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-23 20:32:31
+ * @LastEditTime: 2020-08-25 15:38:22
  */
 
 import {
@@ -69,12 +69,15 @@ export class AppController {
             {
               Action: ['oss:PutObject'],
               Effect: 'Allow',
-              Resource: [`acs:oss:*:*:${process.env.OSS_BUCKET}/*`, `acs:oss:*:*:${process.env.OSS_BUCKET}`],
+              Resource: [
+                `acs:oss:*:*:${process.env.OSS_BUCKET}/*`,
+                `acs:oss:*:*:${process.env.OSS_BUCKET}`,
+              ],
             },
           ],
           Version: '1',
         },
-        60 * 60,
+        Number(process.env.ALIYUN_RAM_TEMPORARY_EXPIRE) * 60,
         '',
       )
 

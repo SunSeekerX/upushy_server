@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 10:18:24
+ * @LastEditTime: 2020-08-25 15:10:33
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -53,6 +53,7 @@ export class SourceController {
     @Body()
     createSourceDto: CreateSourceDto,
   ): Promise<ResponseRO> {
+    const OSS_BASE_URL = process.env.OSS_BASE_URL
     const project = await this.projectEntity.findOne(createSourceDto.projectId)
     // 检查项目是否存在
     if (!project) {
@@ -82,7 +83,10 @@ export class SourceController {
 
       if (nativeSource) {
         const res = await this.sourceService.createSource(createSourceDto)
-
+        res.type !== 4 &&
+          Object.assign(res, {
+            url: `${OSS_BASE_URL}/${res.url}`,
+          })
         return {
           success: true,
           statusCode: 200,
@@ -105,6 +109,10 @@ export class SourceController {
         }
       }
       const res = await this.sourceService.createSource(createSourceDto)
+      res.type !== 4 &&
+        Object.assign(res, {
+          url: `${OSS_BASE_URL}/${res.url}`,
+        })
       return {
         success: true,
         statusCode: 200,
@@ -131,7 +139,10 @@ export class SourceController {
       const count: number = await this.sourceService.getSourceCount({
         nativeVersionCode: source.versionCode,
         type: source.type - 2,
+        projectId: source.projectId,
       })
+
+      console.log({ count, source })
 
       if (count !== 0) {
         return {
@@ -253,7 +264,10 @@ export class SourceController {
     if (pageNum && pageSize) {
       res = await this.sourceService.querySource(querySourceDto, orderCondition)
     } else {
-      res = await this.sourceService.querySourceAll(querySourceDto, orderCondition)
+      res = await this.sourceService.querySourceAll(
+        querySourceDto,
+        orderCondition,
+      )
     }
 
     for (const item of res) {
