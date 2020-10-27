@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-17 10:42:05
+ * @LastEditTime: 2020-10-28 00:41:11
  */
 
 import {
@@ -15,7 +15,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, getRepository, DeleteResult } from 'typeorm'
 import { validate } from 'class-validator'
-const jwt = require('jsonwebtoken')
+import * as jwt from 'jsonwebtoken'
 
 import { UserRO } from './user.interface'
 import { UserEntity } from './user.entity'
@@ -106,7 +106,7 @@ export class UserService {
     return this.buildUserRO(user)
   }
 
-  public generateJWT(user) {
+  public generateJWT(user: UserEntity): string {
     const today = new Date()
     const exp = new Date(today)
     exp.setDate(today.getDate() + 60)

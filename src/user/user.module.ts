@@ -3,16 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:07:16
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-04 12:57:22
+ * @LastEditTime: 2020-10-28 00:53:37
  */
 
-import {
-  Module,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
-  Global,
-} from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, Global } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { UserService } from './user.service'
@@ -30,7 +24,7 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
   exports: [UserService],
 })
 export class UserModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer.apply(SignMiddleware).forRoutes(UserController)
   }
 }

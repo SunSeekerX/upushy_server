@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:09
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 11:24:04
+ * @LastEditTime: 2020-10-28 00:48:00
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -83,9 +83,7 @@ export class ProjectController {
         message: '下有子项无法删除',
       }
     } else {
-      const project = await this.projectService.findOne({
-        id: deleteProjectDto.id,
-      })
+      const project = await this.projectService.findOne(deleteProjectDto.id)
 
       if (project) {
         const res = await this.projectService.delete(deleteProjectDto)
@@ -108,9 +106,7 @@ export class ProjectController {
   async update(
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<ResponseRO> {
-    const project = await this.projectService.findOne({
-      id: updateProjectDto.id,
-    })
+    const project = await this.projectService.findOne(updateProjectDto.id)
     if (!project) {
       return { success: false, statusCode: 200, message: '项目不存在' }
     }

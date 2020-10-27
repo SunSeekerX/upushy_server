@@ -3,12 +3,11 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 12:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-13 20:28:32
+ * @LastEditTime: 2020-10-28 00:41:25
  */
 
 import {
   Entity,
-  PrimaryGeneratedColumn,
   PrimaryColumn,
   Generated,
   Column,
@@ -16,7 +15,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
 } from 'typeorm'
-const argon2 = require('argon2')
+import * as argon2 from 'argon2'
 
 @Entity('app_user')
 export class UserEntity {
@@ -42,7 +41,7 @@ export class UserEntity {
   password: string
 
   @BeforeInsert()
-  async hashPassword() {
+  async hashPassword(): Promise<void | Error> {
     this.password = await argon2.hash(this.password)
   }
 

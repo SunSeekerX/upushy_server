@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-27 17:58:07
+ * @LastEditTime: 2020-10-28 00:25:51
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
@@ -21,6 +21,7 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { AppController } from './app.controller'
 // import { TasksModule } from './tasks/tasks.module';
+import { BasicModule } from './basic/basic.module';
 
 
 @Module({
@@ -56,6 +57,7 @@ import { AppController } from './app.controller'
     UserModule,
     ProjectModule,
     SourceModule,
+    BasicModule,
     // TasksModule,
   ],
   providers: [

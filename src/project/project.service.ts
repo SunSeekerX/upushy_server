@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-13 21:42:04
+ * @LastEditTime: 2020-10-28 00:43:25
  */
 
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, DeleteResult } from 'typeorm'
 
@@ -19,6 +19,7 @@ import {
   QueryProjectDto,
   QuerySourceDto,
 } from './dto/index'
+import { SourceEntity } from 'src/source/source.entity'
 
 @Injectable()
 export class ProjectService {
@@ -28,12 +29,12 @@ export class ProjectService {
   ) {}
 
   // 获取项目总数
-  async getProjectCount() {
+  async getProjectCount(): Promise<number> {
     return await this.projectEntity.count()
   }
 
   // 查找单个项目
-  async findOne(id): Promise<ProjectEntity> {
+  async findOne(id: string): Promise<ProjectEntity> {
     return await this.projectEntity.findOne(id)
   }
 
@@ -42,7 +43,6 @@ export class ProjectService {
       where: {
         id: projectId,
       },
-
       relations: ['sources'],
     })
   }
