@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-25 15:38:22
+ * @LastEditTime: 2020-10-27 18:10:41
  */
 
 import {
@@ -19,6 +19,14 @@ import {
 // import { FileInterceptor } from '@nestjs/platform-express'
 // import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
 import { RedisService } from 'nestjs-redis'
+import * as os from 'os'
+import * as v8 from 'v8'
+const internalIp = require('internal-ip')
+const ipv4 = internalIp.v4.sync()
+const nodeDiskInfo = require('node-disk-info')
+
+import { bytesToSize } from 'src/shared/utils/index'
+
 const OSS = require('ali-oss')
 
 import { ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
@@ -252,8 +260,8 @@ export class AppController {
     // }
   }
 
-  // 系统信息
-  @ApiOperation({ summary: '获取系统信息' })
+  // 系统配置
+  @ApiOperation({ summary: '获取系统配置' })
   @HttpCode(200)
   @Get('config')
   async getConfig(): Promise<ResponseRO> {
@@ -264,6 +272,75 @@ export class AppController {
       data: {
         serviceTime: new Date().getTime(),
       },
+    }
+  }
+
+  // 系统信息
+  @ApiOperation({ summary: '获取系统信息' })
+  @HttpCode(200)
+  @Get('systemConfig')
+  async getSystemConfig(): Promise<ResponseRO> {
+    try {
+      const disks = await nodeDiskInfo.getDiskInfo()
+
+      return {
+        success: true,
+        statusCode: 200,
+        message: '成功',
+        data: {
+          serviceTime: new Date().getTime(),
+          os: {
+            // 系统架构
+            arch: os.arch(),
+            cpus: os.cpus(),
+            // 以整数的形式返回空闲的系统内存量（以字节为单位）。
+            freemem: os.freemem(),
+            // 以整数的形式返回系统的内存总量（以字节为单位）。
+            totalmem: os.totalmem(),
+            // 以字符串的形式返回操作系统的主机名。
+            hostname: os.hostname(),
+            /**
+           * 返回一个数组，包含 1、5 和 15 分钟的平均负载。
+
+平均负载是系统活动性的测量，由操作系统计算得出，并表现为一个分数。
+
+平均负载是 UNIX 特定的概念。 在 Windows 上，其返回值始终为 [0, 0, 0]。
+           */
+            loadavg: os.loadavg(),
+            // 在 Linux 上返回 'Linux'，在 macOS 上返回 'Darwin'，在 Windows 上返回 'Windows_NT'。
+            type: os.type(),
+            // 系统正常运行的时间
+            uptime: os.uptime(),
+            // 主机的网络地址
+            ip: ipv4,
+            // 返回当前用户的主目录的字符串路径。
+            homedir: os.homedir(),
+          },
+          process: {
+            // 项目路径
+            cwd: process.cwd(),
+            NODE: process.env.NODE,
+            versions: process.versions,
+            // 该返回值包含秒的分数。 使用 Math.floor() 来得到整秒钟。
+            uptime: Math.floor(process.uptime()),
+            // env: process.env,
+            // 返回 Node.js 进程的内存使用情况的对象，该对象每个属性值的单位为字节。
+            // memoryUsage: process.memoryUsage(),
+          },
+          v8: {
+            // getHeapSpaceStatistics: v8.getHeapSpaceStatistics(),
+            // v8 引擎堆内存占用
+            getHeapStatistics: v8.getHeapStatistics(),
+          },
+          disks,
+        },
+      }
+    } catch (error) {
+      return {
+        success: false,
+        statusCode: 500,
+        message: error.message,
+      }
     }
   }
 }

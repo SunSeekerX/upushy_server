@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-23 20:57:14
+ * @LastEditTime: 2020-10-27 17:58:07
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
@@ -72,6 +72,7 @@ export class AppModule implements NestModule {
       .apply(SignMiddleware)
       .exclude(
         { path: '/api/update', method: RequestMethod.GET },
+        { path: '/api/systemConfig', method: RequestMethod.GET },
       )
       .forRoutes(AppController)
   }

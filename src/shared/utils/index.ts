@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-04-07 20:45:22
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-07-31 10:20:59
+ * @LastEditTime: 2020-10-27 20:56:21
  */
 
 import * as os from 'os'
@@ -63,4 +63,25 @@ export function guid(len = 32, radix = null) {
     }
   }
   return uuid.join('')
+}
+
+/**
+ * Convert Bytes to Human-Readable Format
+ * @param { Number } bytes
+ * @returns { String }
+ */
+export function bytesToSize(bytes: number):string {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+
+  if (bytes === 0) {
+    return "n/a"
+  }
+
+  const i = parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))))
+
+  if (i === 0) {
+    return bytes + " " + sizes[i]
+  }
+
+  return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
 }
