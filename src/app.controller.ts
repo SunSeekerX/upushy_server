@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-27 18:10:41
+ * @LastEditTime: 2020-10-27 22:18:24
  */
 
 import {
@@ -319,11 +319,11 @@ export class AppController {
           process: {
             // 项目路径
             cwd: process.cwd(),
-            NODE: process.env.NODE,
+            NODE: process.env.npm_node_execpath,
             versions: process.versions,
             // 该返回值包含秒的分数。 使用 Math.floor() 来得到整秒钟。
             uptime: Math.floor(process.uptime()),
-            // env: process.env,
+            env: process.env,
             // 返回 Node.js 进程的内存使用情况的对象，该对象每个属性值的单位为字节。
             // memoryUsage: process.memoryUsage(),
           },
