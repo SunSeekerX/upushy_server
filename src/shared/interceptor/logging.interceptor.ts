@@ -1,95 +1,51 @@
 /**
  * @name:
  * @author: SunSeekerX
- * @Date: 2020-08-14 20:29:21
+ * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-15 15:40:03
+ * @LastEditTime: 2020-10-28 17:22:39
  */
 
 import {
   CallHandler,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
   Injectable,
-  Logger,
   NestInterceptor,
+  Logger,
 } from '@nestjs/common'
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
+import { BasicService } from 'src/basic/basic.service'
+import { getIPLocation } from 'src/shared/utils/index'
 
-/**
- * Interceptor that logs input/output requests
- */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly ctxPrefix: string = LoggingInterceptor.name
-  private readonly logger: Logger = new Logger(this.ctxPrefix)
+  constructor(private readonly basicService: BasicService) {}
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const req: Request = context.switchToHttp().getRequest<Request>()
+    // const res: Response = context.switchToHttp().getResponse<Response>()
 
-  /**
-   * Intercept method, logs before and after the request being processed
-   * @param context details about the current request
-   * @param call$ implements the handle method that returns an Observable
-   */
-  public intercept(
-    context: ExecutionContext,
-    call$: CallHandler,
-  ): Observable<unknown> {
-    return call$.handle().pipe(
-      tap({
-        next: (val: unknown): void => {
-          this.logNext(val, context)
-        },
-        error: (err: Error): void => {
-          this.logError(err, context)
-        },
+    return next.handle().pipe(
+      tap(data => {
+        // 解析ip地址
+        getIPLocation(req.ip)
+          .then(loginLocation => {
+            this.basicService.createLoginLog({
+              username: req.body.username,
+              ipaddr: req.ip,
+              loginLocation,
+              browser: `${req.useragent.browser}:${req.useragent.version}`,
+              os: req.useragent.os,
+              status: data.success ? '1' : '0',
+              msg: data.message,
+              loginTime: new Date(),
+            })
+          })
+          .catch(err => {
+            Logger.error(`---解析ip地址失败错误详情：${err.message}---`)
+          })
       }),
     )
-  }
-
-  /**
-   * Logs the request response in success cases
-   * @param body body returned
-   * @param context details about the current request
-   */
-  private logNext(body: unknown, context: ExecutionContext): void {
-    const req: Request = context.switchToHttp().getRequest<Request>()
-    const res: Response = context.switchToHttp().getResponse<Response>()
-    const { method, originalUrl, ip } = req
-    const { statusCode } = res
-
-    this.logger.log(
-      `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
-    )
-  }
-
-  /**
-   * Logs the request response in success cases
-   * @param error Error object
-   * @param context details about the current request
-   */
-  private logError(error: Error, context: ExecutionContext): void {
-    const req: Request = context.switchToHttp().getRequest<Request>()
-    const res: Response = context.switchToHttp().getResponse<Response>()
-    const { method, originalUrl, ip } = req
-
-    if (error instanceof HttpException) {
-      const statusCode: number = error.getStatus()
-
-      if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-        this.logger.error(
-          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
-        )
-      } else {
-        this.logger.warn(
-          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
-        )
-      }
-    } else {
-      this.logger.error(
-        `Status code: ${error.message} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
-      )
-    }
   }
 }

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:25:51
+ * @LastEditTime: 2020-10-28 16:05:25
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
@@ -16,7 +16,7 @@ import { RedisModule } from 'nestjs-redis'
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
 import { SourceModule } from './source/source.module'
-import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
+import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
 import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { AppController } from './app.controller'
@@ -63,7 +63,7 @@ import { BasicModule } from './basic/basic.module';
   providers: [
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
+      useClass: LogInterceptor,
     },
   ],
   controllers: [AppController],

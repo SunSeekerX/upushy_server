@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-17 10:14:37
+ * @LastEditTime: 2020-10-28 17:22:47
  */
 
 import {
@@ -12,15 +12,19 @@ import {
   Body,
   HttpCode,
   Get,
-  Logger
+  Logger,
+  Req,
+  Ip,
+  UseInterceptors,
 } from '@nestjs/common'
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
 import { RedisService } from 'nestjs-redis'
-const argon2 = require('argon2')
-const svgCaptcha = require('svg-captcha')
+import * as argon2 from 'argon2'
+import * as svgCaptcha from 'svg-captcha'
 
 import { ResponseRO } from 'src/shared/interface/response.interface'
+import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
 import { LoginUserDto, CreateUserDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
@@ -124,7 +128,12 @@ export class UserController {
   @ApiOperation({ summary: '用户登录' })
   @HttpCode(200)
   @Post('/login')
-  async login(@Body() loginUserDto: LoginUserDto): Promise<ResponseRO> {
+  @UseInterceptors(LoggingInterceptor)
+  async login(
+    @Req() request: Request,
+    @Ip() ip,
+    @Body() loginUserDto: LoginUserDto,
+  ): Promise<ResponseRO> {
     if (!loginUserDto.loginCaptchaKey) {
       return {
         success: false,
@@ -133,12 +142,20 @@ export class UserController {
       }
     }
 
+    // 记录登录日志
+    // 登录状态（0成功 1失败）
+    // let loginStatus = '1'
+    // // 用户名
+    // const { username } = loginUserDto
+    // const browser = `${request.useragent.browser}:${request.useragent.version}`
+    // console.log(await getIPLocation('47.102.131.123'))
+    // console.log({ username, request, ip })
+
     try {
       const client = await this.redisService.getClient()
       const loginCaptchaText = await client.get(
         `imgCaptcha:login:${loginUserDto.loginCaptchaKey}`,
       )
-
       if (!loginCaptchaText) {
         return {
           success: false,

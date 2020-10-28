@@ -3,13 +3,13 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-25 17:23:39
+ * @LastEditTime: 2020-10-28 15:35:06
  */
 
 import 'src/shared/utils/bootstrap'
 import * as chalk from 'chalk'
-import * as helmet from 'helmet';
-
+import * as helmet from 'helmet'
+import * as useragent from 'express-useragent'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
@@ -43,6 +43,7 @@ async function bootstrap() {
   // app.use(SignMiddleware)
   app.use(helmet())
   app.setGlobalPrefix('api')
+  app.use(useragent.express())
 
   let docTips = ''
 
@@ -60,14 +61,14 @@ async function bootstrap() {
     - Network: ${chalk.green(`http://${ipv4}:${port}/docs/`)}`
   }
 
-  await app.listen(port)
-
-  console.log(`
-  App running at:
-  - Local:   ${chalk.green(`http://localhost:${port}/api/`)}
-  - Network: ${chalk.green(`http://${ipv4}:${port}/api/`)}
-  ${docTips}
-  `)
+  await app.listen(port, '0.0.0.0', () => {
+    console.log(`
+    App running at:
+    - Local:   ${chalk.green(`http://localhost:${port}/api/`)}
+    - Network: ${chalk.green(`http://${ipv4}:${port}/api/`)}
+    ${docTips}
+    `)
+  })
 }
 
 bootstrap()
