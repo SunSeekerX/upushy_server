@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 15:35:06
+ * @LastEditTime: 2020-10-28 17:57:13
  */
 
 import 'src/shared/utils/bootstrap'

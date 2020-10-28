@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:22:39
+ * @LastEditTime: 2020-10-28 17:58:17
  */
 
 import {
@@ -18,6 +18,7 @@ import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { BasicService } from 'src/basic/basic.service'
 import { getIPLocation } from 'src/shared/utils/index'
+import { getClientIp } from 'src/shared/utils/request-ip'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -29,7 +30,7 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(data => {
         // 解析ip地址
-        getIPLocation(req.ip)
+        getIPLocation(getClientIp(req))
           .then(loginLocation => {
             this.basicService.createLoginLog({
               username: req.body.username,
