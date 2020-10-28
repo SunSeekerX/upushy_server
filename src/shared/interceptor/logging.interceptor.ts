@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 21:32:07
+ * @LastEditTime: 2020-10-28 21:33:00
  */
 
 import {
@@ -33,6 +33,7 @@ export class LoggingInterceptor implements NestInterceptor {
         const ip = getClientIp(req)
         getIPLocation(ip)
           .then(loginLocation => {
+            // 这里插入数据库有可能抛错误
             this.basicService.createLoginLog({
               username: req.body.username,
               ipaddr: ip,
