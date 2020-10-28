@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:30:45
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:34:56
+ * @LastEditTime: 2020-10-28 23:54:36
  */
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -47,7 +47,7 @@ export class CreateLoginLogDto {
 
   @ApiProperty({
     type: String,
-    description: '登录状态（0成功 1失败）',
+    description: '登录状态（0失败 1成功）',
   })
   @Length(1)
   @IsNotEmpty()

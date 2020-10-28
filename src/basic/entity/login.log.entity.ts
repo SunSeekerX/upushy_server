@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:06:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 22:25:13
+ * @LastEditTime: 2020-10-28 23:53:48
  */
 
 import {
@@ -65,8 +65,8 @@ export class LoginLogEntity {
   @Column({
     type: 'char',
     length: 1,
-    default: 0,
-    comment: '登录状态（0成功 1失败）',
+    default: 1,
+    comment: '登录状态（0失败 1成功）',
   })
   status: string
 
