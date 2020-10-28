@@ -3,46 +3,24 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:06:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:48:26
+ * @LastEditTime: 2020-10-28 22:25:13
  */
 
 import {
   Entity,
-  Generated,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { CreateLoginLogDto } from '../dto/create-login-log.dto'
 
 @Entity('sys_login_log')
 export class LoginLogEntity {
-  // constructor({
-  //   username,
-  //   ipaddr,
-  //   loginLocation,
-  //   browser,
-  //   os,
-  //   status,
-  //   msg,
-  //   loginTime,
-  // }: CreateLoginLogDto) {
-  //   this.username = username
-  //   this.ipaddr = ipaddr
-  //   this.loginLocation = loginLocation
-  //   this.browser = browser
-  //   this.os = os
-  //   this.status = status
-  //   this.msg = msg
-  //   this.loginTime = loginTime
-  // }
-
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn({
     comment: 'id',
+    unsigned: true,
   })
-  @Generated('uuid')
-  id: string
+  id: number
 
   @Column({
     type: 'varchar',
@@ -103,7 +81,7 @@ export class LoginLogEntity {
   @Column({
     name: 'login_time',
     type: 'timestamp',
-    comment: '访问时间',
+    comment: '登录日期',
   })
   loginTime: Date
 

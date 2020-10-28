@@ -3,12 +3,12 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:04:03
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:13:49
+ * @LastEditTime: 2020-10-28 23:01:17
  */
 
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { FindConditions, ObjectLiteral, Repository } from 'typeorm'
 import { CreateLoginLogDto } from './dto/create-login-log.dto'
 import { QueryLoginLogDto } from './dto/query-login-log.dto'
 import { LoginLogEntity } from './entity/login.log.entity'
@@ -46,17 +46,23 @@ export class BasicService {
   }
 
   // 分页查询登录记录
-  async queryLoginLog({
-    id,
-    pageNum,
-    pageSize,
-  }: QueryLoginLogDto): Promise<LoginLogEntity[]> {
+  async queryLoginLog(
+    { id, pageNum, pageSize }: QueryLoginLogDto,
+    orderCondition: {
+      [P in keyof LoginLogEntity]?: 'ASC' | 'DESC' | 1 | -1
+    },
+  ): Promise<LoginLogEntity[]> {
+    const conditions:
+      | FindConditions<LoginLogEntity>[]
+      | FindConditions<LoginLogEntity>
+      | ObjectLiteral
+      | string = {}
+    id && (conditions.id = id)
     return await this.loginLogRepository.find({
-      where: {
-        id,
-      },
+      where: conditions,
       take: pageSize,
       skip: (pageNum - 1) * pageSize,
+      order: orderCondition,
     })
   }
 

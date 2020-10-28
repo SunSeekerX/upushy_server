@@ -3,11 +3,12 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 17:06:13
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:17:48
+ * @LastEditTime: 2020-10-28 22:58:48
  */
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { ValidateIf, IsInt } from 'class-validator'
+import { ValidateIf, IsInt, Validate } from 'class-validator'
+import { CustomOrder } from 'src/shared/validator/custom-order'
 
 export class QueryLoginLogDto {
   @ApiProperty({
@@ -36,4 +37,19 @@ export class QueryLoginLogDto {
   @ValidateIf(o => o.pageNum)
   @IsInt()
   readonly pageSize: number
+
+  @ApiProperty({
+    type: String,
+    description: '排序的key',
+  })
+  @ValidateIf(o => o.sortKey)
+  readonly sortKey?: string
+
+  @ApiProperty({
+    type: String,
+    description: '排序的方式: ASC, DESC',
+  })
+  @Validate(CustomOrder)
+  @ValidateIf(o => o.sortKey)
+  readonly order?: string
 }

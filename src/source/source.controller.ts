@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-25 15:10:33
+ * @LastEditTime: 2020-10-28 23:02:43
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -255,12 +255,10 @@ export class SourceController {
     })
 
     let res: Array<SourceEntity> = []
-    let orderCondition = {}
-    if (sortKey) {
-      orderCondition = {
-        [sortKey]: order,
-      }
-    }
+    // let orderCondition = {}
+    const orderCondition = {}
+    sortKey && (orderCondition[sortKey] = order)
+
     if (pageNum && pageSize) {
       res = await this.sourceService.querySource(querySourceDto, orderCondition)
     } else {

@@ -1,9 +1,9 @@
 /**
- * @name: 
+ * @name:
  * @author: SunSeekerX
  * @Date: 2020-08-19 10:11:41
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 10:12:55
+ * @LastEditTime: 2020-10-28 22:58:08
  */
 
 import {
@@ -14,11 +14,11 @@ import {
 
 @ValidatorConstraint({ name: 'customPlatform', async: false })
 export class CustomOrder implements ValidatorConstraintInterface {
-  validate(text: string, args: ValidationArguments) {
+  validate(text: string): boolean {
     return text === 'ASC' || text === 'DESC'
   }
 
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage(args: ValidationArguments): string {
     return `The order must be ASC or DESC, instead of ${args.value}`
   }
 }

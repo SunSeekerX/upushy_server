@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 11:41:08
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:14:57
+ * @LastEditTime: 2020-10-28 23:04:26
  */
 
 import { Controller, Get, Injectable, Query } from '@nestjs/common'
@@ -16,6 +16,7 @@ import {
   ApiTags,
   ApiBearerAuth,
 } from '@nestjs/swagger'
+import { ResponseRO } from 'src/shared/interface/response.interface'
 @ApiBearerAuth()
 @ApiTags('Basic')
 @Controller('basic')
@@ -26,11 +27,24 @@ export class BasicController {
   @ApiOperation({ summary: '获取登录日志' })
   @ApiResponse({ status: 200, description: '获取成功.' })
   @Get('loginLog')
-  async getLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto) {
+  async getLoginLogs(
+    @Query() queryLoginLogDto: QueryLoginLogDto,
+  ): Promise<ResponseRO> {
     const count = await this.basicService.getLoginLogCount()
     let res = []
+    const orderCondition = {}
+    queryLoginLogDto.sortKey &&
+      (orderCondition[queryLoginLogDto.sortKey] = queryLoginLogDto.order)
+    // if (queryLoginLogDto.sortKey) {
+    //   orderCondition = {
+    //     [queryLoginLogDto.sortKey]: queryLoginLogDto.order,
+    //   }
+    // }
     if (queryLoginLogDto.pageNum && queryLoginLogDto.pageSize) {
-      res = await this.basicService.queryLoginLog(queryLoginLogDto)
+      res = await this.basicService.queryLoginLog(
+        queryLoginLogDto,
+        orderCondition,
+      )
     } else {
       res = await this.basicService.findAllLoginLog()
     }
