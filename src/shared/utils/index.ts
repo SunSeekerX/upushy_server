@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-04-07 20:45:22
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 16:27:50
+ * @LastEditTime: 2020-10-28 21:21:36
  */
 
 import * as os from 'os'
@@ -142,5 +142,37 @@ export async function getIPLocation(ip: string): Promise<any> {
         resolve(`${jsonRes.pro}${jsonRes.city}`)
       })
     })
+  }
+}
+
+/**
+ * compare ver1 > ver2
+ * @param {String} ver1 string like x.y.z
+ * @param {String} ver2 string like x.y.z
+ */
+export function compareVersion(ver1: string, ver2: string): boolean {
+  const ver1List: Array<string | number> = ver1.split('.')
+  const ver2List: Array<string | number> = ver2.split('.')
+  ver1List.forEach((v, i) => (ver1List[i] = Number(v)))
+  ver2List.forEach((v, i) => (ver2List[i] = Number(v)))
+
+  const len =
+    ver1List.length > ver2List.length ? ver1List.length : ver2List.length
+
+  for (let i = 0; i < len; i++) {
+    if (ver1List[i] > ver2List[i]) {
+      return true
+    } else if (ver1List[i] === ver2List[i]) {
+      if (
+        (!ver1List[i + 1] && !ver2List[i + 1]) ||
+        (!ver1List[i + 1] && ver2List[i + 1])
+      ) {
+        return false
+      } else if (ver1List[i + 1] && !ver2List[i + 1]) {
+        return true
+      }
+    } else {
+      return false
+    }
   }
 }

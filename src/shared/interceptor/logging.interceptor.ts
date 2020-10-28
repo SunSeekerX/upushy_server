@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:58:17
+ * @LastEditTime: 2020-10-28 21:32:07
  */
 
 import {
@@ -30,11 +30,12 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(data => {
         // 解析ip地址
-        getIPLocation(getClientIp(req))
+        const ip = getClientIp(req)
+        getIPLocation(ip)
           .then(loginLocation => {
             this.basicService.createLoginLog({
               username: req.body.username,
-              ipaddr: req.ip,
+              ipaddr: ip,
               loginLocation,
               browser: `${req.useragent.browser}:${req.useragent.version}`,
               os: req.useragent.os,
