@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-08-17 15:18:20
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-18 15:27:57
+ * @LastEditTime: 2020-10-29 17:57:02
  */
 
-const NodeRSA = require('node-rsa')
+import * as NodeRSA from 'node-rsa'
 import {
   Injectable,
   NestMiddleware,
