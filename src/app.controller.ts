@@ -3,36 +3,23 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-27 22:22:21
+ * @LastEditTime: 2020-10-29 17:17:15
  */
 
-import {
-  Controller,
-  Get,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-  HttpCode,
-  Body,
-  Query,
-} from '@nestjs/common'
+import { Controller, Get, HttpCode, Query } from '@nestjs/common'
 // import { FileInterceptor } from '@nestjs/platform-express'
 // import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
 import { RedisService } from 'nestjs-redis'
 import * as os from 'os'
 import * as v8 from 'v8'
-const internalIp = require('internal-ip')
-const ipv4 = internalIp.v4.sync()
-const nodeDiskInfo = require('node-disk-info')
+import * as publicIp from 'public-ip'
+import * as internalIp from 'internal-ip'
+import * as OSS from 'ali-oss'
+import * as nodeDiskInfo from 'node-disk-info'
 
-import { bytesToSize } from 'src/shared/utils/index'
-
-const OSS = require('ali-oss')
-
-import { ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { ResponseRO } from 'src/shared/interface/response.interface'
-// import { guid } from 'src/shared/utils/index'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'
 import { SourceService } from './source/source.service'
@@ -282,6 +269,8 @@ export class AppController {
   async getSystemConfig(): Promise<ResponseRO> {
     try {
       const disks = await nodeDiskInfo.getDiskInfo()
+      const publicIpIpv4 = await publicIp.v4()
+      const internalIpIpv4 = await internalIp.v4()
 
       return {
         success: true,
@@ -311,8 +300,10 @@ export class AppController {
             type: os.type(),
             // 系统正常运行的时间
             uptime: os.uptime(),
-            // 主机的网络地址
-            ip: ipv4,
+            // 主机公网地址
+            publicIpIpv4,
+            // 主机内网地址
+            internalIpIpv4,
             // 返回当前用户的主目录的字符串路径。
             homedir: os.homedir(),
           },

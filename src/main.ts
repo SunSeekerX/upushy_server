@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:57:13
+ * @LastEditTime: 2020-10-29 17:15:52
  */
 
 import 'src/shared/utils/bootstrap'
@@ -13,7 +13,7 @@ import * as useragent from 'express-useragent'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
-const internalIp = require('internal-ip')
+import * as internalIp from 'internal-ip'
 const ipv4 = internalIp.v4.sync()
 
 import { AppModule } from './app.module'
