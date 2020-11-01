@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 23:02:43
+ * @LastEditTime: 2020-11-01 23:38:13
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -141,9 +141,6 @@ export class SourceController {
         type: source.type - 2,
         projectId: source.projectId,
       })
-
-      console.log({ count, source })
-
       if (count !== 0) {
         return {
           success: false,
@@ -155,7 +152,6 @@ export class SourceController {
 
     if (source) {
       const res = await this.sourceService.deleteSource(deleteSourceDto)
-
       return { success: true, statusCode: 200, message: '操作成功', data: res }
     } else {
       return { success: false, statusCode: 200, message: '资源不存在' }

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:01
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-10 21:15:37
+ * @LastEditTime: 2020-11-01 20:35:18
  */
 
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
@@ -25,7 +25,7 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
   exports: [ProjectService],
 })
 export class ProjectModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer.apply(AuthMiddleware, SignMiddleware).forRoutes(ProjectController)
   }
 }

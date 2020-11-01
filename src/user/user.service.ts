@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:41:11
+ * @LastEditTime: 2020-11-01 23:35:30
  */
 
 import {
@@ -96,29 +96,50 @@ export class UserService {
     return await this.userRepository.delete({ username: username })
   }
 
-  async findById(id: number): Promise<UserRO> {
+  async findById(id: number): Promise<UserEntity> {
     const user = await this.userRepository.findOne(id)
-
     if (!user) {
-      const errors = { User: ' not found' }
-      throw new HttpException({ errors }, 401)
+      throw new HttpException({ errors: { User: ' not found' } }, 401)
     }
-    return this.buildUserRO(user)
+    return user
+    // return this.buildUserRO(user)
   }
 
-  public generateJWT(user: UserEntity): string {
-    const today = new Date()
-    const exp = new Date(today)
-    exp.setDate(today.getDate() + 60)
+  public generateJWT({ id, username }: UserEntity): string {
+    // const today = new Date()
+    // const exp = new Date(today)
+    // exp.setDate(today.getDate() + 60)
 
+    return jwt.sign(
+      {
+        id,
+        username,
+        // 过期时间
+        // exp: Math.floor(Date.now() / 1000) + 1 * 24 * 60 * 60,
+        // exp: Math.floor(Date.now() / 1000) + 5,
+      },
+      process.env.TOKEN_SECRET,
+      {
+        // 过期时间/seconds
+        expiresIn: 1 * 24 * 60 * 60,
+        // expiresIn: 5,
+      },
+    )
+  }
+
+  // 生成 refreshToken
+  public genrateRefreshToken(user: UserEntity): string {
     return jwt.sign(
       {
         id: user.id,
         username: user.username,
-        exp: Math.floor(Date.now() / 1000) + 1 * 24 * 60 * 60,
-        // exp: Math.floor(Date.now() / 1000) + 10,
       },
       process.env.TOKEN_SECRET,
+      {
+        // 过期时间/seconds
+        expiresIn: 30 * 24 * 60 * 60,
+        // expiresIn: 20,
+      },
     )
   }
 

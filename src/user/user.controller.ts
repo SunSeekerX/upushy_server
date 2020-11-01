@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 17:22:47
+ * @LastEditTime: 2020-11-01 22:02:27
  */
 
 import {
@@ -16,23 +16,30 @@ import {
   Req,
   Ip,
   UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common'
-import { Request } from 'express'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
+import { verify } from 'jsonwebtoken'
 import { RedisService } from 'nestjs-redis'
+import * as Redis from 'ioredis'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 
 import { ResponseRO } from 'src/shared/interface/response.interface'
 import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
-import { LoginUserDto, CreateUserDto } from './dto/index'
+import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
+import { UserEntity } from './user.entity'
 
 @ApiBearerAuth()
 @ApiTags('users')
 @Controller('user')
 export class UserController {
+  // redis 客户端
+  redisClient: Redis.Redis | null = null
+
   constructor(
     private readonly redisService: RedisService,
     private readonly userService: UserService,
@@ -50,8 +57,8 @@ export class UserController {
 
     const captchaKey = guid()
     try {
-      const client = await this.redisService.getClient()
-      await client.set(
+      const redisClient = await this._getRedisClient()
+      await redisClient.set(
         `imgCaptcha:register:${captchaKey}`,
         captcha.text.toLowerCase(),
         'ex',
@@ -90,8 +97,8 @@ export class UserController {
     }
 
     try {
-      const client = await this.redisService.getClient()
-      const captchaText = await client.get(
+      const redisClient = await this._getRedisClient()
+      const captchaText = await redisClient.get(
         `imgCaptcha:register:${createUserDto.imgCaptchaKey}`,
       )
 
@@ -129,11 +136,7 @@ export class UserController {
   @HttpCode(200)
   @Post('/login')
   @UseInterceptors(LoggingInterceptor)
-  async login(
-    @Req() request: Request,
-    @Ip() ip,
-    @Body() loginUserDto: LoginUserDto,
-  ): Promise<ResponseRO> {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<ResponseRO> {
     if (!loginUserDto.loginCaptchaKey) {
       return {
         success: false,
@@ -142,18 +145,9 @@ export class UserController {
       }
     }
 
-    // 记录登录日志
-    // 登录状态（0成功 1失败）
-    // let loginStatus = '1'
-    // // 用户名
-    // const { username } = loginUserDto
-    // const browser = `${request.useragent.browser}:${request.useragent.version}`
-    // console.log(await getIPLocation('47.102.131.123'))
-    // console.log({ username, request, ip })
-
     try {
-      const client = await this.redisService.getClient()
-      const loginCaptchaText = await client.get(
+      const redisClient = await this._getRedisClient()
+      const loginCaptchaText = await redisClient.get(
         `imgCaptcha:login:${loginUserDto.loginCaptchaKey}`,
       )
       if (!loginCaptchaText) {
@@ -177,18 +171,20 @@ export class UserController {
         // 检查密码
         if (await argon2.verify(_user.password, loginUserDto.password)) {
           const token = await this.userService.generateJWT(_user)
+          const refreshToken = await this.userService.genrateRefreshToken(_user)
           const { username, nickname } = _user
-          const user = { token, username, nickname }
+          // const user = { token, username, nickname }
 
           return {
             success: true,
             statusCode: 200,
             message: '登录成功',
             data: {
-              token: user.token,
+              token,
+              refreshToken,
               userInfo: {
-                username: user.username,
-                nickname: user.nickname,
+                username,
+                nickname,
               },
             },
           }
@@ -218,15 +214,15 @@ export class UserController {
   @Get('/login/captcha')
   async loginCodeImg(): Promise<ResponseRO> {
     const captcha = svgCaptcha.create({
-      ignoreChars: '0o1i',
+      ignoreChars: '0o1il',
       noise: 1,
       color: true,
     })
 
     const captchaKey = guid()
     try {
-      const client = await this.redisService.getClient()
-      await client.set(
+      const redisClient = await this._getRedisClient()
+      await redisClient.set(
         `imgCaptcha:login:${captchaKey}`,
         captcha.text.toLowerCase(),
         'ex',
@@ -250,5 +246,50 @@ export class UserController {
         errors: [error.message],
       }
     }
+  }
+
+  // 用 refreshToken 获取新的 Token
+  @ApiOperation({ summary: '刷新token' })
+  @HttpCode(200)
+  @Post('/token')
+  async refreshToken(
+    @Body() { refreshToken }: RefreshTokenDto,
+  ): Promise<ResponseRO> {
+    try {
+      // 解码 refreshToken
+      const decoded: any = verify(refreshToken, process.env.TOKEN_SECRET)
+      // 获取用户
+      const user = await this.userService.findById(decoded.id)
+      // if (!user) {
+      //   return {
+      //     success: false,
+      //     statusCode: 400,
+      //     message: 'User not found.',
+      //   }
+      // }
+      const token = await this.userService.generateJWT(user)
+      return {
+        success: true,
+        statusCode: 200,
+        message: 'Success',
+        data: token,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        statusCode: 401,
+        message: 'refreshToken 过期',
+        errors: [error.message],
+      }
+      // throw new HttpException(error.message, HttpStatus.UNAUTHORIZED)
+    }
+  }
+
+  // 获取 redis 客户端
+  async _getRedisClient(): Promise<Redis.Redis> {
+    if (!this.redisClient) {
+      this.redisClient = await this.redisService.getClient()
+    }
+    return this.redisClient
   }
 }
