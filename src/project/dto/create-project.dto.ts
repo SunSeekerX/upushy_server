@@ -3,17 +3,14 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 18:11:03
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 11:21:51
+ * @LastEditTime: 2020-11-02 14:27:06
  */
 
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 
 export class CreateProjectDto {
-  @ApiProperty({
-    type: String,
-    description: '用户id',
-  })
+  // 用户id
   userId?: string
 
   @ApiProperty({
@@ -26,7 +23,7 @@ export class CreateProjectDto {
   @ApiProperty({
     type: String,
     description: '项目描述',
-    default: ''
+    default: '',
   })
   @ValidateIf(o => ![null, undefined].includes(o.describe))
   readonly describe: string

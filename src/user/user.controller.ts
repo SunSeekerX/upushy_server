@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-01 22:02:27
+ * @LastEditTime: 2020-11-02 17:14:26
  */
 
 import {
@@ -13,11 +13,7 @@ import {
   HttpCode,
   Get,
   Logger,
-  Req,
-  Ip,
   UseInterceptors,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
@@ -126,7 +122,7 @@ export class UserController {
       return {
         success: false,
         statusCode: 400,
-        message: '验证码已失效',
+        message: error.message,
       }
     }
   }

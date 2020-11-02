@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:09
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:48:00
+ * @LastEditTime: 2020-11-02 13:05:03
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -128,6 +128,7 @@ export class ProjectController {
     @Query() queryProjectDto: QueryProjectDto,
     @User() user,
   ): Promise<ResponseRO> {
+    console.log(user.id);
     queryProjectDto.userId = user.id
 
     const count = await this.projectService.getProjectCount()

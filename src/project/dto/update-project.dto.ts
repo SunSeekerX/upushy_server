@@ -3,17 +3,18 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 18:19:03
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 11:18:56
+ * @LastEditTime: 2020-11-02 14:27:38
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { ValidateIf, IsNotEmpty } from 'class-validator'
+import { ValidateIf, IsNotEmpty, Length } from 'class-validator'
 
 export class UpdateProjectDto {
   @ApiProperty({
     type: String,
     description: '项目id',
   })
+  @Length(32, 36)
   @IsNotEmpty()
   readonly id: string
 

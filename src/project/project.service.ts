@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:43:25
+ * @LastEditTime: 2020-11-02 14:40:08
  */
 
 import { Injectable } from '@nestjs/common'
@@ -19,7 +19,6 @@ import {
   QueryProjectDto,
   QuerySourceDto,
 } from './dto/index'
-import { SourceEntity } from 'src/source/source.entity'
 
 @Injectable()
 export class ProjectService {

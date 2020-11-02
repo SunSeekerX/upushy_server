@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:06:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 23:53:48
+ * @LastEditTime: 2020-11-02 15:12:55
  */
 
 import {
@@ -14,7 +14,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-@Entity('sys_login_log')
+@Entity('app_login_log')
 export class LoginLogEntity {
   @PrimaryGeneratedColumn({
     comment: 'id',
@@ -38,8 +38,8 @@ export class LoginLogEntity {
   ipaddr: string
 
   @Column({
-    name: 'login_location',
     type: 'varchar',
+    name: 'login_location',
     length: 255,
     default: '',
     comment: '登录地点',
@@ -79,23 +79,23 @@ export class LoginLogEntity {
   msg: string
 
   @Column({
-    name: 'login_time',
     type: 'timestamp',
+    name: 'login_time',
     comment: '登录日期',
   })
   loginTime: Date
 
   @CreateDateColumn({
-    name: 'created_time',
     type: 'timestamp',
+    name: 'created_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     comment: '创建时间',
   })
   createdTime: Date
 
   @UpdateDateColumn({
-    name: 'updated_time',
     type: 'timestamp',
+    name: 'updated_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
     comment: '更新时间',

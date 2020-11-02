@@ -3,27 +3,34 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 12:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 00:41:25
+ * @LastEditTime: 2020-11-02 15:21:50
  */
 
 import {
   Entity,
   PrimaryColumn,
-  Generated,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
 } from 'typeorm'
 import * as argon2 from 'argon2'
+import { guid } from 'src/shared/utils'
 
 @Entity('app_user')
 export class UserEntity {
   @PrimaryColumn({
+    type: 'varchar',
+    length: 36,
+    nullable: false,
     comment: 'id',
   })
-  @Generated('uuid')
   id: string
+
+  @BeforeInsert()
+  updateId(): void {
+    this.id = guid()
+  }
 
   @Column({
     type: 'varchar',
@@ -60,6 +67,7 @@ export class UserEntity {
 
   @CreateDateColumn({
     type: 'timestamp',
+    name: 'created_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     comment: '创建时间',
   })
@@ -67,6 +75,7 @@ export class UserEntity {
 
   @UpdateDateColumn({
     type: 'timestamp',
+    name: 'updated_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
     comment: '更新时间',

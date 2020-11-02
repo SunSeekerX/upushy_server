@@ -326,6 +326,13 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 
 # 更新日志（Changelog）
 
+## 0.0.1 - 2020-11-01
+
+### 功能（Features）
+
+- 增加 refresh token 刷新 token 机制，提升体验
+- id 去除 “-” 
+
 ## 0.0.1 - 2020-08-25
 
 - 修复不存在资源依赖无法删除原生资源的 bug

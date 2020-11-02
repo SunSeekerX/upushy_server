@@ -3,28 +3,40 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:57:45
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-13 20:37:24
+ * @LastEditTime: 2020-11-02 15:20:56
  */
 
 import {
   Entity,
-  PrimaryColumn,
-  Generated,
   Column,
+  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm'
+
+import { guid } from 'src/shared/utils'
 
 @Entity('app_project')
 export class ProjectEntity {
   @PrimaryColumn({
+    type: 'varchar',
+    length: 36,
+    nullable: false,
     comment: 'id',
   })
-  @Generated('uuid')
   id: string
+
+  @BeforeInsert()
+  updateId(): void {
+    this.id = guid()
+  }
 
   @Column({
     type: 'varchar',
+    name: 'user_id',
+    length: 36,
+    nullable: false,
     comment: '用户id',
   })
   userId: string
@@ -40,12 +52,13 @@ export class ProjectEntity {
   @Column({
     type: 'varchar',
     comment: '应用描述',
-    default: ''
+    default: '',
   })
   describe: string
 
   @CreateDateColumn({
     type: 'timestamp',
+    name: 'created_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     comment: '创建时间',
   })
@@ -53,6 +66,7 @@ export class ProjectEntity {
 
   @UpdateDateColumn({
     type: 'timestamp',
+    name: 'updated_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
     comment: '更新时间',

@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 11:41:08
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 23:04:26
+ * @LastEditTime: 2020-11-02 14:38:58
  */
 
-import { Controller, Get, Injectable, Query } from '@nestjs/common'
+import { Controller, Get, Query } from '@nestjs/common'
 import { BasicService } from './basic.service'
 import { QueryLoginLogDto } from './dto/query-login-log.dto'
 

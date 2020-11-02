@@ -3,48 +3,62 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:59:01
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-18 18:07:15
+ * @LastEditTime: 2020-11-02 16:14:54
  */
 
 import {
   Entity,
   PrimaryColumn,
-  Generated,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BeforeInsert,
 } from 'typeorm'
+
+import { guid } from 'src/shared/utils'
 
 @Entity('app_source')
 export class SourceEntity {
   @PrimaryColumn({
+    type: 'varchar',
+    length: 36,
+    nullable: false,
     comment: 'id',
   })
-  @Generated('uuid')
   id: string
+
+  @BeforeInsert()
+  updateId(): void {
+    this.id = guid()
+  }
 
   @Column({
     type: 'varchar',
+    name: 'project_id',
+    length: 36,
+    nullable: false,
     comment: '项目id',
   })
   projectId: string
 
   @Column({
     type: 'varchar',
-    length: 10,
     comment: '版本',
   })
   version: string
 
   @Column({
-    unsigned: true,
+    type: 'int',
+    name: 'version_code',
     nullable: false,
+    unsigned: true,
     comment: '版本号',
   })
   versionCode: number
 
   @Column({
     type: 'int',
+    name: 'native_version_code',
     unsigned: true,
     comment: '原生应用版本号',
     default: 0,
@@ -58,13 +72,24 @@ export class SourceEntity {
   })
   url: string
 
+  // @Column({
+  //   type: 'int',
+  //   name: 'is_force_update',
+  //   unsigned: true,
+  //   nullable: false,
+  //   comment: '是否强制更新（0：否 1：是）',
+  // })
+  // isForceUpdate: number
+
   @Column({
     type: 'int',
+    name: 'update_type',
     unsigned: true,
     nullable: false,
-    comment: '是否强制更新（0：否 1：是）',
+    default: 1,
+    comment: '更新类型（1：用户同意更新，2：强制更新，3：静默更新）',
   })
-  isForceUpdate: number
+  updateType: number
 
   @Column({
     type: 'int',
@@ -92,11 +117,13 @@ export class SourceEntity {
   @Column({
     type: 'varchar',
     comment: '备注',
+    default: '',
   })
   remark: string
 
   @CreateDateColumn({
     type: 'timestamp',
+    name: 'created_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     comment: '创建时间',
   })
@@ -104,6 +131,7 @@ export class SourceEntity {
 
   @UpdateDateColumn({
     type: 'timestamp',
+    name: 'updated_time',
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
     comment: '更新时间',

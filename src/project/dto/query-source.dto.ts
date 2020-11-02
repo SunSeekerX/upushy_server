@@ -3,19 +3,18 @@
  * @author: SunSeekerX
  * @Date: 2020-07-07 15:53:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-03 12:56:16
+ * @LastEditTime: 2020-11-02 14:27:28
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, Length } from 'class-validator'
 
 export class QuerySourceDto {
   @ApiProperty({
-    description: 'Project id',
-    type: Number,
+    description: '项目ID',
+    type: String,
   })
-  @Type(() => Number)
+  @Length(32, 36)
   @IsNotEmpty()
-  readonly projectId: number
+  readonly projectId: string
 }

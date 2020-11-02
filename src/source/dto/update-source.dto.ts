@@ -3,18 +3,19 @@
  * @author: SunSeekerX
  * @Date: 2020-07-06 10:58:10
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-18 17:50:52
+ * @LastEditTime: 2020-11-02 15:54:11
  */
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsInt, Min, MaxLength, ValidateIf } from 'class-validator'
+import { IsNotEmpty, IsInt, Min, MaxLength, ValidateIf, Length } from 'class-validator'
 
 export class UpdateSourceDto {
   @ApiProperty({
     type: String,
     description: '资源ID',
   })
+  @Length(32, 36)
   @IsNotEmpty()
   readonly id: string
 
@@ -57,6 +58,15 @@ export class UpdateSourceDto {
   @IsInt()
   @ValidateIf(o => ![null, undefined].includes(o.isForceUpdate))
   readonly isForceUpdate?: number
+
+  @ApiProperty({
+    type: Number,
+    description: '更新类型（1：用户同意更新，2：强制更新，3：静默更新）',
+  })
+  @Type(() => Number)
+  @IsInt()
+  @ValidateIf(o => ![null, undefined].includes(o.updateType))
+  readonly updateType?: number
 
   // @ApiProperty({
   //   type: Number,

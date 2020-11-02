@@ -3,10 +3,15 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 16:05:25
+ * @LastEditTime: 2020-11-02 15:32:51
  */
 
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 // import { AlicloudOssModule } from 'nestjs-alicloud-oss'
@@ -21,8 +26,7 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { AppController } from './app.controller'
 // import { TasksModule } from './tasks/tasks.module';
-import { BasicModule } from './basic/basic.module';
-
+import { BasicModule } from './basic/basic.module'
 
 @Module({
   imports: [
@@ -43,6 +47,9 @@ import { BasicModule } from './basic/basic.module';
       entities: ['dist/**/*.entity.js'],
       synchronize: true,
       logging: false,
+      extra: {
+        charset: 'utf8mb4_general_ci',
+      },
     }),
     // AlicloudOssModule.withConfig({
     //   options: {

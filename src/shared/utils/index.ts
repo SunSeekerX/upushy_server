@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-04-07 20:45:22
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 21:21:36
+ * @LastEditTime: 2020-11-02 14:24:44
  */
 
 import * as os from 'os'
@@ -33,38 +33,39 @@ export function getIPAdress(): string {
 }
 
 /**
- * 本算法来源于简书开源代码，详见：https://www.jianshu.com/p/fdbf293d0a85
- * 全局唯一标识符（uuid，Globally Unique Identifier）,也称作 uuid(Universally Unique IDentifier)
- * 一般用于多个组件之间,给它一个唯一的标识符,或者v-for循环的时候,如果使用数组的index可能会导致更新列表出现问题
- * 最可能的情况是左滑删除item或者对某条信息流"不喜欢"并去掉它的时候,会导致组件内的数据可能出现错乱
- * v-for的时候,推荐使用后端返回的id而不是循环的index
- * @param {Number} len uuid的长度
- * @param {Boolean} firstU 将返回的首字母置为"u"
- * @param {Nubmer} radix 生成uuid的基数(意味着返回的字符串都是这个基数),2-二进制,8-八进制,10-十进制,16-十六进制
+ * 来源：https://www.jianshu.com/p/fdbf293d0a85
+ * @param { Number } len uuid 长度
+ * @param { Number } radix 基数
  */
-export function guid(len = 32, radix = null) {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(
+export function guid(len: number = 32, radix: number = 16): string {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(
     '',
   )
   const uuid = []
+  let i = 0
   radix = radix || chars.length
 
   if (len) {
-    // 如果指定uuid长度,只是取随机的字符,0|x为位运算,能去掉x的小数位,返回整数位
-    for (let i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)]
+    // Compact form
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)]
   } else {
+    // rfc4122, version 4 form
     let r
-    // rfc4122标准要求返回的uuid中,某些位为固定的字符
+
+    // rfc4122 requires these characters
     uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-'
     uuid[14] = '4'
 
-    for (let i = 0; i < 36; i++) {
+    // Fill in random data.  At i==19 set the high bits of clock sequence as
+    // per rfc4122, sec. 4.1.5
+    for (i = 0; i < 36; i++) {
       if (!uuid[i]) {
         r = 0 | (Math.random() * 16)
         uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r]
       }
     }
   }
+
   return uuid.join('')
 }
 

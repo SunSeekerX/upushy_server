@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-01 23:35:30
+ * @LastEditTime: 2020-11-02 17:16:44
  */
 
 import {
@@ -57,7 +57,8 @@ export class UserService {
 
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: `用户名：${username}，或邮箱：${email}已存在`,
+        // message: `用户名：${username}，或邮箱：${email}已存在`,
+        message: '用户名或邮箱已存在',
         errors,
       })
     }

@@ -3,12 +3,18 @@
  * @author: SunSeekerX
  * @Date: 2020-07-07 15:25:02
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 10:16:11
+ * @LastEditTime: 2020-11-02 14:27:53
  */
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, ValidateIf, IsInt, Validate } from 'class-validator'
+import {
+  IsNotEmpty,
+  ValidateIf,
+  IsInt,
+  Validate,
+  Length,
+} from 'class-validator'
 import { CustomOrder } from 'src/shared/validator/custom-order'
 
 export class QuerySourceDto {
@@ -16,6 +22,7 @@ export class QuerySourceDto {
     description: '项目ID',
     type: String,
   })
+  @Length(32, 36)
   @IsNotEmpty()
   readonly projectId: string
 

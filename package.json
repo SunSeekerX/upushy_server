@@ -35,7 +35,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express-useragent": "^1.0.15",
-    "helmet": "^4.1.1",
+    "helmet": "^4.2.0",
     "iconv-lite": "^0.6.2",
     "internal-ip": "^6.1.0",
     "is_js": "^0.9.0",

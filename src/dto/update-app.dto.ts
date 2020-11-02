@@ -3,12 +3,12 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 16:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-13 21:46:46
+ * @LastEditTime: 2020-11-02 12:21:01
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { Type  } from 'class-transformer'
-import { IsNotEmpty, IsInt, Validate } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsNotEmpty, IsInt, Validate, Length } from 'class-validator'
 import { CustomPlatform } from './custom-platform'
 
 export class UpdateAppDto {
@@ -16,6 +16,7 @@ export class UpdateAppDto {
     type: String,
     description: 'projectId',
   })
+  @Length(8, 8)
   @IsNotEmpty()
   readonly projectId: string
 

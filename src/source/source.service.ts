@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-08-19 10:20:36
+ * @LastEditTime: 2020-11-02 15:41:11
  */
 
 import { Injectable } from '@nestjs/common'
@@ -37,31 +37,6 @@ export class SourceService {
   ) {}
 
   // 添加资源
-  // async createSource({
-  //   projectId,
-  //   version,
-  //   versionCode,
-  //   nativeVersionCode,
-  //   url,
-  //   isForceUpdate,
-  //   type,
-  //   changelog,
-  //   remark,
-  // }: CreateSourceDto): Promise<SourceEntity> {
-  //   const source = new SourceEntity()
-  //   source.version = version
-  //   source.versionCode = versionCode
-  //   source.nativeVersionCode = nativeVersionCode
-  //   source.url = url
-  //   source.isForceUpdate = isForceUpdate
-  //   source.type = type
-  //   source.changelog = changelog
-  //   source.remark = remark
-  //   source.projectId = projectId
-
-  //   return await this.sourceEntity.save(source)
-  // }
-
   async createSource(createSourceDto: CreateSourceDto): Promise<SourceEntity> {
     const source = new SourceEntity()
     Object.assign(source, createSourceDto)
@@ -75,7 +50,7 @@ export class SourceService {
   }
 
   // 更新资源
-  async updateSource(updateSourceDto: UpdateSourceDto) {
+  async updateSource(updateSourceDto: UpdateSourceDto): Promise<SourceEntity> {
     const toUpdate = await this.sourceEntity.findOne(updateSourceDto.id)
     const updated = Object.assign(toUpdate, updateSourceDto)
 
@@ -126,7 +101,7 @@ export class SourceService {
   }
 
   // 查找单个资源
-  async findOne(where): Promise<SourceEntity> {
+  async findOne(where: FindConditions<SourceEntity>): Promise<SourceEntity> {
     return await this.sourceEntity.findOne(where)
   }
 
