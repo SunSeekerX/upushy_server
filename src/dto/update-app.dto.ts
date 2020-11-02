@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 16:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 12:21:01
+ * @LastEditTime: 2020-11-02 17:53:02
  */
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -16,7 +16,7 @@ export class UpdateAppDto {
     type: String,
     description: 'projectId',
   })
-  @Length(8, 8)
+  @Length(32, 36)
   @IsNotEmpty()
   readonly projectId: string
 
@@ -29,7 +29,7 @@ export class UpdateAppDto {
   readonly platform: string
 
   @ApiProperty({
-    type: Number,
+    type: String,
     description: '版本',
   })
   readonly version?: string

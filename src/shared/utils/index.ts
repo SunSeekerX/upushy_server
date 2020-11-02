@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-04-07 20:45:22
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 14:24:44
+ * @LastEditTime: 2020-11-02 19:15:20
  */
 
 import * as os from 'os'
@@ -37,7 +37,7 @@ export function getIPAdress(): string {
  * @param { Number } len uuid 长度
  * @param { Number } radix 基数
  */
-export function guid(len: number = 32, radix: number = 16): string {
+export function guid(len = 32, radix = 16): string {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(
     '',
   )
@@ -61,7 +61,7 @@ export function guid(len: number = 32, radix: number = 16): string {
     for (i = 0; i < 36; i++) {
       if (!uuid[i]) {
         r = 0 | (Math.random() * 16)
-        uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r]
+        uuid[i] = chars[i === 19 ? (r & 0x3) | 0x8 : r]
       }
     }
   }
