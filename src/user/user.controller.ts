@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 17:14:26
+ * @LastEditTime: 2020-11-03 20:06:42
  */
 
 import {
@@ -27,7 +27,6 @@ import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
 import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
-import { UserEntity } from './user.entity'
 
 @ApiBearerAuth()
 @ApiTags('users')

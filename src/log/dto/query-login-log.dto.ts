@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 17:06:13
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 22:58:48
+ * @LastEditTime: 2020-11-03 12:17:10
  */
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'

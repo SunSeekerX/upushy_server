@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 21:33:00
+ * @LastEditTime: 2020-11-03 10:47:37
  */
 
 import {
@@ -16,16 +16,17 @@ import {
 import { Request } from 'express'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
-import { BasicService } from 'src/basic/basic.service'
+
+import { LogService } from 'src/log/log.service'
 import { getIPLocation } from 'src/shared/utils/index'
 import { getClientIp } from 'src/shared/utils/request-ip'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private readonly basicService: BasicService) {}
+  constructor(private readonly logService: LogService) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req: Request = context.switchToHttp().getRequest<Request>()
-    // const res: Response = context.switchToHttp().getResponse<Response>()
 
     return next.handle().pipe(
       tap(data => {
@@ -34,7 +35,7 @@ export class LoggingInterceptor implements NestInterceptor {
         getIPLocation(ip)
           .then(loginLocation => {
             // 这里插入数据库有可能抛错误
-            this.basicService.createLoginLog({
+            this.logService.createLoginLog({
               username: req.body.username,
               ipaddr: ip,
               loginLocation,

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 15:32:51
+ * @LastEditTime: 2020-11-03 14:36:41
  */
 
 import {
@@ -14,19 +14,16 @@ import {
 } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
-// import { AlicloudOssModule } from 'nestjs-alicloud-oss'
 import { RedisModule } from 'nestjs-redis'
-// import { ScheduleModule } from '@nestjs/schedule';
+
+import { AppController } from './app.controller'
+import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
+import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
 import { SourceModule } from './source/source.module'
-import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
-import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
-
-import { AppController } from './app.controller'
-// import { TasksModule } from './tasks/tasks.module';
-import { BasicModule } from './basic/basic.module'
+import { LogModule } from './log/log.module'
 
 @Module({
   imports: [
@@ -48,24 +45,14 @@ import { BasicModule } from './basic/basic.module'
       synchronize: true,
       logging: false,
       extra: {
+        // If without this filed emoji can't be stored
         charset: 'utf8mb4_general_ci',
       },
     }),
-    // AlicloudOssModule.withConfig({
-    //   options: {
-    //     accessKeyId: process.env.OSS_ACCESSKEYID,
-    //     accessKeySecret: process.env.OSS_ACCESSKEYSECRET,
-    //     // the bucket data region location, doc demo used 'oss-cn-beijing'.
-    //     region: process.env.OSS_REGION,
-    //     // the default bucket you want to access, doc demo used 'nest-alicloud-oss-demo'.
-    //     bucket: process.env.OSS_BUCKET,
-    //   },
-    // }),
     UserModule,
     ProjectModule,
     SourceModule,
-    BasicModule,
-    // TasksModule,
+    LogModule,
   ],
   providers: [
     {
@@ -76,12 +63,12 @@ import { BasicModule } from './basic/basic.module'
   controllers: [AppController],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(SignMiddleware)
       .exclude(
-        { path: '/api/update', method: RequestMethod.GET },
-        { path: '/api/systemConfig', method: RequestMethod.GET },
+        { path: '/api/update', method: RequestMethod.POST },
+        // { path: '/api/config/system', method: RequestMethod.GET },
       )
       .forRoutes(AppController)
   }

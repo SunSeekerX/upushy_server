@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:06:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 15:12:55
+ * @LastEditTime: 2020-11-03 12:09:57
  */
 
 import {
@@ -14,7 +14,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-@Entity('app_login_log')
+@Entity('app_log_login')
 export class LoginLogEntity {
   @PrimaryGeneratedColumn({
     comment: 'id',

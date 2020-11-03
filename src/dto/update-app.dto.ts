@@ -3,12 +3,20 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 16:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 17:53:02
+ * @LastEditTime: 2020-11-03 15:48:03
  */
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsInt, Validate, Length } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsInt,
+  Validate,
+  Length,
+  ValidateNested,
+} from 'class-validator'
+
+import { CreateDeviceInfoLogDto } from 'src/log/dto/index'
 import { CustomPlatform } from './custom-platform'
 
 export class UpdateAppDto {
@@ -30,18 +38,26 @@ export class UpdateAppDto {
 
   @ApiProperty({
     type: String,
-    description: '版本',
+    description: 'wgt版本名',
   })
-  readonly version?: string
+  @IsNotEmpty()
+  readonly wgtVersion: string
 
   @ApiProperty({
     type: Number,
-    description: '版本号',
+    description: 'wgt版本号',
   })
   @Type(() => Number)
   @IsInt()
   @IsNotEmpty()
-  readonly versionCode: number
+  readonly wgtVersionCode: number
+
+  @ApiProperty({
+    type: String,
+    description: '原生版本名',
+  })
+  @IsNotEmpty()
+  readonly nativeVersion: string
 
   @ApiProperty({
     type: Number,
@@ -51,4 +67,11 @@ export class UpdateAppDto {
   @IsInt()
   @IsNotEmpty()
   readonly nativeVersionCode: number
+
+  @ApiProperty({
+    type: CreateDeviceInfoLogDto,
+    description: '系统信息',
+  })
+  @ValidateNested()
+  readonly systemInfo: CreateDeviceInfoLogDto
 }

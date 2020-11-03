@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-29 17:17:15
+ * @LastEditTime: 2020-11-03 14:57:44
  */
 
-import { Controller, Get, HttpCode, Query } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Post, Query, UseInterceptors } from '@nestjs/common'
 // import { FileInterceptor } from '@nestjs/platform-express'
 // import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
 import { RedisService } from 'nestjs-redis'
@@ -23,13 +23,14 @@ import { ResponseRO } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'
 import { SourceService } from './source/source.service'
+import { UpdateInterceptor } from './shared/interceptor/update.interceptor'
 
 const sts = new OSS.STS({
   accessKeyId: process.env.ALIYUN_RAM_ACCESSKEYID,
   accessKeySecret: process.env.ALIYUN_RAM_ACCESSKEYSECRET,
 })
 
-@ApiTags('Common')
+@ApiTags('Basic')
 @Controller()
 export class AppController {
   constructor(
@@ -133,10 +134,11 @@ export class AppController {
   // 检查更新
   @ApiOperation({ summary: '检查更新' })
   @HttpCode(200)
-  @Get('update')
+  @Post('update')
+  @UseInterceptors(UpdateInterceptor)
   async update(
-    @Query()
-    { projectId, platform, versionCode, nativeVersionCode }: UpdateAppDto,
+    @Body()
+    { projectId, platform }: UpdateAppDto,
   ): Promise<ResponseRO> {
     // 根据appid检查项目是否存在
     const project = await this.projectService.findOne(projectId)
@@ -151,7 +153,7 @@ export class AppController {
     const OSS_BASE_URL = process.env.OSS_BASE_URL
 
     // 资源类型
-    let type: number = 1
+    let type = 1
     if (platform !== 'android') {
       type = 2
     }
@@ -184,67 +186,6 @@ export class AppController {
         native,
       },
     }
-
-    // if (platform === 'android') {
-    //   // 检查原生Andtoid更新
-    //   const wgt = await this.sourceService.queryMaxSource({
-    //     projectId: projectId,
-    //     type: 1,
-    //   })
-    //   wgt && Object.assign(wgt, { url: `${OSS_BASE_URL}/${wgt.url}` })
-
-    //   const native = await this.sourceService.queryMaxSource({
-    //     projectId: projectId,
-    //     type: 3,
-    //   })
-    //   native && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
-
-    //   // 存入redis
-
-    //   return {
-    //     success: true,
-    //     statusCode: 200,
-    //     message: '成功',
-    //     data: {
-    //       wgt,
-    //       native,
-    //     },
-    //   }
-    //   // return await this.checkNativeUpdate({
-    //   //   projectId: project.id,
-    //   //   type: 3,
-    //   //   versionCode,
-    //   //   nativeVersionCode,
-    //   // })
-    // } else {
-    //   // 检查原生IOS更新
-    //   const wgt = await this.sourceService.queryMaxSource({
-    //     projectId: projectId,
-    //     type: 2,
-    //   })
-
-    //   const native = await this.sourceService.queryMaxSource({
-    //     projectId: projectId,
-    //     type: 4,
-    //   })
-
-    //   // 存入redis
-    //   return {
-    //     success: true,
-    //     statusCode: 200,
-    //     message: '成功',
-    //     data: {
-    //       wgt,
-    //       native,
-    //     },
-    //   }
-    //   // return await this.checkNativeUpdate({
-    //   //   projectId: project.id,
-    //   //   type: 4,
-    //   //   versionCode,
-    //   //   nativeVersionCode,
-    //   // })
-    // }
   }
 
   // 系统配置
@@ -265,7 +206,7 @@ export class AppController {
   // 系统信息
   @ApiOperation({ summary: '获取系统信息' })
   @HttpCode(200)
-  @Get('systemConfig')
+  @Get('config/system')
   async getSystemConfig(): Promise<ResponseRO> {
     try {
       const disks = await nodeDiskInfo.getDiskInfo()
