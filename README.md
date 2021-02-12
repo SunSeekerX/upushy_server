@@ -326,6 +326,12 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 
 # 更新日志（Changelog）
 
+## 0.0.1 - 2021-02-12
+
+### 功能（Features）
+
+- 修复资源列表分页条数不正确
+
 ## 0.0.1 - 2020-11-01
 
 ### 功能（Features）

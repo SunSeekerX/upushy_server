@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-01 23:38:13
+ * @LastEditTime: 2021-02-12 23:34:20
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -243,11 +243,12 @@ export class SourceController {
   async getSource(
     @Query() querySourceDto: QuerySourceDto,
   ): Promise<PaginationRO> {
-    const { sortKey, order, type, pageNum, pageSize } = querySourceDto
+    const {projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
     const OSS_BASE_URL = process.env.OSS_BASE_URL
 
     const total = await this.sourceService.getSourceCount({
-      type: type,
+      projectId,
+      type,
     })
 
     let res: Array<SourceEntity> = []

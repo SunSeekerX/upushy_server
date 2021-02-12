@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 14:57:44
+ * @LastEditTime: 2021-02-12 22:32:19
  */
 
-import { Body, Controller, Get, HttpCode, Post, Query, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
 // import { FileInterceptor } from '@nestjs/platform-express'
 // import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
 import { RedisService } from 'nestjs-redis'
@@ -158,7 +158,7 @@ export class AppController {
       type = 2
     }
 
-    // 检查原生Andtoid更新
+    // 检查原生 Android 更新
     const wgt = await this.sourceService.queryMaxSource({
       projectId: projectId,
       type,
