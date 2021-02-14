@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 14:36:41
+ * @LastEditTime: 2021-02-14 20:39:17
  */
 
 import {
@@ -32,7 +32,7 @@ import { LogModule } from './log/log.module'
       port: parseInt(process.env.REDIS_PORT),
       db: parseInt(process.env.REDIS_DB),
       password: process.env.REDIS_PASSWORD,
-      keyPrefix: process.env.REDIS_PRIFIX,
+      keyPrefix: process.env.REDIS_PREFIX,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

@@ -3,10 +3,15 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:16
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-01 20:37:37
+ * @LastEditTime: 2021-02-14 21:20:40
  */
 
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
+import {
+  Module,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { SourceController } from './source.controller'
@@ -31,3 +36,4 @@ export class SourceModule implements NestModule {
     }).forRoutes(SourceController)
   }
 }
+// export class SourceModule {}

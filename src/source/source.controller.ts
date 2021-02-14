@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-12 23:34:20
+ * @LastEditTime: 2021-02-14 20:56:35
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -27,6 +27,7 @@ import {
   DeleteSourceDto,
   UpdateSourceDto,
   QuerySourceDto,
+  QueryLatestNativeVersionDto,
 } from './dto/index'
 import { SourceService } from './source.service'
 
@@ -243,7 +244,14 @@ export class SourceController {
   async getSource(
     @Query() querySourceDto: QuerySourceDto,
   ): Promise<PaginationRO> {
-    const {projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
+    const {
+      projectId,
+      sortKey,
+      order,
+      type,
+      pageNum,
+      pageSize,
+    } = querySourceDto
     const OSS_BASE_URL = process.env.OSS_BASE_URL
 
     const total = await this.sourceService.getSourceCount({
@@ -277,6 +285,41 @@ export class SourceController {
       data: {
         total,
         records: res,
+      },
+    }
+  }
+
+  // 查询最新的原生版本
+  @ApiOperation({ summary: 'Get latest native sources' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Get('native/latest')
+  async getLatestNativeSource(
+    @Query() queryObj: QueryLatestNativeVersionDto,
+  ): Promise<ResponseRO> {
+    const { projectId } = queryObj
+
+    const latestAndroid = await this.sourceService.queryMaxSource({
+      projectId,
+      type: 3,
+      status: 1,
+    })
+    const latestIos = await this.sourceService.queryMaxSource({
+      projectId,
+      type: 4,
+      status: 1,
+    })
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: '查询成功',
+      data: {
+        android: latestAndroid?.versionCode,
+        ios: latestIos?.versionCode,
       },
     }
   }

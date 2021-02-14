@@ -86,7 +86,7 @@ REDIS_HOST=
 REDIS_PORT=
 REDIS_DB=
 REDIS_PASSWORD=
-REDIS_PRIFIX=
+REDIS_PREFIX=
 
 # Token Secret
 TOKEN_SECRET=
@@ -126,7 +126,7 @@ REDIS_HOST=192.192.192.192
 REDIS_PORT=6379
 REDIS_DB=0
 REDIS_PASSWORD=xxxxx
-REDIS_PRIFIX=
+REDIS_PREFIX=
 
 # Token Secret
 TOKEN_SECRET=your-secret-key
@@ -329,6 +329,12 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 ## 0.0.1 - 2021-02-12
 
 ### 功能（Features）
+
+- 【重要】增加获取最新原生资源的版本号接口
+
+## 0.0.1 - 2021-02-12
+
+### Bug 修复 （Bug Fixes）
 
 - 修复资源列表分页条数不正确
 

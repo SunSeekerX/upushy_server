@@ -1,7 +1,11 @@
 {
   "cSpell.words": [
     "ALIYUN",
+    "TDOA",
     "ipaddr",
-    "nestjs"
+    "nestjs",
+    "prebuild",
+    "typeorm",
+    "varchar"
   ]
 }

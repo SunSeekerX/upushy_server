@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 15:41:11
+ * @LastEditTime: 2021-02-14 20:56:16
  */
 
 import { Injectable } from '@nestjs/common'
@@ -58,7 +58,7 @@ export class SourceService {
   }
 
   // 根据项目projectId & type查找最大的versionCode资源
-  async queryMaxSource({ projectId, type, status }): Promise<SourceEntity> {
+  async queryMaxSource({ projectId, type, status }): Promise<SourceEntity | null> {
     const { max } = await getRepository(SourceEntity)
       .createQueryBuilder('app_source')
       .select('MAX(app_source.versionCode)', 'max')

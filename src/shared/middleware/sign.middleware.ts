@@ -31,7 +31,7 @@ const API_SIGN_TIME_OUT = Number(process.env.API_SIGN_TIME_OUT)
 export class SignMiddleware implements NestMiddleware {
   constructor(private redisService: RedisService) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // const aPrivateKey = new NodeRSA(process.env.API_SIGN_RSA_PRIVATE_KEY, {
       //   encryptionScheme: 'pkcs1',
