@@ -180,8 +180,6 @@ yarn build
 pm2 start ecosystem.config.js --env production
 ```
 
-
-
 ## uni-app 接入（Uni-app deploy）
 
 > 请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
