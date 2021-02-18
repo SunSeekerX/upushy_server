@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 17:16:44
+ * @LastEditTime: 2021-02-18 11:38:29
  */
 
 import {
@@ -72,7 +72,7 @@ export class UserService {
 
     const errors = await validate(newUser)
     if (errors.length > 0) {
-      const _errors = { username: 'Userinput is not valid.' }
+      const _errors = { username: 'User input is not valid.' }
       throw new HttpException(
         { message: 'Input data validation failed', _errors },
         HttpStatus.BAD_REQUEST,
@@ -129,7 +129,7 @@ export class UserService {
   }
 
   // 生成 refreshToken
-  public genrateRefreshToken(user: UserEntity): string {
+  public generateRefreshToken(user: UserEntity): string {
     return jwt.sign(
       {
         id: user.id,

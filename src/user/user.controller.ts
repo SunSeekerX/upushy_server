@@ -166,7 +166,7 @@ export class UserController {
         // 检查密码
         if (await argon2.verify(_user.password, loginUserDto.password)) {
           const token = await this.userService.generateJWT(_user)
-          const refreshToken = await this.userService.genrateRefreshToken(_user)
+          const refreshToken = await this.userService.generateRefreshToken(_user)
           const { username, nickname } = _user
           // const user = { token, username, nickname }
 
