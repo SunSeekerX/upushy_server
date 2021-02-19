@@ -1,19 +1,18 @@
 /**
- * @name: 
+ * @name:
  * @author: SunSeekerX
  * @Date: 2020-11-03 11:12:20
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 14:51:29
+ * @LastEditTime: 2021-02-19 11:25:43
  */
+
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
 
 export class CreateDeviceInfoLogDto {
   @ApiProperty({
     type: String,
     description: '设备唯一标识',
   })
-  // @IsNotEmpty()
   readonly uuid?: string
 
   // @ApiProperty({
