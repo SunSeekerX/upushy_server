@@ -282,6 +282,93 @@ docker pull 1647800606/uni-pushy:latest
 docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606/uni-pushy
 ```
 
+## 自建后台
+
+有一部分同学需要我的后台设计思路，想集成到自己的后台。事实上现在的热更新后台功能确实不是很强大。这里提供一下后台开发的一些思路和怎么构建一个后台和 `uni-pushy-client` 进行配合工作。
+
+### 检查更新接口
+
+`uni-pushy-client` 只需要一个接口就可以进行工作了。[update](https://api.uni-pushy.yoouu.cn/docs/#/Basic/AppController_update)，也就是这个接口。看下请求参数和返回信息
+
+**入参**
+
+```json
+{
+  // 项目id，标识项目
+  "projectId": "866116d35b382bb6e1ae0cbb484b9950",
+  // 平台
+  "platform": "android",
+  // 热更新资源版本
+  "wgtVersion": "1.0.0",
+  // 热更新资源版本号
+  "wgtVersionCode": 100,
+  // 原生资源版本
+  "nativeVersion": "1.0.0",
+  // 原生资源版本号
+  "nativeVersionCode": 100
+}
+```
+
+**返回**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "成功",
+  "data": {
+    "wgt": {
+      "id": "392029975c32603c4480e4a3edbe5f7c",
+      "projectId": "866116d35b382bb6e1ae0cbb484b9950",
+      "version": "1.1.25",
+      "versionCode": 1125,
+      "nativeVersionCode": 1119,
+      "url": "https://uni-pushy.oss-cn-hangzhou.aliyuncs.com/2021-02/2021-02-28 16:46:64.1614502019649.__UNI__B843CC0.wgt",
+      "updateType": 1,
+      "type": 1,
+      "status": 1,
+      "changelog": "1.1.25\nbuild:1125\n2021-02-28 16:46:47",
+      "remark": "",
+      "createdTime": "2021-02-28T08:46:59.793Z",
+      "updatedTime": "2021-02-28T08:46:59.793Z"
+    },
+    "native": {
+      "id": "1e0820e3ac9e15af1667dc57251c64ab",
+      "projectId": "866116d35b382bb6e1ae0cbb484b9950",
+      "version": "1.1.19",
+      "versionCode": 1119,
+      "nativeVersionCode": 0,
+      "url": "https://uni-pushy.oss-cn-hangzhou.aliyuncs.com/2021-2-7/1612709287834.__UNI__B843CC0_0207224602.apk",
+      "updateType": 1,
+      "type": 3,
+      "status": 1,
+      "changelog": "一曲新词酒一杯，去年天气旧亭台。夕阳西下几时回？\n无可奈何花落去，似曾相识燕归来。小园香径独徘徊。\n\n1.1.19\nbuild:1119\n2021-02-07 22:49:21",
+      "remark": "",
+      "createdTime": "2021-02-07T14:49:25.538Z",
+      "updatedTime": "2021-02-07T14:49:25.538Z"
+    }
+  }
+}
+```
+
+所有的更新逻辑都是通过 `uni-pushy-client` 完成的。后台只提供了最新的版本号。和下载地址。
+
+### 资源分类
+
+更新分为原生资源和 `wgt` 热更新资源。资源有分为 `android` 和 `ios` 两个平台。后台其他的功能是对这些资源的管理。
+
+`updateType`
+
+更新类型（1：用户同意更新，2：强制更新，3：静默更新）
+
+`type`
+
+资源类型（1：wgt-android 2：wgt-ios 3：android，4：ios）
+
+`status`
+
+资源状态（0：禁用 1：启用）
+
 # **API**（Reference）
 
 > [可选] [目录|文件] 软件 API 的逐一介绍
