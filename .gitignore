@@ -37,6 +37,6 @@ lerna-debug.log*
 .env.development
 .env.production
 
-# another files
+# Another files
 package-lock.json
 yarn.lock
