@@ -1,3 +1,11 @@
+/**
+ * @name:
+ * @author: SunSeekerX
+ * @Date: 2021-02-18 22:01:46
+ * @LastEditors: SunSeekerX
+ * @LastEditTime: 2021-03-28 00:24:45
+ */
+
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -8,17 +16,19 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
     'prettier',
-    'prettier/@typescript-eslint',
   ],
   root: true,
   env: {
     node: true,
     jest: true,
   },
+  ignorePatterns: ['.eslintrc.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
 }
