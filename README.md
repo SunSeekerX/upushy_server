@@ -54,6 +54,8 @@ yarn
 
 ## 开发（Dev）
 
+### 环境变量
+
 配置环境变量（Set env）,根目录下执行
 
 ```bash
@@ -76,10 +78,11 @@ OSS_REGION=
 OSS_BUCKET=
 # OSS 访问域名 示例：https://uni-pushy.oss-cn-hangzhou.aliyuncs.com
 OSS_BASE_URL=
-# 阿里云 RAM 访问控制配置，用来生成临时账号上传资源到 OSS，需要能访问 OSS 存储桶 示例：acs:ram::1501092948xxxxxx:role/webossuploadrole
-ALIYUN_RAM_ARN=
-ALIYUN_RAM_ACCESSKEYID=
-ALIYUN_RAM_ACCESSKEYSECRET=
+# 阿里云账号相关配置，详情请查看 README
+ALIYUN_ACCOUNT_ID=
+ALIYUN_ACCOUNT_RAM_ROLE=
+ALIYUN_RAM_ACCESS_KEY_ID=
+ALIYUN_RAM_ACCESS_KEY_SECRET=
 # 临时账号有效期（最低15min， 最大60min），单位：min 示例：15
 ALIYUN_RAM_TEMPORARY_EXPIRE=
 
@@ -108,6 +111,7 @@ API_SIGN_TIME_OUT=
 
 # 时区（Time zone）示例：Asia/Shanghai
 TZ=
+
 ```
 
 **启动**
@@ -117,6 +121,66 @@ npm run serve
 # or
 yarn serve
 ```
+
+### 阿里云环境变量解释
+
+> 在后台主要用户生成临时凭证给前端直接上传文件到 `oss`,这种方式有众多优点
+>
+> - 支持分片上传
+> - 支持大文件上传
+> - 上传带宽取决于客户端的带宽
+> - 临时凭证保证访问安全
+> - ...
+>
+> [授权访问文档](https://help.aliyun.com/document_detail/32077.htm)
+
+#### **ALIYUN_ACCOUNT_ID**
+
+阿里云账号 id，登陆阿里云右上角鼠标悬浮在头像即可显示。
+
+![image-20210422225957059](assets/image-20210422225957059.png)
+
+#### **ALIYUN_ACCOUNT_RAM_ROLE**
+
+阿里云资源访问角色，该角色主要用于访问 oss 服务。必须具有 `AliyunOSSFullAccess` 权限。
+
+1. 鼠标悬浮右上角>访问控制
+
+   ![image-20210422230309679](assets/image-20210422230309679.png)
+
+2. ![image-20210422230436608](assets/image-20210422230436608.png)
+
+3. 创建一个角色，默认系统没有访问 oss 服务的角色。选择阿里云账号
+
+   ![image-20210422230523646](assets/image-20210422230523646.png)
+
+4. 填写角色名称
+
+   ![image-20210422230605772](assets/image-20210422230605772.png)
+
+5. 分配角色权限
+
+   ![image-20210422230656029](assets/image-20210422230656029.png)
+
+#### ALIYUN_RAM_ACCESS_KEY_ID
+
+ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
+
+1. 创建一个用于生成临时凭证的用户，创建完成就能拿到 `ALIYUN_RAM_ACCESS_KEY_ID` 和 `ALIYUN_RAM_ACCESS_KEY_SECRET`
+
+   ![image-20210422231036948](assets/image-20210422231036948.png)
+
+2. 给刚刚创建的用户分配权限
+
+   ![image-20210422231642751](assets/image-20210422231642751.png)
+
+3. 分配 `AliyunSTSAssumeRoleAccess` 权限
+
+   ![image-20210422231616807](assets/image-20210422231616807.png)
+
+#### ALIYUN_RAM_ACCESS_KEY_SECRET
+
+同 [`ALIYUN_RAM_ACCESS_KEY_ID`](####ALIYUN_RAM_ACCESS_KEY_ID)
 
 ## 部署（Deploy）
 
@@ -184,7 +248,9 @@ pm2 start ecosystem.config.js --env production
 
 > 请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
 
-**下面的内容已废弃！！！下面的内容已废弃！！！下面的内容已废弃！！！**
+**以下内容已废弃！！！**
+
+---
 
 `uni-app` 插件来源：[https://ext.dcloud.net.cn/plugin?id=1643](https://ext.dcloud.net.cn/plugin?id=1643)
 
@@ -380,6 +446,17 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 - 文章：`Nodejs` `rsa` 加密的使用
 
 # 更新日志（Changelog）
+
+## 0.0.2 - 2021-04-22
+
+#### 功能（Features）
+
+- 【重要】阿里云环境变量配置改变
+  - 删除 `ALIYUN_RAM_ARN` 环境变量
+  - 增加 `ALIYUN_ACCOUNT_ID` 环境变量
+  - 增加 `ALIYUN_ACCOUNT_RAM_ROLE` 环境变量
+  - `ALIYUN_RAM_ACCESSKEYID` 更名为 `ALIYUN_RAM_ACCESS_KEY_ID`
+  - `ALIYUN_RAM_ACCESSKEYSECRET` 更名为 `ALIYUN_RAM_ACCESS_KEY_SECRET`
 
 ## 0.0.1 - 2021-02-12
 

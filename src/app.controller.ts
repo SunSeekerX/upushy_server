@@ -1,15 +1,12 @@
 /**
- * @name:
+ * @name: 应用控制器
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-22 18:58:16
+ * @LastEditTime: 2021-04-22 23:24:23
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
-// import { FileInterceptor } from '@nestjs/platform-express'
-// import { AlicloudOssService, UploadedFileMetadata } from 'nestjs-alicloud-oss'
-import { RedisService } from 'nestjs-redis'
 import * as os from 'os'
 import * as v8 from 'v8'
 import * as publicIp from 'public-ip'
@@ -26,8 +23,8 @@ import { SourceService } from './source/source.service'
 import { UpdateInterceptor } from './shared/interceptor/update.interceptor'
 
 const sts = new OSS.STS({
-  accessKeyId: process.env.ALIYUN_RAM_ACCESSKEYID,
-  accessKeySecret: process.env.ALIYUN_RAM_ACCESSKEYSECRET,
+  accessKeyId: process.env.ALIYUN_RAM_ACCESS_KEY_ID,
+  accessKeySecret: process.env.ALIYUN_RAM_ACCESS_KEY_SECRET,
 })
 
 @ApiTags('Basic')
@@ -35,9 +32,7 @@ const sts = new OSS.STS({
 export class AppController {
   constructor(
     private readonly projectService: ProjectService,
-    private readonly sourceService: SourceService,
-    // private readonly ossService: AlicloudOssService,
-    private readonly redisService: RedisService
+    private readonly sourceService: SourceService
   ) {}
 
   @Get()
@@ -52,13 +47,14 @@ export class AppController {
   /**
    * @description OSS授权临时访问
    * 接口调用有限制，每1S最多100QPS
+   * https://help.aliyun.com/document_detail/32077.htm?spm=a2c4g.11186623.2.25.5a1c606c8MMGGB#title-sdv-594-iub
    */
   @ApiOperation({ summary: 'OSS授权临时访问' })
   @Get('oss-sts')
   async assumeRole(): Promise<ResponseRO> {
     try {
       const token = await sts.assumeRole(
-        process.env.ALIYUN_RAM_ARN,
+        `acs:ram::${process.env.ALIYUN_ACCOUNT_ID}:role/${process.env.ALIYUN_ACCOUNT_RAM_ROLE}`,
         {
           Statement: [
             {
@@ -95,40 +91,6 @@ export class AppController {
       }
     }
   }
-
-  // 文件上传
-  // @ApiOperation({ summary: 'oss文件上传' })
-  // @ApiResponse({ status: 201, description: 'Upload file successful.' })
-  // @UseInterceptors(FileInterceptor('file'))
-  // @Post('upload')
-  // async uploadedFile(
-  //   @UploadedFile()
-  //   file: UploadedFileMetadata,
-  // ): Promise<ResponseRO> {
-  //   file = {
-  //     ...file,
-  //     customName: `${guid()}.${file.originalname}`,
-  //     // folder: 'a/b/c',
-  //     // bucket: 'nest-alicloud-oss-demo3',
-  //   }
-
-  //   await this.ossService.upload(file)
-
-  //   if (file) {
-  //     return {
-  //       success: true,
-  //       statusCode: 200,
-  //       message: '上传成功',
-  //       data: file,
-  //     }
-  //   } else {
-  //     return {
-  //       success: false,
-  //       statusCode: 200,
-  //       message: '上传失败',
-  //     }
-  //   }
-  // }
 
   // 检查更新
   @ApiOperation({ summary: '检查更新' })
