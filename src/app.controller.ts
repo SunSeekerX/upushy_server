@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-12 22:32:19
+ * @LastEditTime: 2021-04-22 18:58:16
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -37,7 +37,7 @@ export class AppController {
     private readonly projectService: ProjectService,
     private readonly sourceService: SourceService,
     // private readonly ossService: AlicloudOssService,
-    private readonly redisService: RedisService,
+    private readonly redisService: RedisService
   ) {}
 
   @Get()
@@ -59,7 +59,6 @@ export class AppController {
     try {
       const token = await sts.assumeRole(
         process.env.ALIYUN_RAM_ARN,
-        // 'acs:ram::1501092948750966:role/webossuploadrole',
         {
           Statement: [
             {
@@ -74,7 +73,7 @@ export class AppController {
           Version: '1',
         },
         Number(process.env.ALIYUN_RAM_TEMPORARY_EXPIRE) * 60,
-        '',
+        ''
       )
 
       return {
@@ -138,7 +137,7 @@ export class AppController {
   @UseInterceptors(UpdateInterceptor)
   async update(
     @Body()
-    { projectId, platform }: UpdateAppDto,
+    { projectId, platform }: UpdateAppDto
   ): Promise<ResponseRO> {
     // 根据appid检查项目是否存在
     const project = await this.projectService.findOne(projectId)
@@ -171,9 +170,7 @@ export class AppController {
       type: type + 2,
       status: 1,
     })
-    native &&
-      native.type !== 4 &&
-      Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
+    native && native.type !== 4 && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
 
     // 存入redis
 
