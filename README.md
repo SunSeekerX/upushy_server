@@ -73,11 +73,10 @@ PRO_DOC=
 
 # OSS 配置（OSS config）
 # OSS 地域 示例：oss-cn-hangzhou
-OSS_REGION=
+ALIYUN_OSS_ENDPOINT=
 # OSS 存储桶名 示例：uni-pushy
-OSS_BUCKET=
-# OSS 访问域名 示例：https://uni-pushy.oss-cn-hangzhou.aliyuncs.com
-OSS_BASE_URL=
+ALIYUN_OSS_BUCKET=
+
 # 阿里云账号相关配置，详情请查看 README
 ALIYUN_ACCOUNT_ID=
 ALIYUN_ACCOUNT_RAM_ROLE=
@@ -181,6 +180,18 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 #### ALIYUN_RAM_ACCESS_KEY_SECRET
 
 同 [`ALIYUN_RAM_ACCESS_KEY_ID`](####ALIYUN_RAM_ACCESS_KEY_ID)
+
+### oss 存储桶配置
+
+1. 新建 oss 存储桶
+
+   ![image-20210423192125412](assets/image-20210423192125412.png)
+
+2. 跨域设置
+
+   ![image-20210423192316407](assets/image-20210423192316407.png)
+
+   > ETag x-oss-request-id
 
 ## 部署（Deploy）
 
@@ -446,6 +457,14 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 - 文章：`Nodejs` `rsa` 加密的使用
 
 # 更新日志（Changelog）
+
+## 0.0.3 - 2021-04-23
+
+### 功能（Features）
+
+- 删除 `OSS_BASE_URL` 环境变量
+- `OSS_REGION` 更名为 `ALIYUN_OSS_ENDPOINT`
+- `OSS_BUCKET` 更名为 `ALIYUN_OSS_BUCKET`
 
 ## 0.0.2 - 2021-04-22
 

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-22 23:24:23
+ * @LastEditTime: 2021-04-23 19:44:30
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -61,8 +61,8 @@ export class AppController {
               Action: ['oss:PutObject'],
               Effect: 'Allow',
               Resource: [
-                `acs:oss:*:*:${process.env.OSS_BUCKET}/*`,
-                `acs:oss:*:*:${process.env.OSS_BUCKET}`,
+                `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}/*`,
+                `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}`,
               ],
             },
           ],
@@ -78,8 +78,8 @@ export class AppController {
         message: '成功',
         data: {
           ...token.credentials,
-          region: process.env.OSS_REGION,
-          bucket: process.env.OSS_BUCKET,
+          region: process.env.ALIYUN_OSS_ENDPOINT,
+          bucket: process.env.ALIYUN_OSS_BUCKET,
         },
       }
     } catch (e) {
@@ -111,7 +111,7 @@ export class AppController {
       }
     }
 
-    const OSS_BASE_URL = process.env.OSS_BASE_URL
+    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
 
     // 资源类型
     let type = 1

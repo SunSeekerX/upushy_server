@@ -3,23 +3,15 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-14 20:56:35
+ * @LastEditTime: 2021-04-23 19:31:00
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import {
-  ApiResponse,
-  ApiOperation,
-  ApiTags,
-  ApiBearerAuth,
-} from '@nestjs/swagger'
+import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
-import {
-  ResponseRO,
-  PaginationRO,
-} from 'src/shared/interface/response.interface'
+import { ResponseRO, PaginationRO } from 'src/shared/interface/response.interface'
 import { ProjectEntity } from 'src/project/project.entity'
 import { SourceEntity } from 'src/source/source.entity'
 import {
@@ -39,7 +31,7 @@ export class SourceController {
     private readonly sourceService: SourceService,
 
     @InjectRepository(ProjectEntity)
-    private readonly projectEntity: Repository<ProjectEntity>,
+    private readonly projectEntity: Repository<ProjectEntity>
   ) {}
 
   // 添加资源
@@ -52,9 +44,9 @@ export class SourceController {
   @Post()
   async addSource(
     @Body()
-    createSourceDto: CreateSourceDto,
+    createSourceDto: CreateSourceDto
   ): Promise<ResponseRO> {
-    const OSS_BASE_URL = process.env.OSS_BASE_URL
+    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
     const project = await this.projectEntity.findOne(createSourceDto.projectId)
     // 检查项目是否存在
     if (!project) {
@@ -172,8 +164,7 @@ export class SourceController {
     const source = await this.sourceService.findOne({
       id,
     })
-    const nativeVersionCode: number =
-      updateSourceDto.nativeVersionCode || source.nativeVersionCode
+    const nativeVersionCode: number = updateSourceDto.nativeVersionCode || source.nativeVersionCode
 
     if (!source) {
       return { success: false, statusCode: 200, message: '资源不存在' }
@@ -241,18 +232,9 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get()
-  async getSource(
-    @Query() querySourceDto: QuerySourceDto,
-  ): Promise<PaginationRO> {
-    const {
-      projectId,
-      sortKey,
-      order,
-      type,
-      pageNum,
-      pageSize,
-    } = querySourceDto
-    const OSS_BASE_URL = process.env.OSS_BASE_URL
+  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PaginationRO> {
+    const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
+    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
 
     const total = await this.sourceService.getSourceCount({
       projectId,
@@ -267,15 +249,11 @@ export class SourceController {
     if (pageNum && pageSize) {
       res = await this.sourceService.querySource(querySourceDto, orderCondition)
     } else {
-      res = await this.sourceService.querySourceAll(
-        querySourceDto,
-        orderCondition,
-      )
+      res = await this.sourceService.querySourceAll(querySourceDto, orderCondition)
     }
 
     for (const item of res) {
-      item.type !== 4 &&
-        Object.assign(item, { url: `${OSS_BASE_URL}/${item.url}` })
+      item.type !== 4 && Object.assign(item, { url: `${OSS_BASE_URL}/${item.url}` })
     }
 
     return {
@@ -297,9 +275,7 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get('native/latest')
-  async getLatestNativeSource(
-    @Query() queryObj: QueryLatestNativeVersionDto,
-  ): Promise<ResponseRO> {
+  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<ResponseRO> {
     const { projectId } = queryObj
 
     const latestAndroid = await this.sourceService.queryMaxSource({
