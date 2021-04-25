@@ -91,6 +91,8 @@ DB_PORT=
 DB_USER=
 DB_PASSWORD=
 DB_DATABASE=
+# 是否自动同步表结构，需要数据库用户有操作表权限
+DB_TABLE_SYNC=
 
 # Redis 配置（Redis config）
 REDIS_HOST=
@@ -457,6 +459,12 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 - 文章：`Nodejs` `rsa` 加密的使用
 
 # 更新日志（Changelog）
+
+## 0.0.4 - 2021-04-25
+
+### 功能（Features）
+
+- 增加 `DB_TABLE_SYNC` 配置，用来标识是否同步表结构。
 
 ## 0.0.3 - 2021-04-23
 

@@ -3,15 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-14 20:39:17
+ * @LastEditTime: 2021-04-25 19:07:15
  */
 
-import {
-  Module,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RedisModule } from 'nestjs-redis'
@@ -42,7 +37,7 @@ import { LogModule } from './log/log.module'
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity.js'],
-      synchronize: true,
+      synchronize: process.env.DB_TABLE_SYNC === 'true',
       logging: false,
       extra: {
         // If without this filed emoji can't be stored
@@ -67,7 +62,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(SignMiddleware)
       .exclude(
-        { path: '/api/update', method: RequestMethod.POST },
+        { path: '/api/update', method: RequestMethod.POST }
         // { path: '/api/config/system', method: RequestMethod.GET },
       )
       .forRoutes(AppController)
