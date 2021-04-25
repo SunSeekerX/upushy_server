@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-23 19:44:30
+ * @LastEditTime: 2021-04-26 00:12:09
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -21,6 +21,8 @@ import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'
 import { SourceService } from './source/source.service'
 import { UpdateInterceptor } from './shared/interceptor/update.interceptor'
+import { HttpException } from '@nestjs/common'
+import { HttpStatus } from '@nestjs/common'
 
 const sts = new OSS.STS({
   accessKeyId: process.env.ALIYUN_RAM_ACCESS_KEY_ID,
@@ -52,43 +54,47 @@ export class AppController {
   @ApiOperation({ summary: 'OSS授权临时访问' })
   @Get('oss-sts')
   async assumeRole(): Promise<ResponseRO> {
-    try {
-      const token = await sts.assumeRole(
-        `acs:ram::${process.env.ALIYUN_ACCOUNT_ID}:role/${process.env.ALIYUN_ACCOUNT_RAM_ROLE}`,
-        {
-          Statement: [
-            {
-              Action: ['oss:PutObject'],
-              Effect: 'Allow',
-              Resource: [
-                `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}/*`,
-                `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}`,
-              ],
-            },
-          ],
-          Version: '1',
-        },
-        Number(process.env.ALIYUN_RAM_TEMPORARY_EXPIRE) * 60,
-        ''
-      )
+    if (!(process.env.WEB_OSS === 'true')) {
+      try {
+        const token = await sts.assumeRole(
+          `acs:ram::${process.env.ALIYUN_ACCOUNT_ID}:role/${process.env.ALIYUN_ACCOUNT_RAM_ROLE}`,
+          {
+            Statement: [
+              {
+                Action: ['oss:PutObject'],
+                Effect: 'Allow',
+                Resource: [
+                  `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}/*`,
+                  `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}`,
+                ],
+              },
+            ],
+            Version: '1',
+          },
+          Number(process.env.ALIYUN_RAM_TEMPORARY_EXPIRE) * 60,
+          ''
+        )
 
-      return {
-        success: true,
-        statusCode: 200,
-        message: '成功',
-        data: {
-          ...token.credentials,
-          region: process.env.ALIYUN_OSS_ENDPOINT,
-          bucket: process.env.ALIYUN_OSS_BUCKET,
-        },
+        return {
+          success: true,
+          statusCode: 200,
+          message: '成功',
+          data: {
+            ...token.credentials,
+            region: process.env.ALIYUN_OSS_ENDPOINT,
+            bucket: process.env.ALIYUN_OSS_BUCKET,
+          },
+        }
+      } catch (e) {
+        console.log(e)
+        return {
+          success: false,
+          statusCode: e.status,
+          message: e.message,
+        }
       }
-    } catch (e) {
-      console.log(e)
-      return {
-        success: false,
-        statusCode: e.status,
-        message: e.message,
-      }
+    } else {
+      throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
     }
   }
 
