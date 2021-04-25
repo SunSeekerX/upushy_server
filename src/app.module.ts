@@ -37,7 +37,7 @@ import { LogModule } from './log/log.module'
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity.js'],
-      synchronize: process.env.DB_TABLE_SYNC === 'true',
+      synchronize: !(process.env.DB_TABLE_SYNC === 'false'),
       logging: false,
       extra: {
         // If without this filed emoji can't be stored

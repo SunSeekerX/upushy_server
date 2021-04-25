@@ -70,6 +70,8 @@ mv .env.example .env.development
 SERVER_PORT=
 # 是否打开文档 示例：true
 PRO_DOC=
+# 是否直接从前端上传文件(true|false)，如果为true，oss-sts 接口将不会启用，部分 “ALIYUN” 开头的环境变量可以不填写，具体请查看文档说明。default：false
+WEB_OSS=
 
 # OSS 配置（OSS config）
 # OSS 地域 示例：oss-cn-hangzhou
@@ -91,7 +93,7 @@ DB_PORT=
 DB_USER=
 DB_PASSWORD=
 DB_DATABASE=
-# 是否自动同步表结构，需要数据库用户有操作表权限
+# 是否自动同步表结构，需要数据库用户有操作表权限(true|false),default：true
 DB_TABLE_SYNC=
 
 # Redis 配置（Redis config）
@@ -122,6 +124,16 @@ npm run serve
 # or
 yarn serve
 ```
+
+#### WEB_OSS
+
+用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写,相关环境变量填写到前端。
+
+- `ALIYUN_ACCOUNT_ID`
+- `ALIYUN_ACCOUNT_RAM_ROLE`
+- `ALIYUN_RAM_ACCESS_KEY_ID`
+- `ALIYUN_RAM_ACCESS_KEY_SECRET`
+- `ALIYUN_RAM_TEMPORARY_EXPIRE`
 
 ### 阿里云环境变量解释
 
@@ -460,6 +472,17 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 
 # 更新日志（Changelog）
 
+## 0.0.5 - 2021-04-26
+
+### 功能（Features）
+
+- 增加 `WEB_OSS` 配置，用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写
+  - `ALIYUN_ACCOUNT_ID`
+  - `ALIYUN_ACCOUNT_RAM_ROLE`
+  - `ALIYUN_RAM_ACCESS_KEY_ID`
+  - `ALIYUN_RAM_ACCESS_KEY_SECRET`
+  - `ALIYUN_RAM_TEMPORARY_EXPIRE`
+
 ## 0.0.4 - 2021-04-25
 
 ### 功能（Features）
@@ -476,7 +499,7 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 
 ## 0.0.2 - 2021-04-22
 
-#### 功能（Features）
+### 功能（Features）
 
 - 【重要】阿里云环境变量配置改变
   - 删除 `ALIYUN_RAM_ARN` 环境变量
