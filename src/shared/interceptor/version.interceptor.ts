@@ -3,15 +3,14 @@
  * @author: SunSeekerX
  * @Date: 2021-04-26 11:47:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-28 00:25:48
+ * @LastEditTime: 2021-04-28 00:31:02
  */
 
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import type { ResponseRO } from 'src/shared/interface/response.interface'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { version } = require('../../../package.json')
+import { version } from '../../../package.json'
 
 @Injectable()
 export class VersionInterceptor implements NestInterceptor {
