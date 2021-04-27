@@ -13,6 +13,7 @@ import { RedisModule } from 'nestjs-redis'
 
 import { AppController } from './app.controller'
 import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
+import { VersionInterceptor } from 'src/shared/interceptor/version.interceptor'
 import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { UserModule } from './user/user.module'
@@ -53,6 +54,10 @@ import { LogModule } from './log/log.module'
     {
       provide: APP_INTERCEPTOR,
       useClass: LogInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: VersionInterceptor,
     },
   ],
   controllers: [AppController],
