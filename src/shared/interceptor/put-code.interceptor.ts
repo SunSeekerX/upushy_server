@@ -6,12 +6,7 @@
  * @LastEditTime: 2020-08-04 10:58:51
  */
 
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 
 @Injectable()

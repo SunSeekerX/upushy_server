@@ -3,16 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 10:47:37
+ * @LastEditTime: 2021-04-26 11:43:33
  */
 
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-  Logger,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Logger } from '@nestjs/common'
 import { Request } from 'express'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
@@ -29,11 +23,11 @@ export class LoggingInterceptor implements NestInterceptor {
     const req: Request = context.switchToHttp().getRequest<Request>()
 
     return next.handle().pipe(
-      tap(data => {
+      tap((data) => {
         // 解析ip地址
         const ip = getClientIp(req)
         getIPLocation(ip)
-          .then(loginLocation => {
+          .then((loginLocation) => {
             // 这里插入数据库有可能抛错误
             this.logService.createLoginLog({
               username: req.body.username,
@@ -46,10 +40,10 @@ export class LoggingInterceptor implements NestInterceptor {
               loginTime: new Date(),
             })
           })
-          .catch(err => {
+          .catch((err) => {
             Logger.error(`---解析ip地址失败错误详情：${err.message}---`)
           })
-      }),
+      })
     )
   }
 }

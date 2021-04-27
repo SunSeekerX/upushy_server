@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-08-14 20:29:21
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-28 16:50:59
+ * @LastEditTime: 2021-04-26 11:44:13
  */
 
 import {
@@ -32,10 +32,7 @@ export class LogInterceptor implements NestInterceptor {
    * @param context details about the current request
    * @param call$ implements the handle method that returns an Observable
    */
-  public intercept(
-    context: ExecutionContext,
-    call$: CallHandler,
-  ): Observable<any> {
+  public intercept(context: ExecutionContext, call$: CallHandler): Observable<any> {
     return call$.handle().pipe(
       tap({
         next: (val: any): void => {
@@ -44,7 +41,7 @@ export class LogInterceptor implements NestInterceptor {
         error: (err: Error): void => {
           this.logError(err, context)
         },
-      }),
+      })
     )
   }
 
@@ -60,7 +57,7 @@ export class LogInterceptor implements NestInterceptor {
     const { statusCode } = res
 
     this.logger.log(
-      `Status code: ${statusCode} | Success：${body.success} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
+      `Status code: ${statusCode} | Success：${body.success} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`
     )
   }
 
@@ -79,16 +76,16 @@ export class LogInterceptor implements NestInterceptor {
 
       if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
         this.logger.error(
-          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
+          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`
         )
       } else {
         this.logger.warn(
-          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
+          `Status code: ${statusCode} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`
         )
       }
     } else {
       this.logger.error(
-        `Status code: ${error.message} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`,
+        `Status code: ${error.message} | Method: ${method} | Path: ${originalUrl} | IP: ${ip}`
       )
     }
   }
