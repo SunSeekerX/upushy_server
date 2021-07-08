@@ -1,29 +1,22 @@
-FROM alpine AS builder
+FROM keymetrics/pm2:latest-alpine
 
-WORKDIR /app
+# Bundle APP files
+COPY src src/
+COPY conf conf/
+COPY package.json .
+COPY ecosystem.config.js .
+COPY nest-cli.json .
+COPY prettier.config.js .
+COPY tsconfig.build.json .
+COPY lint-staged.config.js .
+COPY tsconfig.json .
+COPY .env.production .
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# Install app dependencies
+ENV NPM_CONFIG_LOGLEVEL warn
+RUN npm install --registry https://registry.npm.taobao.org/
+RUN npm run build
 
-RUN apk add --no-cache --update nodejs nodejs-npm
+RUN mkdir /logs
 
-COPY package.json /app/package.json
-
-RUN npm config set registry https://registry.npm.taobao.org/ && npm i --production
-
-FROM alpine
-
-WORKDIR /app
-
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
-COPY conf/Shanghai /etc/localtime
-
-RUN apk add --no-cache --update nodejs nodejs-npm
-
-COPY --from=builder /app/node_modules ./node_modules
-
-COPY ./dist /app/dist/
-
-EXPOSE 3000
-
-CMD ["node", "dist/main"]
+CMD [ "pm2-runtime", "start", "ecosystem.config.js", "--env", "production" ]

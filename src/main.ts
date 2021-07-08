@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-29 17:15:52
+ * @LastEditTime: 2021-07-08 22:08:59
  */
 
 import 'src/shared/utils/bootstrap'
@@ -37,7 +37,7 @@ async function bootstrap() {
         enableImplicitConversion: true,
         // excludeExtraneousValues: true,
       },
-    }),
+    })
   )
   // app.use(logger)
   // app.use(SignMiddleware)

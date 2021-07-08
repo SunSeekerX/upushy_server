@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "build:docker": "yarn prebuild && yarn build && docker build -t upushy .",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "serve": "cross-env NODE_ENV=development nest start --watch",
@@ -47,6 +48,7 @@
     "node-rsa": "^1.1.1",
     "public-ip": "^4.0.3",
     "rimraf": "^3.0.2",
+    "rxjs": "^7.2.0",
     "svg-captcha": "^1.4.0",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.31"

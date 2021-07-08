@@ -1,6 +1,8 @@
-# 简介（Introduction）- uni-pushy-server
+# uni-pushy-server
 
-`uni-pushy` uni-app 热更新管理平台。
+## 📌 简介
+
+`uni-pushy` uni-app 热更新管理平台。简称 `upushy`.
 
 这是 `uni-pushy` 的后端仓库。Github：[uni-pushy-server](https://github.com/SunSeekerX/uni-pushy-server)
 
@@ -22,27 +24,23 @@
 >
 > **uni-app App 资源热更新：** https://ask.dcloud.net.cn/article/35667
 
-# ❗ 注意（Notice）
+## 📌 快速上手
 
-目前应用仍然处于开发阶段，不排除出现重大 **Bug** ，以及 **Api** 升级改造不兼容的可能性。
+### 开发
 
-> 已在公司项目内部使用半年，无明显 bug。
-
-# 快速上手（Getting Started）
-
-克隆仓库（Clone this repo）
+**克隆仓库**
 
 ```bash
 git clone https://github.com/SunSeekerX/uni-pushy-server.git
 ```
 
-进入项目目录
+**进入项目目录**
 
 ```bash
 cd uni-pushy-server/
 ```
 
-安装依赖 （Install dependencies），项目根目录下执行
+**安装依赖**
 
 ```bash
 npm i
@@ -50,72 +48,15 @@ npm i
 yarn
 ```
 
-> 国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](https://sunseekerx.yoouu.cn/front-end/npm/#📂-tbify)
+> 国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](
 
-## 开发（Dev）
-
-### 环境变量
-
-配置环境变量（Set env）,根目录下执行
+**配置环境变量，根目录下执行**
 
 ```bash
 mv .env.example .env.development
 ```
 
-打开 `.env.development`，填写环境变量
-
-```shell
-# 服务配置（Server）
-# 端口 示例：8081
-SERVER_PORT=
-# 是否打开文档 示例：true
-PRO_DOC=
-# 是否直接从前端上传文件(true|false)，如果为true，oss-sts 接口将不会启用，部分 “ALIYUN” 开头的环境变量可以不填写，具体请查看文档说明。default：false
-WEB_OSS=
-
-# OSS 配置（OSS config）
-# OSS 地域 示例：oss-cn-hangzhou
-ALIYUN_OSS_ENDPOINT=
-# OSS 存储桶名 示例：uni-pushy
-ALIYUN_OSS_BUCKET=
-
-# 阿里云账号相关配置，详情请查看 README
-ALIYUN_ACCOUNT_ID=
-ALIYUN_ACCOUNT_RAM_ROLE=
-ALIYUN_RAM_ACCESS_KEY_ID=
-ALIYUN_RAM_ACCESS_KEY_SECRET=
-# 临时账号有效期（最低15min， 最大60min），单位：min 示例：15
-ALIYUN_RAM_TEMPORARY_EXPIRE=
-
-# 数据库配置（DATABASE Config）
-DB_HOST=
-DB_PORT=
-DB_USER=
-DB_PASSWORD=
-DB_DATABASE=
-# 是否自动同步表结构，需要数据库用户有操作表权限(true|false),default：true
-DB_TABLE_SYNC=
-
-# Redis 配置（Redis config）
-REDIS_HOST=
-REDIS_PORT=
-REDIS_DB=
-REDIS_PASSWORD=
-REDIS_PREFIX=
-
-# Token 生成密钥（Token Secret）示例：secret-key
-TOKEN_SECRET=
-
-# Api 签名配置（Api sign config）
-# Api 签名 RSA 私钥（需要和 Admin 配对）示例：-----BEGIN PRIVATE KEY-----MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALvlTV1G0b/q40bYbz/z2cV3tS10oxFiGkr7abO7HF0qp7NXrZMTxj/098sVF32IhOqliQOP9c4arcEFgpHr7mhek5j0xKR7u11DXY6bFKfhOVXdhl9e5s3mc5mhaPgD168txm6a0k+6TyQjHP2pKbzJis54tshfmR3Ley2XfGs3AgMBAAECgYAV6OUejVWEBYW/Cxnd4TdxmUXdKQ6ixke+mpZ2yMjD7GdluEGbNuEVMCF84ta8YqDtI6RYb/7/q4i7S0MwdMx1147YyCS9keZBliNsgnK3drDXAFlVYd1y5YLXrbDMgOiK5W6oIRCQ8455SiuhLd/60lGskeHis+hEhl3WLJ7CYQJBAPltCRSPrXeE5apbRLZq0zXcyUjmEakxe97bpzsjIE9XKwvCU8rISLA0s3HmUuEgqWXqwLvr8snM03WBduPrgQkCQQDA2RnKt2uBPLcZRs5aVo4SusJF9YjDFH/TAjutedOgxP6sYdmQ1iudyVgVE7dCeCKnnJti7rnJsGeXwWrG9to/AkB3+vgkONzjojzrzo1mBkrlHPiCJZGXRqNkV1rBOqtfHvoo5OhzohY9FIzBHF7/xjtWOC9P9jbK1cleO9GZ334pAkA3TkvKSj4Hi00Lb7YATHBkSLEsdRUqtTdPYYWR461gnv5Wm51Un0dU8ghTyxq0clWl8hDSF5qqj++1ot+nfeXrAkEAnMVbHK89dFYQ2yzEMIwF3R+VF0OY/v2ZtL72OOCRexnQ2ISPJokILYg52AH9Esbp8PKVXS5tQ9sQ/nyBsbr1wA==-----END PRIVATE KEY-----
-API_SIGN_RSA_PRIVATE_KEY=
-# 请求超时时间，单位：秒 示例：15
-API_SIGN_TIME_OUT=
-
-# 时区（Time zone）示例：Asia/Shanghai
-TZ=
-
-```
+**打开 `.env.development`，填写相关环境变量**
 
 **启动**
 
@@ -125,123 +66,7 @@ npm run serve
 yarn serve
 ```
 
-#### WEB_OSS
-
-用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写,相关环境变量填写到前端。
-
-- `ALIYUN_ACCOUNT_ID`
-- `ALIYUN_ACCOUNT_RAM_ROLE`
-- `ALIYUN_RAM_ACCESS_KEY_ID`
-- `ALIYUN_RAM_ACCESS_KEY_SECRET`
-- `ALIYUN_RAM_TEMPORARY_EXPIRE`
-
-### 阿里云环境变量解释
-
-> 在后台主要用户生成临时凭证给前端直接上传文件到 `oss`,这种方式有众多优点
->
-> - 支持分片上传
-> - 支持大文件上传
-> - 上传带宽取决于客户端的带宽
-> - 临时凭证保证访问安全
-> - ...
->
-> [授权访问文档](https://help.aliyun.com/document_detail/32077.htm)
-
-#### **ALIYUN_ACCOUNT_ID**
-
-阿里云账号 id，登陆阿里云右上角鼠标悬浮在头像即可显示。
-
-![image-20210422225957059](assets/image-20210422225957059.png)
-
-#### **ALIYUN_ACCOUNT_RAM_ROLE**
-
-阿里云资源访问角色，该角色主要用于访问 oss 服务。必须具有 `AliyunOSSFullAccess` 权限。
-
-1. 鼠标悬浮右上角>访问控制
-
-   ![image-20210422230309679](assets/image-20210422230309679.png)
-
-2. ![image-20210422230436608](assets/image-20210422230436608.png)
-
-3. 创建一个角色，默认系统没有访问 oss 服务的角色。选择阿里云账号
-
-   ![image-20210422230523646](assets/image-20210422230523646.png)
-
-4. 填写角色名称
-
-   ![image-20210422230605772](assets/image-20210422230605772.png)
-
-5. 分配角色权限
-
-   ![image-20210422230656029](assets/image-20210422230656029.png)
-
-#### ALIYUN_RAM_ACCESS_KEY_ID
-
-ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
-
-1. 创建一个用于生成临时凭证的用户，创建完成就能拿到 `ALIYUN_RAM_ACCESS_KEY_ID` 和 `ALIYUN_RAM_ACCESS_KEY_SECRET`
-
-   ![image-20210422231036948](assets/image-20210422231036948.png)
-
-2. 给刚刚创建的用户分配权限
-
-   ![image-20210422231642751](assets/image-20210422231642751.png)
-
-3. 分配 `AliyunSTSAssumeRoleAccess` 权限
-
-   ![image-20210422231616807](assets/image-20210422231616807.png)
-
-#### ALIYUN_RAM_ACCESS_KEY_SECRET
-
-同 [`ALIYUN_RAM_ACCESS_KEY_ID`](####ALIYUN_RAM_ACCESS_KEY_ID)
-
-### oss 存储桶配置
-
-1. 新建 oss 存储桶
-
-   ![image-20210423192125412](assets/image-20210423192125412.png)
-
-2. 跨域设置
-
-   ![image-20210423192316407](assets/image-20210423192316407.png)
-
-   > ETag x-oss-request-id
-
-## 部署（Deploy）
-
-本项目为 nodejs 项目，需要你对 nodejs 项目部署有一定的了解。
-
-### ~~[docker 部署](#docker 部署)~~
-
-> 暂不完善，请使用 `pm2` 部署。
-
-配置环境变量（Set env），根目录下执行
-
-```bash
-mv .env.example .env
-```
-
-打开 `.env`，填写环境变量，环境变量同开发。
-
-**打包**
-
-```bash
-npm run build
-```
-
-打包完成生成的静态文件位于 `dist` 目录下，为 `nestjs` 项目。部署时需要带上 `.env` 环境变量文件，以及 `package.json` 依赖说明文件。同时依赖于 `nodejs`。
-
-> 如果只是部署的话安装依赖可以只下载运行时依赖，使用如下命令
->
-> ```bash
-> npm i --production
-> ```
-
-**启动**
-
-```bash
-node dist/main
-```
+### Docker 部署
 
 ### Pm2 部署
 
@@ -269,111 +94,128 @@ yarn build
 pm2 start ecosystem.config.js --env production
 ```
 
-## uni-app 接入（Uni-app deploy）
+## 📌 环境变量相关说明
 
-> 请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
+### WEB_OSS
 
-**以下内容已废弃！！！**
+用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写,相关环境变量填写到前端。
 
----
+- `ALIYUN_ACCOUNT_ID`
+- `ALIYUN_ACCOUNT_RAM_ROLE`
+- `ALIYUN_RAM_ACCESS_KEY_ID`
+- `ALIYUN_RAM_ACCESS_KEY_SECRET`
+- `ALIYUN_RAM_TEMPORARY_EXPIRE`
 
-`uni-app` 插件来源：[https://ext.dcloud.net.cn/plugin?id=1643](https://ext.dcloud.net.cn/plugin?id=1643)
+### 阿里云环境变量解释
 
-改造后的版本位于仓库 `uni-pushy-server/assets/utils/pushy/index.js`
+> 在后台主要用户生成临时凭证给前端直接上传文件到 `oss`,这种方式有众多优点
+>
+> - 支持分片上传
+> - 支持大文件上传
+> - 上传带宽取决于客户端的带宽
+> - 临时凭证保证访问安全
+> - ...
+>
+> [授权访问文档](https://help.aliyun.com/document_detail/32077.htm)
 
-**使用**
+#### ALIYUN_ACCOUNT_ID
 
-在 `app.vue` 中引入，在 `onLaunch` 生命周期接入，初始化成功就能检查更新了。
+阿里云账号 id，登陆阿里云右上角鼠标悬浮在头像即可显示。
 
-```vue
-<!--
- * @name: 
- * @author: SunSeekerX
- * @Date: 2020-07-20 16:04:27
- * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-07-20 16:51:18
--->
+<details>
+  <summary>展开/收起</summary>
+  <img src="assets/image-20210422225957059.png" alt="image-20210422225957059" style="zoom:80%;" />
+</details>
 
-<script>
-// #ifdef APP-PLUS
-import Pushy from '@/utils/pushy/pushy'
-// #endif
+#### ALIYUN_ACCOUNT_RAM_ROLE
 
-export default {
-  onLaunch: function () {
-    console.log('App Launch')
+阿里云资源访问角色，该角色主要用于访问 oss 服务。必须具有 `AliyunOSSFullAccess` 权限。
 
-    // #ifdef APP-PLUS
-    const pushy = new Pushy({
-      // 项目id
-      projectId: '40bb2d3a-f815-4090-91f6-556b1806d52a',
-      // 更新地址
-      updateUrl: 'http://10.0.0.3:8081',
-    })
-    pushy.init()
-    // #endif
-  },
+1. 鼠标悬浮右上角>访问控制
 
-  onShow: function () {
-    console.log('App Show')
-  },
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422230309679.png" alt="image-20210422230309679" style="zoom:80%;" />
+   </details>
 
-  onHide: function () {
-    console.log('App Hide')
-  },
-}
-</script>
-```
+2. <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422230436608.png" alt="image-20210422230436608" style="zoom:80%;" />
+   </details>
 
-初始化参数
+3. 创建一个角色，默认系统没有访问 oss 服务的角色。选择阿里云账号
 
-|    key    |   说明   |  类型   | 默认 | 必须 |
-| :-------: | :------: | :-----: | :--: | :--: |
-| projectId | 项目 id  | String  |  ''  | Yes  |
-| updateUrl | 更新地址 | String  |  ''  | Yes  |
-|  update   | 是否启用 | Boolean | true |  No  |
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422230523646.png" alt="image-20210422230523646" style="zoom:80%;" />
+   </details>
 
-# 入门篇（Basics）
+4. 填写角色名称
 
-## 环境准备（Prerequisite）
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422230605772.png" alt="image-20210422230605772" style="zoom:80%;" />
+   </details>
 
-## 安装（Installation）
+5. 分配角色权限
 
-## 设置（Configuration）
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422230656029.png" alt="image-20210422230656029" style="zoom:80%;" />
+   </details>
 
-> [必备] [文件] 软件的设置
+#### ALIYUN_RAM_ACCESS_KEY_ID
 
-# 进阶篇（Advanced)
+ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 
-> [可选] [目录] 又称”开发篇“，提供中高级的开发教程
+1. 创建一个用于生成临时凭证的用户，创建完成就能拿到 `ALIYUN_RAM_ACCESS_KEY_ID` 和 `ALIYUN_RAM_ACCESS_KEY_SECRET`
 
-## ~~docker 部署~~
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422231036948.png" alt="image-20210422231036948" style="zoom:80%;" />
+   </details>
 
-### ~~自行打包镜像~~
+2. 给刚刚创建的用户分配权限
 
-```bash
-docker build -t uni-pushy:0.0.1-SNAPSHOT .
-```
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422231642751.png" alt="image-20210422231642751" style="zoom:80%;" />
+   </details>
 
-### ~~Docker hub 镜像~~
+3. 分配 `AliyunSTSAssumeRoleAccess` 权限
 
-`Docker hub` 镜像地址：[https://hub.docker.com/r/1647800606/uni-pushy/tags](https://hub.docker.com/r/1647800606/uni-pushy/tags)
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210422231616807.png" alt="image-20210422231616807" style="zoom:80%;" />
+   </details>
 
-**拉取镜像**
+#### ALIYUN_RAM_ACCESS_KEY_SECRET
 
-```bash
-docker pull 1647800606/uni-pushy:latest
-```
+同 [`ALIYUN_RAM_ACCESS_KEY_ID`](####ALIYUN_RAM_ACCESS_KEY_ID)
 
-**启动镜像**
+### oss 存储桶配置
 
-启动时需要映射外部环境变量文件至容器内部 `/app` 路径下，参考启动命令
+1. 新建 oss 存储桶
 
-```bash
-docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606/uni-pushy
-```
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210423192125412.png" alt="image-20210423192125412" style="zoom:80%;" />
+   </details>
 
-## 自建后台
+2. 跨域设置
+
+   <details>
+     <summary>展开/收起</summary>
+     <img src="assets/image-20210423192316407.png" alt="image-20210423192316407" style="zoom:80%;" />
+   </details>
+
+   > ETag x-oss-request-id
+
+## 📌 uni-app 接入
+
+请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
+
+## 📌 自建后台
 
 有一部分同学需要我的后台设计思路，想集成到自己的后台。事实上现在的热更新后台功能确实不是很强大。这里提供一下后台开发的一些思路和怎么构建一个后台和 `uni-pushy-client` 进行配合工作。
 
@@ -460,183 +302,74 @@ docker run -d -p 8080:3000 -v /w/env/.env:/app/.env --name uni-pushy  1647800606
 
 资源状态（0：禁用 1：启用）
 
-# **API**（Reference）
-
-> [可选] [目录|文件] 软件 API 的逐一介绍
-
-# TODO
+## 📌 TODO
 
 - 检查更新结果缓存
 - 接口限流
 - 文章：`Nodejs` `rsa` 加密的使用
 
-# 更新日志（Changelog）
+## 📌 FAQ
 
-## 0.0.5 - 2021-04-26
+### 这是什么？
 
-### 功能（Features）
+一个 `uni－app` 热更新的管理后台。
 
-- 增加 `WEB_OSS` 配置，用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写
-  - `ALIYUN_ACCOUNT_ID`
-  - `ALIYUN_ACCOUNT_RAM_ROLE`
-  - `ALIYUN_RAM_ACCESS_KEY_ID`
-  - `ALIYUN_RAM_ACCESS_KEY_SECRET`
-  - `ALIYUN_RAM_TEMPORARY_EXPIRE`
-
-## 0.0.4 - 2021-04-25
-
-### 功能（Features）
-
-- 增加 `DB_TABLE_SYNC` 配置，用来标识是否同步表结构。
-
-## 0.0.3 - 2021-04-23
-
-### 功能（Features）
-
-- 删除 `OSS_BASE_URL` 环境变量
-- `OSS_REGION` 更名为 `ALIYUN_OSS_ENDPOINT`
-- `OSS_BUCKET` 更名为 `ALIYUN_OSS_BUCKET`
-
-## 0.0.2 - 2021-04-22
-
-### 功能（Features）
-
-- 【重要】阿里云环境变量配置改变
-  - 删除 `ALIYUN_RAM_ARN` 环境变量
-  - 增加 `ALIYUN_ACCOUNT_ID` 环境变量
-  - 增加 `ALIYUN_ACCOUNT_RAM_ROLE` 环境变量
-  - `ALIYUN_RAM_ACCESSKEYID` 更名为 `ALIYUN_RAM_ACCESS_KEY_ID`
-  - `ALIYUN_RAM_ACCESSKEYSECRET` 更名为 `ALIYUN_RAM_ACCESS_KEY_SECRET`
-
-## 0.0.1 - 2021-02-12
-
-### 功能（Features）
-
-- 【重要】增加获取最新原生资源的版本号接口
-
-## 0.0.1 - 2021-02-12
-
-### Bug 修复 （Bug Fixes）
-
-- 修复资源列表分页条数不正确
-
-## 0.0.1 - 2020-11-01
-
-### 功能（Features）
-
-- 增加 refresh token 刷新 token 机制，提升体验
-- id 去除 “-”
-
-## 0.0.1 - 2020-08-25
-
-- 修复不存在资源依赖无法删除原生资源的 bug
-
-## 0.0.1 - 2020-08-24
-
-- 【重要】移出上传文件到后端接口
-- 【重要】增加 `Aliyun STS` 接口，用来生成临时访问的 `AccesId` 给前端直接上传文件到 `OSS`
-
-## 0.0.1 - 2020-08-19
-
-- 增加资源排序
-
-## 0.0.1 - 2020-08-18
-
-- 【重要】增加 `Api sign` 接口加密
-
-## 0.0.1 - 2020-08-15
-
-### 功能（Features）
-
-- 【重要】修改检查更新为查询资源方式，具体是否更新放在用户端进行判断
-- 增加资源更新日志
-
-## 0.0.1 - 2020-08-10
-
-### Bug 修复 （Bug Fixes）
-
-- 【重要】修复项目无资源检查更新出错
-
-### 功能（Features）
-
-- 【重要】检查更新新增原生资源校验
-
-- 【重要】项目：新增 `appid` 唯一属性，原来为 `name（项目名）` 为唯一属性
-
-- 【重要】资源：增加了 `wgt` 资源原生版本依赖
-- 【重要】资源：确定 `versionCode` 为更新唯一指标
-- 【重要】资源：去除 `isFullUpdated` 字段，默认 `wgt` 资源为部分更新，`android`，`ios` 为整包更新
-- 【重要】去除数据库`外键约束`， 改为应用层实现外键约束。（提高性能和扩展性）
-
-- 【重要】增加登录注册 `md5` 加密
-
-- 【重要】取消使用 `helmet` 模块，等待后期测试通过再加入
-- 代码逻辑优化
-
-# FAQ
-
-## 这是什么？
-
-一个 uni－app 热更新的管理后台。
-
-## 有什么用？
+### 有什么用？
 
 可以用来管理 `uni-app` 热更新的资源和版本。
 
-## 什么是热更新？
+### 什么是热更新？
 
 装在手机上的 app，不让用户知道就可以增加删除某些功能。快速修复 bug，快速更新功能。
 
-## 有哪些技术用到了热更新？
+### 有哪些技术用到了热更新？
 
 `React native` ，`flutter `，`uni-app`
 
-## 为什么要做这个？
+### 为什么要做这个？
 
 网上又没有，不只能自己做。
 
-## 后端用的是什么语言框架？
+### 后端用的是什么语言框架？
 
 [NestJs](https://nestjs.com/)
 
-## 为什么用 Nestjs ？
+### 为什么用 Nestjs ？
 
-其他的我也不会。
+巨好用啊啊啊~
 
-## 为什么要用 antd-vue？
+### 为什么要用 antd-vue？
 
-至少它一直在更新，你来维护 `element-ui` 吗？
+`element-ui` 有一段时间不维护了，搞得人心惶惶，现在又有了，不知道啥意思。
 
-## 为什么有个数据字典模块？
+~~至少它一直在更新，你来维护 `element-ui` 吗？~~
 
-想做一套完整的后台解决方案。
-
-## TS 怎么样？
+### TS 怎么样？
 
 有一次写 `vue` 尝试了下 `ts`，感觉像 "si" 一样。写 `ts` 还要多些那么多代码，为什么还要确定数据类型，有什么 `interface` ，`type`。
 
 无意中看到了 `nestjs `，写多了 `ts ` 感觉 `js` 像 "si" 一样。
 
-## Nestjs 好用吗？
+### Nestjs 好用吗？
 
 `Node` 后端要是火起来，`nestjs` 应该是碾压 `express`，`koa2`，`egg.js`。。。
 
-## 为什么要用你写的？
+### 为什么要用你写的？
 
 你不想看看我是怎么实现的吗？
 
-## 会持续更新吗？
+### 会持续更新吗？
 
 不会
 
-## 确实学到了一些东西怎么感谢你？
+### 确实学到了一些东西怎么感谢你？
 
 啊这~，你给我点一个 ⭐ 嘛～
 
-## 有问题可以问你吗？
+### 有问题可以问你吗？
 
 你要是知道你的问题是什么，可以来问我。
 
-## 怎么联系你。
+### 怎么联系你。
 
 能找到这个项目找不到我的联系方式？
