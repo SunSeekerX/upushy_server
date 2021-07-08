@@ -6,6 +6,7 @@
     "nestjs",
     "prebuild",
     "typeorm",
+    "upushy",
     "varchar"
   ]
 }

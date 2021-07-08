@@ -68,6 +68,12 @@ yarn serve
 
 ### Docker 部署
 
+**新建配置文件 `/etc/upushy/.env.production`**
+
+```shell
+vim /etc/upushy/.env.production
+```
+
 ### Pm2 部署
 
 [pm2 官网](https://pm2.keymetrics.io/docs/usage/quick-start/)

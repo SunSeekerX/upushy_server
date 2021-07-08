@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "build:docker": "yarn prebuild && yarn build && docker build -t upushy .",
+    "build:docker": "yarn build && docker build -t upushy .",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "serve": "cross-env NODE_ENV=development nest start --watch",
