@@ -3,15 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 14:55:14
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-01 23:08:15
+ * @LastEditTime: 2021-07-09 16:55:49
  */
 
-import {
-  NestMiddleware,
-  HttpStatus,
-  Injectable,
-  HttpException,
-} from '@nestjs/common'
+import { NestMiddleware, HttpStatus, Injectable, HttpException } from '@nestjs/common'
 import { Request, Response, NextFunction } from 'express'
 import { verify } from 'jsonwebtoken'
 
@@ -21,11 +16,7 @@ import { UserService } from 'src/user/user.service'
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
 
-  async use(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void | Error> {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void | Error> {
     const authorization: string = req.headers.authorization
     if (!authorization) {
       // No token

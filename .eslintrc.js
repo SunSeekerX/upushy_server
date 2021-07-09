@@ -1,9 +1,9 @@
 /**
- * @name:
+ * Eslint 配置
  * @author: SunSeekerX
- * @Date: 2021-02-18 22:01:46
+ * @Date: 2020-12-21 11:26:56
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-03-28 00:24:45
+ * @LastEditTime: 2021-07-09 16:30:05
  */
 
 module.exports = {

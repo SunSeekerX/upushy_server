@@ -3,18 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 20:06:42
+ * @LastEditTime: 2021-07-09 16:08:42
  */
 
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  Get,
-  Logger,
-  UseInterceptors,
-} from '@nestjs/common'
+import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
 import { RedisService } from 'nestjs-redis'
@@ -35,10 +27,7 @@ export class UserController {
   // redis 客户端
   redisClient: Redis.Redis | null = null
 
-  constructor(
-    private readonly redisService: RedisService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly redisService: RedisService, private readonly userService: UserService) {}
 
   // 注册图片验证码
   @ApiOperation({ summary: '注册图片验证码' })
@@ -53,12 +42,7 @@ export class UserController {
     const captchaKey = guid()
     try {
       const redisClient = await this._getRedisClient()
-      await redisClient.set(
-        `imgCaptcha:register:${captchaKey}`,
-        captcha.text.toLowerCase(),
-        'ex',
-        60,
-      )
+      await redisClient.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
 
       return {
         success: true,
@@ -93,9 +77,7 @@ export class UserController {
 
     try {
       const redisClient = await this._getRedisClient()
-      const captchaText = await redisClient.get(
-        `imgCaptcha:register:${createUserDto.imgCaptchaKey}`,
-      )
+      const captchaText = await redisClient.get(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
 
       if (captchaText === createUserDto.imgCaptcha) {
         const user = await this.userService.create(createUserDto)
@@ -142,9 +124,7 @@ export class UserController {
 
     try {
       const redisClient = await this._getRedisClient()
-      const loginCaptchaText = await redisClient.get(
-        `imgCaptcha:login:${loginUserDto.loginCaptchaKey}`,
-      )
+      const loginCaptchaText = await redisClient.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
       if (!loginCaptchaText) {
         return {
           success: false,
@@ -217,12 +197,7 @@ export class UserController {
     const captchaKey = guid()
     try {
       const redisClient = await this._getRedisClient()
-      await redisClient.set(
-        `imgCaptcha:login:${captchaKey}`,
-        captcha.text.toLowerCase(),
-        'ex',
-        60,
-      )
+      await redisClient.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
 
       return {
         success: true,
@@ -247,9 +222,7 @@ export class UserController {
   @ApiOperation({ summary: '刷新token' })
   @HttpCode(200)
   @Post('/token')
-  async refreshToken(
-    @Body() { refreshToken }: RefreshTokenDto,
-  ): Promise<ResponseRO> {
+  async refreshToken(@Body() { refreshToken }: RefreshTokenDto): Promise<ResponseRO> {
     try {
       // 解码 refreshToken
       const decoded: any = verify(refreshToken, process.env.TOKEN_SECRET)

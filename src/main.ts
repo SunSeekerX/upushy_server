@@ -1,9 +1,9 @@
 /**
- * @name:
+ * @name: 项目入口
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-08 22:08:59
+ * @LastEditTime: 2021-07-09 16:22:58
  */
 
 import 'src/shared/utils/bootstrap'
@@ -48,11 +48,7 @@ async function bootstrap() {
   let docTips = ''
 
   if (process.env.PRO_DOC !== 'false') {
-    const options = new DocumentBuilder()
-      .setTitle('uni-pushy server')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build()
+    const options = new DocumentBuilder().setTitle('uni-pushy server').setVersion('1.0').addBearerAuth().build()
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('/docs', app, document)
 
