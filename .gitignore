@@ -36,9 +36,5 @@ lerna-debug.log*
 # Env
 .env.development
 .env.production
-dev.yaml
-production.yaml
-
-# Another files
-package-lock.json
-yarn.lock
+src/shared/config/env.**
+!src/shared/config/env.example.yaml

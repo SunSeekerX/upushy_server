@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-26 00:12:09
+ * @LastEditTime: 2021-07-10 17:13:51
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -15,7 +15,8 @@ import * as OSS from 'ali-oss'
 import * as nodeDiskInfo from 'node-disk-info'
 
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/interface/env-type.interface'
 import { ResponseRO } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'
@@ -25,17 +26,14 @@ import { HttpException } from '@nestjs/common'
 import { HttpStatus } from '@nestjs/common'
 
 const sts = new OSS.STS({
-  accessKeyId: process.env.ALIYUN_RAM_ACCESS_KEY_ID,
-  accessKeySecret: process.env.ALIYUN_RAM_ACCESS_KEY_SECRET,
+  accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID', EnvType.string),
+  accessKeySecret: getEnv('ALIYUN_RAM_ACCESS_KEY_SECRET', EnvType.string),
 })
 
 @ApiTags('Basic')
 @Controller()
 export class AppController {
-  constructor(
-    private readonly projectService: ProjectService,
-    private readonly sourceService: SourceService
-  ) {}
+  constructor(private readonly projectService: ProjectService, private readonly sourceService: SourceService) {}
 
   @Get()
   getHello(): ResponseRO {
@@ -54,24 +52,27 @@ export class AppController {
   @ApiOperation({ summary: 'OSS授权临时访问' })
   @Get('oss-sts')
   async assumeRole(): Promise<ResponseRO> {
-    if (!(process.env.WEB_OSS === 'true')) {
+    if (!getEnv('WEB_OSS', EnvType.boolean)) {
       try {
         const token = await sts.assumeRole(
-          `acs:ram::${process.env.ALIYUN_ACCOUNT_ID}:role/${process.env.ALIYUN_ACCOUNT_RAM_ROLE}`,
+          `acs:ram::${getEnv('ALIYUN_ACCOUNT_ID', EnvType.string)}:role/${getEnv(
+            'ALIYUN_ACCOUNT_RAM_ROLE',
+            EnvType.string
+          )}`,
           {
             Statement: [
               {
                 Action: ['oss:PutObject'],
                 Effect: 'Allow',
                 Resource: [
-                  `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}/*`,
-                  `acs:oss:*:*:${process.env.ALIYUN_OSS_BUCKET}`,
+                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}/*`,
+                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}`,
                 ],
               },
             ],
             Version: '1',
           },
-          Number(process.env.ALIYUN_RAM_TEMPORARY_EXPIRE) * 60,
+          Number(getEnv('ALIYUN_RAM_TEMPORARY_EXPIRE', EnvType.number)) * 60,
           ''
         )
 
@@ -81,8 +82,8 @@ export class AppController {
           message: '成功',
           data: {
             ...token.credentials,
-            region: process.env.ALIYUN_OSS_ENDPOINT,
-            bucket: process.env.ALIYUN_OSS_BUCKET,
+            region: getEnv('ALIYUN_OSS_ENDPOINT', EnvType.string),
+            bucket: getEnv('ALIYUN_OSS_BUCKET', EnvType.string),
           },
         }
       } catch (e) {
@@ -117,7 +118,10 @@ export class AppController {
       }
     }
 
-    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
+      'ALIYUN_OSS_ENDPOINT',
+      EnvType.string
+    )}.aliyuncs.com`
 
     // 资源类型
     let type = 1

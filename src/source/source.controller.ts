@@ -3,13 +3,16 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-23 19:31:00
+ * @LastEditTime: 2021-07-10 16:34:36
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum'
 
 import { ResponseRO, PaginationRO } from 'src/shared/interface/response.interface'
 import { ProjectEntity } from 'src/project/project.entity'
@@ -46,7 +49,10 @@ export class SourceController {
     @Body()
     createSourceDto: CreateSourceDto
   ): Promise<ResponseRO> {
-    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
+      'ALIYUN_OSS_ENDPOINT',
+      EnvType.string
+    )}.aliyuncs.com`
     const project = await this.projectEntity.findOne(createSourceDto.projectId)
     // 检查项目是否存在
     if (!project) {
@@ -234,7 +240,10 @@ export class SourceController {
   @Get()
   async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PaginationRO> {
     const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
-    const OSS_BASE_URL = `https://${process.env.ALIYUN_OSS_BUCKET}.${process.env.ALIYUN_OSS_ENDPOINT}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
+      'ALIYUN_OSS_ENDPOINT',
+      EnvType.string
+    )}.aliyuncs.com`
 
     const total = await this.sourceService.getSourceCount({
       projectId,

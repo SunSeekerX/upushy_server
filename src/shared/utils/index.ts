@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-04-07 20:45:22
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 19:15:20
+ * @LastEditTime: 2021-07-10 11:27:14
  */
 
 import * as os from 'os'
@@ -21,11 +21,7 @@ export function getIPAdress(): string {
     const iface = interfaces[devName]
     for (let i = 0; i < iface.length; i++) {
       const alias = iface[i]
-      if (
-        alias.family === 'IPv4' &&
-        alias.address !== '127.0.0.1' &&
-        !alias.internal
-      ) {
+      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
         return alias.address
       }
     }
@@ -38,9 +34,7 @@ export function getIPAdress(): string {
  * @param { Number } radix 基数
  */
 export function guid(len = 32, radix = 16): string {
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(
-    '',
-  )
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
   const uuid = []
   let i = 0
   radix = radix || chars.length
@@ -114,7 +108,7 @@ export function getIPAdressByRequest(request: Request): string | string[] {
  */
 export function isInternalIPAdress(ip: string): boolean {
   return /^(127\.0\.0\.1)|(localhost)|(10\.\d{1,3}\.\d{1,3}\.\d{1,3})|(172\.((1[6-9])|(2\d)|(3[01]))\.\d{1,3}\.\d{1,3})|(192\.168\.\d{1,3}\.\d{1,3})$/.test(
-    ip,
+    ip
   )
 }
 
@@ -132,7 +126,7 @@ export async function getIPLocation(ip: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const chunks = []
 
-      res.data.on('data', chunk => {
+      res.data.on('data', (chunk) => {
         chunks.push(chunk)
       })
 
@@ -157,17 +151,13 @@ export function compareVersion(ver1: string, ver2: string): boolean {
   ver1List.forEach((v, i) => (ver1List[i] = Number(v)))
   ver2List.forEach((v, i) => (ver2List[i] = Number(v)))
 
-  const len =
-    ver1List.length > ver2List.length ? ver1List.length : ver2List.length
+  const len = ver1List.length > ver2List.length ? ver1List.length : ver2List.length
 
   for (let i = 0; i < len; i++) {
     if (ver1List[i] > ver2List[i]) {
       return true
     } else if (ver1List[i] === ver2List[i]) {
-      if (
-        (!ver1List[i + 1] && !ver2List[i + 1]) ||
-        (!ver1List[i + 1] && ver2List[i + 1])
-      ) {
+      if ((!ver1List[i + 1] && !ver2List[i + 1]) || (!ver1List[i + 1] && ver2List[i + 1])) {
         return false
       } else if (ver1List[i + 1] && !ver2List[i + 1]) {
         return true

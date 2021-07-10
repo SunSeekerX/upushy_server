@@ -1,13 +1,25 @@
 /**
- * 项目配置
+ * @name: 项目默认配置
  * @author: SunSeekerX
- * @Date: 2021-07-09 16:04:03
+ * @Date: 2021-07-10 11:02:12
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-09 18:20:33
+ * @LastEditTime: 2021-07-10 16:21:41
  */
 
-// 项目端口
+/**
+ * 环境名配置
+ */
+export const ENVS = ['development', 'test', 'production', 'stage', 'prod', 'staging']
+
+/**
+ * 运行端口
+ */
 export const SERVER_PORT = 3000
+
+/**
+ * 是否打开文档
+ */
+export const PRO_DOC = true
 
 /**
  * Token 生成加盐

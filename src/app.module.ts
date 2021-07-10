@@ -3,13 +3,16 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-09 18:28:17
+ * @LastEditTime: 2021-07-10 17:19:47
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RedisModule } from 'nestjs-redis'
+
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
 
 import { AppController } from './app.controller'
 import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
@@ -32,8 +35,8 @@ import { LogModule } from './log/log.module'
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
+      host: getEnv('DB_HOST', EnvType.string),
+      port: getEnv('DB_PORT', EnvType.number),
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
