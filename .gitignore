@@ -36,6 +36,8 @@ lerna-debug.log*
 # Env
 .env.development
 .env.production
+dev.yaml
+production.yaml
 
 # Another files
 package-lock.json
