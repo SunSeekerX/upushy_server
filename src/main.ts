@@ -3,11 +3,11 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 17:59:08
+ * @LastEditTime: 2021-07-11 12:57:27
  */
 
-import 'src/shared/utils/bootstrap'
-import { onValidateLocalEnvFile, getEnv } from 'src/shared/utils/env'
+// import 'src/shared/utils/bootstrap'
+
 import * as chalk from 'chalk'
 import * as helmet from 'helmet'
 import * as useragent from 'express-useragent'
@@ -17,8 +17,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import * as internalIp from 'internal-ip'
 const ipv4 = internalIp.v4.sync()
 
-import { AppModule } from './app.module'
-import { EnvType } from './shared/enum'
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
+import { AppModule } from 'src/app.module'
 // import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 // import { ValidationPipe } from 'src/shared/pipes/validation.pipe'
 // import { logger } from 'src/shared/middleware/logger.middleware'
@@ -51,18 +52,25 @@ async function bootstrap() {
   let docTips = ''
   let runningTips = `
     App running at:
-    - Local:   ${chalk.green(`http://localhost:${port}/api/`)}
-    - Network: ${chalk.green(`http://${ipv4}:${port}/api/`)}`
+      - Local:   ${chalk.green(`http://localhost:${port}/api/`)}
+      - Network: ${chalk.green(`http://${ipv4}:${port}/api/`)}
+    Client running at:
+      - Local:   ${chalk.green(`http://localhost:${port}/`)}
+      - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`
+  // let clientTips = `
+  // client running at:
+  //   - Local:   ${chalk.green(`http://localhost:${port}/`)}
+  //   - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`
 
-  if (getEnv<boolean>('PRO_DOC')) {
+  if (getEnv<boolean>('PRO_DOC', EnvType.boolean)) {
     const options = new DocumentBuilder().setTitle('uni-pushy server').setVersion('1.0').addBearerAuth().build()
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('/docs', app, document)
 
     docTips = `
     Docs running at:
-    - Local:   ${chalk.green(`http://localhost:${port}/docs/`)}
-    - Network: ${chalk.green(`http://${ipv4}:${port}/docs/`)}`
+      - Local:   ${chalk.green(`http://localhost:${port}/docs/`)}
+      - Network: ${chalk.green(`http://${ipv4}:${port}/docs/`)}`
 
     runningTips = runningTips + docTips
   }
@@ -71,10 +79,5 @@ async function bootstrap() {
     console.log(runningTips)
   })
 }
-
-/**
- * 验证本地载入的环境变量配置
- */
-onValidateLocalEnvFile()
 
 bootstrap()

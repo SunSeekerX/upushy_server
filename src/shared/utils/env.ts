@@ -3,20 +3,22 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:40:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 17:42:31
+ * @LastEditTime: 2021-07-11 12:55:05
  */
 
-import * as yaml from 'js-yaml'
-import * as fs from 'fs'
+// import * as yaml from 'js-yaml'
+import { load as yamlLoad } from 'js-yaml'
+// import * as fs from 'fs'
+import { readFileSync } from 'fs'
 import * as chalk from 'chalk'
 import * as defaultConfig from 'src/shared/config/default'
 import { plainToClass } from 'class-transformer'
 import { validateSync } from 'class-validator'
+import { join } from 'path'
+
 import { ENVS } from 'src/shared/config/default'
 import LocalEnv from 'src/shared/config/local-env'
-import { type } from '../../../../../common/vuepress-theme-hope/packages/feed/src/types/index'
 
-type EnvType2 = number | string | boolean
 const TAG = 'Environment'
 const emptyList = [null, undefined]
 
@@ -31,12 +33,25 @@ if (!ENVS.includes(envPath)) {
 /**
  * 解析 yaml 配置
  */
-const localEnvConfig = yaml.load(fs.readFileSync(`src/shared/config/env.${envPath.toLocaleLowerCase()}.yaml`, 'utf8'))
+// const envFilePath = `src/shared/config/env.${envPath.toLocaleLowerCase()}.yaml`
+const envFilePath = join(__dirname, `../../../env.${envPath.toLocaleLowerCase()}.yaml`)
+const localEnvConfig = yamlLoad(readFileSync(envFilePath, 'utf8'))
+// console.log(localEnvConfig)
+
+if (emptyList.includes(localEnvConfig)) {
+  const msg = chalk.red(`${TAG}: 配置文件为空，路径: ${envFilePath}`)
+  throw new Error(msg)
+}
 
 /**
  * 检查本地环境变量配置
  */
 const localEnvObject = plainToClass(LocalEnv, localEnvConfig, { excludeExtraneousValues: true })
+
+/**
+ *验证本地载入的环境变量配置
+ */
+onValidateLocalEnvFile()
 
 /**
  * 构建错误提示
@@ -57,7 +72,7 @@ function buildError(errors) {
 /**
  * 验证本地载入的环境变量配置
  */
-export function onValidateLocalEnvFile(): void {
+function onValidateLocalEnvFile(): void {
   const errors = validateSync(localEnvObject)
   if (errors.length > 0) {
     console.log(chalk.red(`${TAG}: 验证失败，请检查环境变量配置`))
@@ -87,7 +102,11 @@ function onGetEnvError(key: string, type: string | number | boolean, val: any, v
  * @param { boolean } must
  * @returns { T extends type}
  */
-function getEnvLocal<T extends EnvType2>(key: string, type: T, must: boolean): T {
+function getEnvLocal<T extends string | number | boolean>(
+  key: string,
+  type: 'number' | 'string' | 'boolean',
+  must: boolean
+): T {
   const val: any = localEnvConfig[key]
   const valType = typeof val
   if (must) {
@@ -107,13 +126,11 @@ function getEnvLocal<T extends EnvType2>(key: string, type: T, must: boolean): T
  * @param { T extends EnvType } type
  * @returns
  */
-export function getEnv<T extends string | number | boolean>(key: string, type: T): T {
+export function getEnv<T extends string | number | boolean>(key: string, type: 'number' | 'string' | 'boolean'): T {
   const notMustKeys = Object.keys(defaultConfig)
   const mustFlag = !notMustKeys.includes(key)
   const localVal = getEnvLocal<T>(key, type, mustFlag)
   const val = defaultConfig[key]
-  type wantType = typeof T
-
   if (mustFlag) {
     if (!emptyList.includes(localVal)) {
       return localVal
@@ -123,7 +140,7 @@ export function getEnv<T extends string | number | boolean>(key: string, type: T
   } else {
     if (!emptyList.includes(localVal)) {
       return localVal
-    } else if (val && typeof val === type) {
+    } else if (!emptyList.includes(val) && typeof val === type) {
       return val
     } else {
       onGetEnvError(key, type, val, typeof val)

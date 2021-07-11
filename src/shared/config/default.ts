@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:02:12
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 16:21:41
+ * @LastEditTime: 2021-07-11 11:51:23
  */
 
 /**
@@ -20,6 +20,16 @@ export const SERVER_PORT = 3000
  * 是否打开文档
  */
 export const PRO_DOC = true
+
+/**
+ * 数据库是否同步表格
+ */
+export const DB_TABLE_SYNC = true
+
+/**
+ * Redis REDIS_PREFIX
+ */
+export const REDIS_PREFIX = ''
 
 /**
  * Token 生成加盐

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-09 16:08:42
+ * @LastEditTime: 2021-07-11 11:53:40
  */
 
 import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors } from '@nestjs/common'
@@ -19,6 +19,8 @@ import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
 import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -225,7 +227,7 @@ export class UserController {
   async refreshToken(@Body() { refreshToken }: RefreshTokenDto): Promise<ResponseRO> {
     try {
       // 解码 refreshToken
-      const decoded: any = verify(refreshToken, process.env.TOKEN_SECRET)
+      const decoded: any = verify(refreshToken, getEnv<string>('TOKEN_SECRET', EnvType.string))
       // 获取用户
       const user = await this.userService.findById(decoded.id)
       // if (!user) {

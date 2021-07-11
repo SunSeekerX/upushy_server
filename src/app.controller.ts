@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 17:13:51
+ * @LastEditTime: 2021-07-11 11:22:06
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -16,7 +16,7 @@ import * as nodeDiskInfo from 'node-disk-info'
 
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/interface/env-type.interface'
+import { EnvType } from 'src/shared/enum/index'
 import { ResponseRO } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from './project/project.service'

@@ -3,13 +3,15 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 17:19:47
+ * @LastEditTime: 2021-07-11 12:51:54
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RedisModule } from 'nestjs-redis'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path'
 
 import { getEnv } from 'src/shared/utils/env'
 import { EnvType } from 'src/shared/enum/index'
@@ -26,22 +28,26 @@ import { LogModule } from './log/log.module'
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      exclude: ['/api*'],
+    }),
     RedisModule.register({
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT),
-      db: parseInt(process.env.REDIS_DB),
-      password: process.env.REDIS_PASSWORD,
-      keyPrefix: process.env.REDIS_PREFIX,
+      host: getEnv('REDIS_HOST', EnvType.string),
+      port: getEnv('REDIS_PORT', EnvType.number),
+      db: getEnv('REDIS_DB', EnvType.number),
+      password: getEnv('REDIS_PASSWORD', EnvType.string),
+      keyPrefix: getEnv('REDIS_PREFIX', EnvType.string),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: getEnv('DB_HOST', EnvType.string),
       port: getEnv('DB_PORT', EnvType.number),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      username: getEnv('DB_USER', EnvType.string),
+      password: getEnv('DB_PASSWORD', EnvType.string),
+      database: getEnv('DB_DATABASE', EnvType.string),
       entities: ['dist/**/*.entity.js'],
-      synchronize: !(process.env.DB_TABLE_SYNC === 'false'),
+      synchronize: getEnv('DB_TABLE_SYNC', EnvType.boolean),
       logging: false,
       extra: {
         // If without this filed emoji can't be stored

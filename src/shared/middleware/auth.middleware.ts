@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 14:55:14
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-09 16:55:49
+ * @LastEditTime: 2021-07-11 11:53:18
  */
 
 import { NestMiddleware, HttpStatus, Injectable, HttpException } from '@nestjs/common'
@@ -11,6 +11,8 @@ import { Request, Response, NextFunction } from 'express'
 import { verify } from 'jsonwebtoken'
 
 import { UserService } from 'src/user/user.service'
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -26,7 +28,7 @@ export class AuthMiddleware implements NestMiddleware {
     const token = authorization.split(' ')[1]
 
     try {
-      const decoded: any = verify(token, process.env.TOKEN_SECRET)
+      const decoded: any = verify(token, getEnv<string>('TOKEN_SECRET', EnvType.string))
       const user = await this.userService.findById(decoded.id)
       // if (!user) {
       //   throw new HttpException('User not found.', HttpStatus.UNAUTHORIZED)

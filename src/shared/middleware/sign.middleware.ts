@@ -3,29 +3,26 @@
  * @author: SunSeekerX
  * @Date: 2020-08-17 15:18:20
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-10-29 17:57:02
+ * @LastEditTime: 2021-07-11 11:55:58
  */
 
 import * as NodeRSA from 'node-rsa'
-import {
-  Injectable,
-  NestMiddleware,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common'
+import { Injectable, NestMiddleware, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Request, Response, NextFunction } from 'express'
 import * as md5 from 'md5'
 import { RedisService } from 'nestjs-redis'
+
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
 
 /**
  * @description 测试如果放在这里会偶尔出现 “Error during decryption (probably incorrect key). Original error: Error: Incorrect data or key”
  * 错误，猜测是内存被回收，放在每次校验创建测试
  */
-const aPrivateKey = new NodeRSA(process.env.API_SIGN_RSA_PRIVATE_KEY, {
+const aPrivateKey = new NodeRSA(getEnv<string>('API_SIGN_RSA_PRIVATE_KEY', EnvType.string), {
   encryptionScheme: 'pkcs1',
 })
-const API_SIGN_TIME_OUT = Number(process.env.API_SIGN_TIME_OUT)
+const API_SIGN_TIME_OUT = getEnv<number>('API_SIGN_TIME_OUT', EnvType.number)
 
 @Injectable()
 export class SignMiddleware implements NestMiddleware {
@@ -33,7 +30,7 @@ export class SignMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // const aPrivateKey = new NodeRSA(process.env.API_SIGN_RSA_PRIVATE_KEY, {
+      // const aPrivateKey = new NodeRSA(getEnv<string>('API_SIGN_RSA_PRIVATE_KEY', EnvType.string), {
       //   encryptionScheme: 'pkcs1',
       // })
       const client = await this.redisService.getClient()
@@ -62,12 +59,7 @@ export class SignMiddleware implements NestMiddleware {
         Logger.warn(`${API_SIGN_TIME_OUT}s内重复请求`)
         throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
-      await client.set(
-        `ApiSign:Nonce:${nonceArr[0]}`,
-        nonceArr[0],
-        'ex',
-        API_SIGN_TIME_OUT,
-      )
+      await client.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], 'ex', API_SIGN_TIME_OUT)
 
       /**
        * @description 防止参数被篡改

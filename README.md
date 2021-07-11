@@ -66,6 +66,20 @@ npm run serve
 yarn serve
 ```
 
+### Docker 构建
+
+**构建镜像**
+
+```shell
+docker build -t upushy .
+```
+
+**启动容器**
+
+```shell
+docker run -d -p 3001:3001 --name=upushy -v /w/code/nodejs/uni-pushy-server/env.production.yaml:/env.production.yaml --restart=always upushy
+```
+
 ### Docker 部署
 
 **新建配置文件 `/etc/upushy/.env.production`**
@@ -231,7 +245,7 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 
 **入参**
 
-```json
+```javascript
 {
   // 项目id，标识项目
   "projectId": "866116d35b382bb6e1ae0cbb484b9950",

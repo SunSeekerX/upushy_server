@@ -3,15 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-18 11:38:29
+ * @LastEditTime: 2021-07-11 11:54:11
  */
 
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  BadRequestException,
-} from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, getRepository, DeleteResult } from 'typeorm'
 import { validate } from 'class-validator'
@@ -20,12 +15,14 @@ import * as jwt from 'jsonwebtoken'
 import { UserRO } from './user.interface'
 import { UserEntity } from './user.entity'
 import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
+import { getEnv } from 'src/shared/utils/env'
+import { EnvType } from 'src/shared/enum/index'
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>
   ) {}
 
   // 查找全部
@@ -39,12 +36,7 @@ export class UserService {
   }
 
   // 创建用户
-  async create({
-    username,
-    password,
-    nickname,
-    email,
-  }: CreateUserDto): Promise<UserRO> {
+  async create({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
     const qb = await getRepository(UserEntity)
       .createQueryBuilder('user')
       .where('user.username = :username', { username })
@@ -73,10 +65,7 @@ export class UserService {
     const errors = await validate(newUser)
     if (errors.length > 0) {
       const _errors = { username: 'User input is not valid.' }
-      throw new HttpException(
-        { message: 'Input data validation failed', _errors },
-        HttpStatus.BAD_REQUEST,
-      )
+      throw new HttpException({ message: 'Input data validation failed', _errors }, HttpStatus.BAD_REQUEST)
     } else {
       const savedUser = await this.userRepository.save(newUser)
       return this.buildUserRO(savedUser)
@@ -119,12 +108,12 @@ export class UserService {
         // exp: Math.floor(Date.now() / 1000) + 1 * 24 * 60 * 60,
         // exp: Math.floor(Date.now() / 1000) + 5,
       },
-      process.env.TOKEN_SECRET,
+      getEnv<string>('TOKEN_SECRET', EnvType.string),
       {
         // 过期时间/seconds
         expiresIn: 1 * 24 * 60 * 60,
         // expiresIn: 5,
-      },
+      }
     )
   }
 
@@ -135,12 +124,12 @@ export class UserService {
         id: user.id,
         username: user.username,
       },
-      process.env.TOKEN_SECRET,
+      getEnv<string>('TOKEN_SECRET', EnvType.string),
       {
         // 过期时间/seconds
         expiresIn: 30 * 24 * 60 * 60,
         // expiresIn: 20,
-      },
+      }
     )
   }
 
@@ -151,7 +140,6 @@ export class UserService {
       nickname: user.nickname,
       token: this.generateJWT(user),
     }
-
     return { user: userRO }
   }
 }

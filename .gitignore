@@ -36,5 +36,6 @@ lerna-debug.log*
 # Env
 .env.development
 .env.production
-src/shared/config/env.**
-!src/shared/config/env.example.yaml
+env.**
+!env.example.yaml
+client
