@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 12:49:06
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-12 22:24:54
+ * @LastEditTime: 2021-07-12 23:44:13
  */
 
 import { IsNotEmpty, IsNumber, Max, Min, ValidateIf } from 'class-validator'
@@ -81,7 +81,7 @@ export default class LocalEnv {
   readonly ALIYUN_RAM_ACCESS_KEY_SECRET: string
 
   @Expose()
-  @ValidateIf((o) => !o.WEB_OSS)
+  @ValidateIf((o) => !o.WEB_OSS && !emptyList.includes(o.ALIYUN_RAM_TEMPORARY_EXPIRE))
   @Min(15)
   @IsNotEmpty()
   @IsNumber()
