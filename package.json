@@ -1,7 +1,7 @@
 {
   "name": "uni-pushy-server",
   "version": "0.1.0",
-  "build": 100,
+  "build": 101,
   "description": "A uni-app code push server.",
   "author": "SunSeekerX",
   "private": true,
@@ -10,6 +10,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:docker": "yarn build && docker build -t upushy .",
+    "build:docker-server": "docker build -f Dockerfile.server -t upushy-server .",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "serve": "cross-env NODE_ENV=development nest start --watch",
     "start": "nest start",

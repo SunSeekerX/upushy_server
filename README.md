@@ -199,9 +199,9 @@ VUE_APP_ALIYUN_ACCESS_KEY_SECRET=
 
 ```shell
 # 包含管理面板
-docker build -t upushy .
+yarn build:docker
 # 仅服务
-docker build -f Dockerfile.server -t upushy-server .
+yarn build:docker-server
 ```
 
 **启动容器**
