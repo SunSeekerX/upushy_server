@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-12 22:09:59
+ * @LastEditTime: 2021-07-12 23:45:57
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -87,7 +87,6 @@ export class AppController {
           },
         }
       } catch (e) {
-        console.log(e)
         return {
           success: false,
           statusCode: e.status,

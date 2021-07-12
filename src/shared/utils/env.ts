@@ -36,7 +36,6 @@ if (!ENVS.includes(envPath)) {
 // const envFilePath = `src/shared/config/env.${envPath.toLocaleLowerCase()}.yaml`
 const envFilePath = join(__dirname, `../../../env.${envPath.toLocaleLowerCase()}.yaml`)
 const localEnvConfig = yamlLoad(readFileSync(envFilePath, 'utf8'))
-// console.log(localEnvConfig)
 
 if (emptyList.includes(localEnvConfig)) {
   const msg = chalk.red(`${TAG}: 配置文件为空，路径: ${envFilePath}`)

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-08-17 15:18:20
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:55:58
+ * @LastEditTime: 2021-07-12 23:46:11
  */
 
 import * as NodeRSA from 'node-rsa'
@@ -95,8 +95,6 @@ export class SignMiddleware implements NestMiddleware {
         Logger.warn('参数可能被篡改')
         throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
-
-      // console.log({ method: req.method, query: req.query, body: req.body })
     } catch (error) {
       Logger.error(error.message)
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)

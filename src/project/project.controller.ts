@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:09
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 13:05:03
+ * @LastEditTime: 2021-07-12 23:46:04
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -14,28 +14,15 @@ import { User } from 'src/shared/decorator/user.decorator'
 
 import { ResponseRO } from 'src/shared/interface/response.interface'
 
-import {
-  CreateProjectDto,
-  DeleteProjectDto,
-  UpdateProjectDto,
-  QueryProjectDto,
-} from './dto/index'
+import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/index'
 
-import {
-  ApiResponse,
-  ApiOperation,
-  ApiTags,
-  ApiBearerAuth,
-} from '@nestjs/swagger'
+import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 @ApiBearerAuth()
 @ApiTags('Project')
 @Controller()
 export class ProjectController {
-  constructor(
-    private readonly sourceService: SourceService,
-    private readonly projectService: ProjectService,
-  ) {}
+  constructor(private readonly sourceService: SourceService, private readonly projectService: ProjectService) {}
 
   // 创建项目
   @ApiOperation({ summary: 'Create project' })
@@ -45,10 +32,7 @@ export class ProjectController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post('project')
-  async create(
-    @Body() createProjectDto: CreateProjectDto,
-    @User() user,
-  ): Promise<ResponseRO> {
+  async create(@Body() createProjectDto: CreateProjectDto, @User() user): Promise<ResponseRO> {
     createProjectDto.userId = user.id
     const res = await this.projectService.create(createProjectDto)
 
@@ -70,9 +54,7 @@ export class ProjectController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Delete('project')
-  async delete(
-    @Body() deleteProjectDto: DeleteProjectDto,
-  ): Promise<ResponseRO> {
+  async delete(@Body() deleteProjectDto: DeleteProjectDto): Promise<ResponseRO> {
     const sourceCount = await this.sourceService.querySourceCount({
       projectId: deleteProjectDto.id,
     })
@@ -103,9 +85,7 @@ export class ProjectController {
   // 更新项目信息
   @ApiOperation({ summary: 'Update project' })
   @Put('project')
-  async update(
-    @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<ResponseRO> {
+  async update(@Body() updateProjectDto: UpdateProjectDto): Promise<ResponseRO> {
     const project = await this.projectService.findOne(updateProjectDto.id)
     if (!project) {
       return { success: false, statusCode: 200, message: '项目不存在' }
@@ -124,11 +104,7 @@ export class ProjectController {
   @ApiOperation({ summary: 'Get all projects' })
   @ApiResponse({ status: 200, description: 'Return all projects.' })
   @Get('projects')
-  async getProjects(
-    @Query() queryProjectDto: QueryProjectDto,
-    @User() user,
-  ): Promise<ResponseRO> {
-    console.log(user.id);
+  async getProjects(@Query() queryProjectDto: QueryProjectDto, @User() user): Promise<ResponseRO> {
     queryProjectDto.userId = user.id
 
     const count = await this.projectService.getProjectCount()
