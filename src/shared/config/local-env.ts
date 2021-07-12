@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 12:49:06
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:52:02
+ * @LastEditTime: 2021-07-12 22:24:54
  */
 
-import { IsNotEmpty, Max, Min, ValidateIf } from 'class-validator'
+import { IsNotEmpty, IsNumber, Max, Min, ValidateIf } from 'class-validator'
 import { Expose } from 'class-transformer'
 
 const emptyList = [null, undefined]
@@ -18,6 +18,7 @@ export default class LocalEnv {
   @ValidateIf((o) => !emptyList.includes(o.SERVER_PORT))
   @Min(1)
   @Max(65535)
+  @IsNumber()
   readonly SERVER_PORT: number
 
   @Expose()
@@ -42,6 +43,7 @@ export default class LocalEnv {
   @ValidateIf((o) => !emptyList.includes(o.API_SIGN_TIME_OUT))
   @Min(15)
   @IsNotEmpty()
+  @IsNumber()
   readonly API_SIGN_TIME_OUT: number
 
   /**
@@ -80,7 +82,9 @@ export default class LocalEnv {
 
   @Expose()
   @ValidateIf((o) => !o.WEB_OSS)
+  @Min(15)
   @IsNotEmpty()
+  @IsNumber()
   readonly ALIYUN_RAM_TEMPORARY_EXPIRE: number
 
   /**
@@ -94,6 +98,7 @@ export default class LocalEnv {
   @Min(1)
   @Max(65535)
   @IsNotEmpty()
+  @IsNumber()
   readonly DB_PORT: number
 
   @Expose()
@@ -119,10 +124,12 @@ export default class LocalEnv {
   @Min(1)
   @Max(65535)
   @IsNotEmpty()
+  @IsNumber()
   readonly REDIS_PORT: number
 
   @Expose()
   @IsNotEmpty()
+  @IsNumber()
   readonly REDIS_DB: number
 
   @Expose()

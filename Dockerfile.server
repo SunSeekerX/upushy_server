@@ -13,7 +13,6 @@ WORKDIR /app
 
 # Bundle APP files
 COPY dist /app/dist/
-COPY client /app/client/
 COPY package.json /app
 COPY ecosystem.config.js /app
 

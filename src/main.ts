@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 12:57:27
+ * @LastEditTime: 2021-07-12 20:53:20
  */
 
 // import 'src/shared/utils/bootstrap'
@@ -45,7 +45,11 @@ async function bootstrap() {
   )
   // app.use(logger)
   // app.use(SignMiddleware)
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    })
+  )
   app.setGlobalPrefix('api')
   app.use(useragent.express())
 

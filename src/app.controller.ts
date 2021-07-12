@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 22:33:39
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:22:06
+ * @LastEditTime: 2021-07-12 22:09:59
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
@@ -72,7 +72,7 @@ export class AppController {
             ],
             Version: '1',
           },
-          Number(getEnv('ALIYUN_RAM_TEMPORARY_EXPIRE', EnvType.number)) * 60,
+          getEnv<number>('ALIYUN_RAM_TEMPORARY_EXPIRE', EnvType.number) * 60,
           ''
         )
 

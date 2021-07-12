@@ -8,23 +8,124 @@
 
 基于 `nestjs` +`typeorm`+`redis`+`mysql`+`jsonwebtoken`+`class-validator`+`restful`。
 
-**配套客户端**：**[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)**
+**配套客户端 SDK**：**[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)**
 
-**配套前端**：**[uni-pushy-admin](https://github.com/SunSeekerX/uni-pushy-admin)**
+**配套管理面板**：**[uni-pushy-admin](https://github.com/SunSeekerX/uni-pushy-admin)**
 
 **预览地址**：**[https://uni-pushy.yoouu.cn/](https://uni-pushy.yoouu.cn/)**
 
-> 自行注册账号使用即可体验，对后台配置不熟悉的可以先使用我部署的服务做为测试。
+> 自行注册账号使用即可体验，对项目部署不熟悉的同学可以先使用我部署的服务做为测试。
 >
 > 只需要简单的配置下客户端就行。
 
-**预览文档**：[https://api.uni-pushy.yoouu.cn/docs/](https://api.uni-pushy.yoouu.cn/docs/)
+**预览接口文档**：[https://api.uni-pushy.yoouu.cn/docs/](https://api.uni-pushy.yoouu.cn/docs/)
 
 > **uni-app App 整包升级检测：** https://ask.dcloud.net.cn/article/34972
 >
 > **uni-app App 资源热更新：** https://ask.dcloud.net.cn/article/35667
 
 ## 📌 快速上手
+
+### Docker 部署
+
+**拉取镜像**
+
+```shell
+# 带面板
+docker pull sunseekerx/upushy:latest
+# 不带面板
+docker pull sunseekerx/upushy-server:latest
+```
+
+**新建一个数据库**
+
+**新建配置文件 `/etc/upushy/env.production.yaml`**
+
+```shell
+mkdir -p /etc/upushy/
+cd /etc/upushy/
+vim env.production.yaml
+```
+
+**配置文件参考**
+
+`/etc/upushy/env.production.yaml` 字段说明查看 [全部环境变量](###全部环境变量)
+
+```yaml
+WEB_OSS: false
+
+ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
+ALIYUN_OSS_BUCKET: 'uni-pushy'
+
+ALIYUN_ACCOUNT_ID: 'xxxxxxxxxxxx'
+ALIYUN_ACCOUNT_RAM_ROLE: 'xxxxxx'
+ALIYUN_RAM_ACCESS_KEY_ID: 'xxxxxx'
+ALIYUN_RAM_ACCESS_KEY_SECRET: 'xxxxxx'
+
+DB_HOST: '0.0.0.0'
+DB_PORT: 3306
+DB_USER: 'user'
+DB_PASSWORD: 'password'
+DB_DATABASE: 'upushy'
+
+REDIS_HOST: '0.0.0.0'
+REDIS_PORT: 6379
+REDIS_DB: 1
+REDIS_PASSWORD: 'password'
+```
+
+**启动容器**
+
+默认端口为 `3000`，如果你通过配置文件改变了端口号，需要映射为你更新过后的端口。
+
+```shell
+# 带面板
+docker run -d -p 3000:3000 --name=upushy -v /etc/upushy/env.production.yaml:/app/env.production.yaml --restart=always sunseekerx/upushy
+# 仅服务
+docker run -d -p 3000:3000 --name=upushy-server -v /etc/upushy/env.production.yaml:/app/env.production.yaml --restart=always sunseekerx/upushy-server
+```
+
+> 如果无法同步数据库表格，请配置不自动同步数据库表格 `DB_TABLE_SYNC`，到项目根目录下找到 `sql` 文件夹下最新的 `sql` 脚本手动执行一遍。然后在启动容器
+
+### Pm2 部署
+
+[pm2 官网](https://pm2.keymetrics.io/docs/usage/quick-start/)
+
+**克隆项目**
+
+**全局安装 pm2**
+
+```bash
+npm install pm2@latest -g
+# or
+yarn global add pm2
+```
+
+**安装运行依赖**
+
+```shell
+npm install --production
+# or
+yarn --prod
+```
+
+**新建配置文件 `uni-pushy-server/env.production.yaml`**
+
+需要填写的项查看 [Docker 部署](###Docker 部署)
+
+**编译项目**
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+**启动项目**
+
+```bash
+pm2 start ecosystem.config.js --env production
+```
 
 ### 开发
 
@@ -48,15 +149,15 @@ npm i
 yarn
 ```
 
-> 国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](
+> 国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](https://doc.yoouu.cn/front-end/npm/#%F0%9F%93%8C-%E5%8A%A0%E9%80%9F%E4%B8%8B%E8%BD%BD-tbify)
 
 **配置环境变量，根目录下执行**
 
 ```bash
-mv .env.example .env.development
+mv env.development.yaml env.development.yaml
 ```
 
-**打开 `.env.development`，填写相关环境变量**
+**打开 `env.development.yaml`，填写相关环境变量，参考 Docker 部署**
 
 **启动**
 
@@ -68,53 +169,119 @@ yarn serve
 
 ### Docker 构建
 
+本地构建带管理面板的镜像需要拉取管理面板编译导出的资源放到 `uni-pushy-server/client` 下！管理面板编译环境变量参考
+
+`uni-pushy-admin/.env.production`
+
+```shell
+# 运行模式
+NODE_ENV=production
+
+#
+VUE_APP_PREVIEW=true
+
+# 请求超时时间 default：6000
+VUE_APP_REQUEST_TIMEOUT=6000
+
+# 请求地址前缀，不带“/”！
+VUE_APP_API_BASE_URL=/
+
+VUE_APP_API_RSA_PUBLIC_KEY='-----BEGIN PUBLIC KEY-----xxxxxxxxxxx-----END PUBLIC KEY-----'
+
+VUE_APP_WEB_OSS=false
+VUE_APP_ALIYUN_OSS_REGION=
+VUE_APP_ALIYUN_OSS_BUCKET=
+VUE_APP_ALIYUN_ACCESS_KEY_ID=
+VUE_APP_ALIYUN_ACCESS_KEY_SECRET=
+```
+
 **构建镜像**
 
 ```shell
+# 包含管理面板
 docker build -t upushy .
+# 仅服务
+docker build -f Dockerfile.server -t upushy-server .
 ```
 
 **启动容器**
 
 ```shell
-docker run -d -p 3001:3001 --name=upushy -v /w/code/nodejs/uni-pushy-server/env.production.yaml:/env.production.yaml --restart=always upushy
+# 带面板
+docker run -d -p 3000:3000 --name=upushy -v /w/code/nodejs/env.production.yaml:/app/env.production.yaml --restart=always upushy
+# 仅服务
+docker run -d -p 3000:3000 --name=upushy-server -v /w/code/nodejs/env.production.yaml:/app/env.production.yaml --restart=always upushy-server
 ```
 
-### Docker 部署
-
-**新建配置文件 `/etc/upushy/.env.production`**
+**推送镜像**
 
 ```shell
-vim /etc/upushy/.env.production
-```
+# 打 tag
+docker tag upushy sunseekerx/upushy:latest
+# 推送带面板
+docker push sunseekerx/upushy:latest
 
-### Pm2 部署
-
-[pm2 官网](https://pm2.keymetrics.io/docs/usage/quick-start/)
-
-**全局安装 pm2**
-
-```bash
-npm install pm2@latest -g
-# or
-yarn global add pm2
-```
-
-**编译项目**
-
-```bash
-npm run build
-# or
-yarn build
-```
-
-**启动项目**
-
-```bash
-pm2 start ecosystem.config.js --env production
+# 打 tag
+docker tag upushy-server sunseekerx/upushy-server:latest
+# 推送仅服务
+docker push sunseekerx/upushy-server:latest
 ```
 
 ## 📌 环境变量相关说明
+
+### 全部环境变量
+
+```yaml
+# 服务端口 默认：3000 1-65535
+SERVER_PORT: 3000
+# 是否打开文档 默认：true
+PRO_DOC: true
+# 是否直接通过前端访问 oss
+WEB_OSS: false
+# Token 生成加盐 默认：'secret-key'
+TOKEN_SECRET: 'secret-key'
+# Api 加密 RSA 私钥 默认：请查看源码
+API_SIGN_RSA_PRIVATE_KEY: ''
+# Api 加密请求过期间隔，超出即被认为为过期请求 默认：15 单位：s
+API_SIGN_TIME_OUT: 15
+# 是否自动同步数据库表格
+DB_TABLE_SYNC: true
+
+# OSS 入口
+ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
+# OSS 存储桶名
+ALIYUN_OSS_BUCKET: 'uni-pushy'
+
+# 阿里云账号相关，如果 WEB_OSS 为 true 可以不填写，具体获取方式在下方
+ALIYUN_ACCOUNT_ID: 'xxxxxxxxxxxx'
+ALIYUN_ACCOUNT_RAM_ROLE: 'xxxxxx'
+ALIYUN_RAM_ACCESS_KEY_ID: 'xxxxxx'
+ALIYUN_RAM_ACCESS_KEY_SECRET: 'xxxxxx'
+# 阿里云 sts 临时账户有效期 默认：15 单位：min 最低：15min
+ALIYUN_RAM_TEMPORARY_EXPIRE: 15
+
+# 数据库 host
+DB_HOST: '0.0.0.0'
+# 数据库端口
+DB_PORT: 3306
+# 数据库用户
+DB_USER: 'user'
+# 数据库密码
+DB_PASSWORD: 'password'
+# 数据库名
+DB_DATABASE: 'upushy'
+
+# Redis host
+REDIS_HOST: '0.0.0.0'
+# Redis 端口
+REDIS_PORT: 6379
+# Redis 库
+REDIS_DB: 1
+# Redis 密码
+REDIS_PASSWORD: 'password'
+# Redis prefix
+REDIS_PREFIX: ''
+```
 
 ### WEB_OSS
 
@@ -230,6 +397,10 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
    </details>
 
    > ETag x-oss-request-id
+
+## 📌 更新日志
+
+[CHANGELOG](./CHANGELOG.md)
 
 ## 📌 uni-app 接入
 

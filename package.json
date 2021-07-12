@@ -1,6 +1,7 @@
 {
   "name": "uni-pushy-server",
   "version": "0.1.0",
+  "build": 100,
   "description": "A uni-app code push server.",
   "author": "SunSeekerX",
   "private": true,

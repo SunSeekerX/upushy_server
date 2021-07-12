@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:02:12
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:51:23
+ * @LastEditTime: 2021-07-12 22:42:32
  */
 
 /**
@@ -22,7 +22,7 @@ export const SERVER_PORT = 3000
 export const PRO_DOC = true
 
 /**
- * 数据库是否同步表格
+ * 是否自动同步数据库表格
  */
 export const DB_TABLE_SYNC = true
 
@@ -30,6 +30,11 @@ export const DB_TABLE_SYNC = true
  * Redis REDIS_PREFIX
  */
 export const REDIS_PREFIX = ''
+
+/**
+ * 阿里云 sts 临时账户有效期，单位 min
+ */
+export const ALIYUN_RAM_TEMPORARY_EXPIRE = 15
 
 /**
  * Token 生成加盐
