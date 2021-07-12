@@ -204,15 +204,6 @@ yarn build:docker
 yarn build:docker-server
 ```
 
-**启动容器**
-
-```shell
-# 带面板
-docker run -d -p 3000:3000 --name=upushy -v /w/code/nodejs/env.production.yaml:/app/env.production.yaml --restart=always upushy
-# 仅服务
-docker run -d -p 3000:3000 --name=upushy-server -v /w/code/nodejs/env.production.yaml:/app/env.production.yaml --restart=always upushy-server
-```
-
 **推送镜像**
 
 ```shell
