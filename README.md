@@ -111,7 +111,7 @@ yarn --prod
 
 **新建配置文件 `uni-pushy-server/env.production.yaml`**
 
-需要填写的项查看 [Docker 部署](#Docker 部署)
+需要填写的项查看 [Docker 部署](#Docker-部署)
 
 **编译项目**
 
@@ -157,7 +157,7 @@ yarn
 mv env.development.yaml env.development.yaml
 ```
 
-**打开 `env.development.yaml`，填写相关环境变量，参考 Docker 部署**
+**打开 `env.development.yaml`，填写相关环境变量，参考 [Docker 部署](#Docker-部署)**
 
 **启动**
 
