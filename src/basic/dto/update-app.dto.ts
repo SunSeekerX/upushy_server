@@ -8,13 +8,7 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import {
-  IsNotEmpty,
-  IsInt,
-  Validate,
-  Length,
-  ValidateNested,
-} from 'class-validator'
+import { IsNotEmpty, IsInt, Validate, Length, ValidateNested } from 'class-validator'
 
 import { CreateDeviceInfoLogDto } from 'src/log/dto/index'
 import { CustomPlatform } from './custom-platform'

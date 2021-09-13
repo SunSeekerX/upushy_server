@@ -1,14 +1,12 @@
 /**
- * 获取环境变量配置
+ * 解析环境变量配置
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:40:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 12:55:05
+ * @LastEditTime: 2021-09-13 20:18:40
  */
 
-// import * as yaml from 'js-yaml'
 import { load as yamlLoad } from 'js-yaml'
-// import * as fs from 'fs'
 import { readFileSync } from 'fs'
 import * as chalk from 'chalk'
 import * as defaultConfig from 'src/shared/config/default'
@@ -22,7 +20,7 @@ import LocalEnv from 'src/shared/config/local-env'
 const TAG = 'Environment'
 const emptyList = [null, undefined]
 
-console.log(chalk.white(`${TAG}: 开始载入环境变量配置，准备验证...`))
+console.log(chalk.white(`${TAG}: 准备验证环境变量配置...`))
 
 const envPath: string = process.env.NODE_ENV
 if (!ENVS.includes(envPath)) {

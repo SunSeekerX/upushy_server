@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:54:11
+ * @LastEditTime: 2021-09-13 20:28:55
  */
 
 import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
@@ -15,8 +15,8 @@ import * as jwt from 'jsonwebtoken'
 import { UserRO } from './user.interface'
 import { UserEntity } from './user.entity'
 import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum/index'
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
 
 @Injectable()
 export class UserService {

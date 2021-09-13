@@ -1,43 +1,34 @@
 /**
- * @name:
+ * 应用程序模块
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 12:51:54
+ * @LastEditTime: 2021-09-14 00:29:11
  */
 
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { RedisModule } from 'nestjs-redis'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum/index'
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
 
-import { AppController } from './app.controller'
 import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
-import { VersionInterceptor } from 'src/shared/interceptor/version.interceptor'
-import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
 import { SourceModule } from './source/source.module'
 import { LogModule } from './log/log.module'
+import { CacheModule } from './cache/cache.module'
+import { BasicModule } from './basic/basic.module'
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
       exclude: ['/api*'],
-    }),
-    RedisModule.register({
-      host: getEnv('REDIS_HOST', EnvType.string),
-      port: getEnv('REDIS_PORT', EnvType.number),
-      db: getEnv('REDIS_DB', EnvType.number),
-      password: getEnv('REDIS_PASSWORD', EnvType.string),
-      keyPrefix: getEnv('REDIS_PREFIX', EnvType.string),
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -58,27 +49,14 @@ import { LogModule } from './log/log.module'
     ProjectModule,
     SourceModule,
     LogModule,
+    CacheModule,
+    BasicModule,
   ],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: LogInterceptor,
     },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: VersionInterceptor,
-    },
   ],
-  controllers: [AppController],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(SignMiddleware)
-      .exclude(
-        { path: '/api/update', method: RequestMethod.POST }
-        // { path: '/api/config/system', method: RequestMethod.GET },
-      )
-      .forRoutes(AppController)
-  }
-}
+export class AppModule {}

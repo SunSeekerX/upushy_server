@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-10 14:55:14
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:53:18
+ * @LastEditTime: 2021-09-13 20:29:19
  */
 
 import { NestMiddleware, HttpStatus, Injectable, HttpException } from '@nestjs/common'
@@ -11,8 +11,8 @@ import { Request, Response, NextFunction } from 'express'
 import { verify } from 'jsonwebtoken'
 
 import { UserService } from 'src/user/user.service'
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum/index'
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

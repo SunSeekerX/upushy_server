@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 16:34:36
+ * @LastEditTime: 2021-09-13 20:29:02
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -11,8 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum'
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
 
 import { ResponseRO, PaginationRO } from 'src/shared/interface/response.interface'
 import { ProjectEntity } from 'src/project/project.entity'

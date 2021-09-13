@@ -1,9 +1,9 @@
 /**
- * @name:
+ * 环境变量文件验证类
  * @author: SunSeekerX
  * @Date: 2021-07-10 12:49:06
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-12 23:44:13
+ * @LastEditTime: 2021-09-13 20:53:46
  */
 
 import { IsNotEmpty, IsNumber, Max, Min, ValidateIf } from 'class-validator'
@@ -14,6 +14,9 @@ export default class LocalEnv {
   /**
    * 系统服务配置
    */
+  /**
+   * 运行端口
+   */
   @Expose()
   @ValidateIf((o) => !emptyList.includes(o.SERVER_PORT))
   @Min(1)
@@ -21,19 +24,31 @@ export default class LocalEnv {
   @IsNumber()
   readonly SERVER_PORT: number
 
+  /**
+   * 是否打开正式环境文档
+   */
   @Expose()
   @ValidateIf((o) => !emptyList.includes(o.PRO_DOC))
   readonly PRO_DOC: boolean
 
+  /**
+   * Api 前缀
+   */
   @Expose()
-  @IsNotEmpty()
-  readonly WEB_OSS: boolean
+  @ValidateIf((o) => !emptyList.includes(o.API_GLOBAL_PREFIX))
+  readonly API_GLOBAL_PREFIX: string
 
+  /**
+   * Token 生成加盐
+   */
   @Expose()
   @ValidateIf((o) => !emptyList.includes(o.TOKEN_SECRET))
   @IsNotEmpty()
   readonly TOKEN_SECRET: string
 
+  /**
+   * Api 加密私钥
+   */
   @Expose()
   @ValidateIf((o) => !emptyList.includes(o.API_SIGN_RSA_PRIVATE_KEY))
   @IsNotEmpty()
@@ -49,6 +64,10 @@ export default class LocalEnv {
   /**
    * 阿里云 oss
    */
+  @Expose()
+  @IsNotEmpty()
+  readonly WEB_OSS: boolean
+
   @Expose()
   @IsNotEmpty()
   readonly ALIYUN_OSS_ENDPOINT: string

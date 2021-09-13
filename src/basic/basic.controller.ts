@@ -1,29 +1,27 @@
 /**
- * @name: 应用控制器
+ * 基础模块控制器
  * @author: SunSeekerX
- * @Date: 2020-06-25 22:33:39
+ * @Date: 2021-09-13 23:30:57
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-12 23:45:57
+ * @LastEditTime: 2021-09-13 23:34:05
  */
 
-import { Body, Controller, Get, HttpCode, Post, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Post, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common'
 import * as os from 'os'
 import * as v8 from 'v8'
 import * as publicIp from 'public-ip'
 import * as internalIp from 'internal-ip'
 import * as OSS from 'ali-oss'
 import * as nodeDiskInfo from 'node-disk-info'
-
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum/index'
+
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
 import { ResponseRO } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
-import { ProjectService } from './project/project.service'
-import { SourceService } from './source/source.service'
-import { UpdateInterceptor } from './shared/interceptor/update.interceptor'
-import { HttpException } from '@nestjs/common'
-import { HttpStatus } from '@nestjs/common'
+import { ProjectService } from 'src/project/project.service'
+import { SourceService } from 'src/source/source.service'
+import { UpdateInterceptor } from 'src/shared/interceptor/update.interceptor'
 
 const sts = new OSS.STS({
   accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID', EnvType.string),
@@ -31,18 +29,9 @@ const sts = new OSS.STS({
 })
 
 @ApiTags('Basic')
-@Controller()
-export class AppController {
+@Controller('basic')
+export class BasicController {
   constructor(private readonly projectService: ProjectService, private readonly sourceService: SourceService) {}
-
-  @Get()
-  getHello(): ResponseRO {
-    return {
-      success: true,
-      statusCode: 200,
-      message: 'Hello world.',
-    }
-  }
 
   /**
    * @description OSS授权临时访问
@@ -198,12 +187,12 @@ export class AppController {
             // 以字符串的形式返回操作系统的主机名。
             hostname: os.hostname(),
             /**
-           * 返回一个数组，包含 1、5 和 15 分钟的平均负载。
-
-平均负载是系统活动性的测量，由操作系统计算得出，并表现为一个分数。
-
-平均负载是 UNIX 特定的概念。 在 Windows 上，其返回值始终为 [0, 0, 0]。
-           */
+            * 返回一个数组，包含 1、5 和 15 分钟的平均负载。
+ 
+ 平均负载是系统活动性的测量，由操作系统计算得出，并表现为一个分数。
+ 
+ 平均负载是 UNIX 特定的概念。 在 Windows 上，其返回值始终为 [0, 0, 0]。
+            */
             loadavg: os.loadavg(),
             // 在 Linux 上返回 'Linux'，在 macOS 上返回 'Darwin'，在 Windows 上返回 'Windows_NT'。
             type: os.type(),

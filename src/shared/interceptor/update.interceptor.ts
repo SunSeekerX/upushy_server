@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-11-03 10:57:32
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-26 11:44:05
+ * @LastEditTime: 2021-09-14 00:28:06
  */
 
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
@@ -12,7 +12,7 @@ import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { plainToClass } from 'class-transformer'
 
-import { UpdateAppDto } from 'src/dto'
+import { UpdateAppDto } from 'src/basic/dto'
 import { LogService } from 'src/log/log.service'
 
 import { CreateDeviceInfoLogDto, CreateUpdateLogDto } from 'src/log/dto'
@@ -37,10 +37,7 @@ export class UpdateInterceptor implements NestInterceptor {
           })
         )
 
-        const deviceInfoLogDto: CreateDeviceInfoLogDto = plainToClass(
-          CreateDeviceInfoLogDto,
-          updateAppDto.systemInfo
-        )
+        const deviceInfoLogDto: CreateDeviceInfoLogDto = plainToClass(CreateDeviceInfoLogDto, updateAppDto.systemInfo)
         const deviceInfo = await this.logService.querySingleDeviceInfo({
           uuid: updateAppDto.systemInfo.uuid,
         })

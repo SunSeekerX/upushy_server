@@ -1,9 +1,9 @@
 /**
- * 通用 enum
+ * 环境变量类型
  * @author: SunSeekerX
- * @Date: 2021-07-10 11:34:03
+ * @Date: 2021-09-13 20:41:38
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-10 17:58:24
+ * @LastEditTime: 2021-09-13 20:41:39
  */
 
 export enum EnvType {

@@ -3,14 +3,15 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-11 11:53:40
+ * @LastEditTime: 2021-09-13 22:48:28
  */
 
 import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
-import { RedisService } from 'nestjs-redis'
-import * as Redis from 'ioredis'
+import { Cache } from 'cache-manager'
+// import { RedisService } from 'nestjs-redis'
+// import * as Redis from 'ioredis'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 
@@ -19,17 +20,22 @@ import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
 import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
-import { getEnv } from 'src/shared/utils/env'
-import { EnvType } from 'src/shared/enum/index'
+import { getEnv } from 'src/shared/config'
+import { EnvType } from 'src/shared/enums'
+import { CacheService } from 'src/cache/cache.service'
 
 @ApiBearerAuth()
 @ApiTags('users')
 @Controller('user')
 export class UserController {
   // redis 客户端
-  redisClient: Redis.Redis | null = null
+  // redisClient: Redis.Redis | null = null
+  cacheManager: Cache
 
-  constructor(private readonly redisService: RedisService, private readonly userService: UserService) {}
+  // constructor(private readonly redisService: RedisService, private readonly userService: UserService) {}
+  constructor(private cacheService: CacheService, private readonly userService: UserService) {
+    this.cacheManager = this.cacheService.getCacheManager()
+  }
 
   // 注册图片验证码
   @ApiOperation({ summary: '注册图片验证码' })
@@ -43,9 +49,12 @@ export class UserController {
 
     const captchaKey = guid()
     try {
-      const redisClient = await this._getRedisClient()
-      await redisClient.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
+      // const redisClient = await this._getRedisClient()
+      // await redisClient.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
 
+      await this.cacheManager.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), {
+        ttl: 60,
+      })
       return {
         success: true,
         statusCode: 200,
@@ -78,8 +87,9 @@ export class UserController {
     }
 
     try {
-      const redisClient = await this._getRedisClient()
-      const captchaText = await redisClient.get(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
+      // const redisClient = await this._getRedisClient()
+      // const captchaText = await redisClient.get(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
+      const captchaText = await this.cacheManager.get<string>(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
 
       if (captchaText === createUserDto.imgCaptcha) {
         const user = await this.userService.create(createUserDto)
@@ -125,8 +135,9 @@ export class UserController {
     }
 
     try {
-      const redisClient = await this._getRedisClient()
-      const loginCaptchaText = await redisClient.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
+      // const redisClient = await this._getRedisClient()
+      // const loginCaptchaText = await redisClient.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
+      const loginCaptchaText = await this.cacheManager.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
       if (!loginCaptchaText) {
         return {
           success: false,
@@ -198,8 +209,11 @@ export class UserController {
 
     const captchaKey = guid()
     try {
-      const redisClient = await this._getRedisClient()
-      await redisClient.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
+      // const redisClient = await this._getRedisClient()
+      // await redisClient.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
+      await this.cacheManager.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), {
+        ttl: 60,
+      })
 
       return {
         success: true,
@@ -256,10 +270,10 @@ export class UserController {
   }
 
   // 获取 redis 客户端
-  async _getRedisClient(): Promise<Redis.Redis> {
-    if (!this.redisClient) {
-      this.redisClient = await this.redisService.getClient()
-    }
-    return this.redisClient
-  }
+  // async _getRedisClient(): Promise<Redis.Redis> {
+  //   if (!this.redisClient) {
+  //     this.redisClient = await this.redisService.getClient()
+  //   }
+  //   return this.redisClient
+  // }
 }
