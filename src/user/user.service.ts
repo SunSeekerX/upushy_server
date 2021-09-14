@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 20:28:55
+ * @LastEditTime: 2021-09-14 17:50:38
  */
 
 import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
@@ -12,8 +12,8 @@ import { Repository, getRepository, DeleteResult } from 'typeorm'
 import { validate } from 'class-validator'
 import * as jwt from 'jsonwebtoken'
 
-import { UserRO } from './user.interface'
-import { UserEntity } from './user.entity'
+import { UserRO } from './interface'
+import { UserEntity } from './entities'
 import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 00:28:41
+ * @LastEditTime: 2021-09-14 18:31:53
  */
 
 import * as chalk from 'chalk'
@@ -13,6 +13,7 @@ import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { v4 } from 'internal-ip'
+import { HttpExceptionFilter } from 'src/shared/filter'
 
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
@@ -37,6 +38,7 @@ async function bootstrap() {
       // disableErrorMessages: true,
     })
   )
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.use(
     helmet({
       contentSecurityPolicy: false,

@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 20:29:02
+ * @LastEditTime: 2021-09-14 18:39:09
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -14,9 +14,9 @@ import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagg
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
 
-import { ResponseRO, PaginationRO } from 'src/shared/interface/response.interface'
-import { ProjectEntity } from 'src/project/project.entity'
-import { SourceEntity } from 'src/source/source.entity'
+import { BaseResult, PagingResult } from 'src/shared/interface'
+import { ProjectEntity } from 'src/project/entities'
+import { SourceEntity } from 'src/source/entities'
 import {
   CreateSourceDto,
   DeleteSourceDto,
@@ -48,7 +48,7 @@ export class SourceController {
   async addSource(
     @Body()
     createSourceDto: CreateSourceDto
-  ): Promise<ResponseRO> {
+  ): Promise<BaseResult> {
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
       'ALIYUN_OSS_ENDPOINT',
       EnvType.string
@@ -56,7 +56,7 @@ export class SourceController {
     const project = await this.projectEntity.findOne(createSourceDto.projectId)
     // 检查项目是否存在
     if (!project) {
-      return { success: false, statusCode: 200, message: '项目不存在' }
+      return { code: 200, message: '项目不存在' }
     }
 
     // 相同类型的资源版本号必须递增
@@ -67,8 +67,7 @@ export class SourceController {
 
     if (createSourceDto.versionCode <= maxVersionCode) {
       return {
-        success: false,
-        statusCode: 400,
+        code: 400,
         message: `最低版本号必须大于：${maxVersionCode}`,
       }
     }
@@ -87,23 +86,20 @@ export class SourceController {
             url: `${OSS_BASE_URL}/${res.url}`,
           })
         return {
-          success: true,
-          statusCode: 200,
+          code: 200,
           message: '操作成功',
           data: res,
         }
       } else {
         return {
-          success: false,
-          statusCode: 400,
+          code: 400,
           message: '原生版本资源不存在',
         }
       }
     } else {
       if (createSourceDto.nativeVersionCode !== 0) {
         return {
-          success: false,
-          statusCode: 400,
+          code: 400,
           message: '原生资源无原生版本号',
         }
       }
@@ -113,8 +109,7 @@ export class SourceController {
           url: `${OSS_BASE_URL}/${res.url}`,
         })
       return {
-        success: true,
-        statusCode: 200,
+        code: 200,
         message: '操作成功',
         data: res,
       }
@@ -129,7 +124,7 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Delete()
-  async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<ResponseRO> {
+  async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult> {
     const source = await this.sourceService.findOne({
       id: deleteSourceDto.id,
     })
@@ -142,8 +137,7 @@ export class SourceController {
       })
       if (count !== 0) {
         return {
-          success: false,
-          statusCode: 400,
+          code: 400,
           message: '有wgt资源依赖该资源，无法删除',
         }
       }
@@ -151,9 +145,9 @@ export class SourceController {
 
     if (source) {
       const res = await this.sourceService.deleteSource(deleteSourceDto)
-      return { success: true, statusCode: 200, message: '操作成功', data: res }
+      return { code: 200, message: '操作成功', data: res }
     } else {
-      return { success: false, statusCode: 200, message: '资源不存在' }
+      return { code: 200, message: '资源不存在' }
     }
   }
 
@@ -165,7 +159,7 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Put()
-  async update(@Body() updateSourceDto: UpdateSourceDto): Promise<ResponseRO> {
+  async update(@Body() updateSourceDto: UpdateSourceDto): Promise<BaseResult> {
     const { id, versionCode } = updateSourceDto
     const source = await this.sourceService.findOne({
       id,
@@ -173,7 +167,7 @@ export class SourceController {
     const nativeVersionCode: number = updateSourceDto.nativeVersionCode || source.nativeVersionCode
 
     if (!source) {
-      return { success: false, statusCode: 200, message: '资源不存在' }
+      return { code: 200, message: '资源不存在' }
     }
 
     // 相同类型的资源版本号必须递增
@@ -184,8 +178,7 @@ export class SourceController {
 
     if (versionCode !== source.versionCode && versionCode <= maxVersionCode) {
       return {
-        success: false,
-        statusCode: 400,
+        code: 400,
         message: `最低版本号必须大于：${maxVersionCode}`,
       }
     }
@@ -199,31 +192,27 @@ export class SourceController {
       if (nativeSource) {
         const res = await this.sourceService.updateSource(updateSourceDto)
         return {
-          success: true,
-          statusCode: 200,
+          code: 200,
           message: '更新成功',
           data: res,
         }
       } else {
         return {
-          success: false,
-          statusCode: 400,
+          code: 400,
           message: '原生版本资源不存在',
         }
       }
     } else {
       if (nativeVersionCode && nativeVersionCode !== 0) {
         return {
-          success: false,
-          statusCode: 400,
+          code: 400,
           message: '原生资源无原生版本号',
         }
       }
 
       const res = await this.sourceService.updateSource(updateSourceDto)
       return {
-        success: true,
-        statusCode: 200,
+        code: 200,
         message: '更新成功',
         data: res,
       }
@@ -238,7 +227,7 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get()
-  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PaginationRO> {
+  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PagingResult> {
     const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
       'ALIYUN_OSS_ENDPOINT',
@@ -266,8 +255,7 @@ export class SourceController {
     }
 
     return {
-      success: true,
-      statusCode: 200,
+      code: 200,
       message: '查询成功',
       data: {
         total,
@@ -284,7 +272,7 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get('native/latest')
-  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<ResponseRO> {
+  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<BaseResult> {
     const { projectId } = queryObj
 
     const latestAndroid = await this.sourceService.queryMaxSource({
@@ -299,8 +287,7 @@ export class SourceController {
     })
 
     return {
-      success: true,
-      statusCode: 200,
+      code: 200,
       message: '查询成功',
       data: {
         android: latestAndroid?.versionCode,

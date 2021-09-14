@@ -1,9 +1,9 @@
 /**
- * @name:
+ * 用户实体
  * @author: SunSeekerX
  * @Date: 2020-06-22 12:09:26
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-03-18 16:43:39
+ * @LastEditTime: 2021-09-14 17:47:26
  */
 
 import {

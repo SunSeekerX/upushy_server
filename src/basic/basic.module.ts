@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2021-09-13 23:30:37
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 23:36:09
+ * @LastEditTime: 2021-09-14 17:30:59
  */
 
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { BasicService } from './basic.service'
 import { BasicController } from './basic.controller'
 
@@ -18,4 +18,4 @@ import { SourceModule } from 'src/source/source.module'
   providers: [BasicService],
   controllers: [BasicController],
 })
-export class BasicModule {}
+export class BasicModule{}

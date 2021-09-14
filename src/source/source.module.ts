@@ -3,24 +3,18 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:16
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-14 21:20:40
+ * @LastEditTime: 2021-09-14 18:16:30
  */
 
-import {
-  Module,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { SourceController } from './source.controller'
 import { SourceService } from './source.service'
-import { SourceEntity } from './source.entity'
-import { ProjectEntity } from 'src/project/project.entity'
+import { SourceEntity } from './entities'
+import { ProjectEntity } from 'src/project/entities'
 
-import { AuthMiddleware } from 'src/shared/middleware/auth.middleware'
-import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
+import { TokenAuthMiddleware } from 'src/shared/middleware'
 
 @Module({
   imports: [TypeOrmModule.forFeature([SourceEntity, ProjectEntity])],
@@ -30,10 +24,12 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
 })
 export class SourceModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AuthMiddleware, SignMiddleware).exclude({
-      path: '/api/user/token',
-      method: RequestMethod.POST,
-    }).forRoutes(SourceController)
+    consumer
+      .apply(TokenAuthMiddleware)
+      .exclude({
+        path: '/api/user/token',
+        method: RequestMethod.POST,
+      })
+      .forRoutes(SourceController)
   }
 }
-// export class SourceModule {}

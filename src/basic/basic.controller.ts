@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-09-13 23:30:57
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 23:34:05
+ * @LastEditTime: 2021-09-14 18:36:55
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common'
@@ -17,7 +17,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
-import { ResponseRO } from 'src/shared/interface/response.interface'
+import { BaseResult } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from 'src/project/project.service'
 import { SourceService } from 'src/source/source.service'
@@ -40,7 +40,7 @@ export class BasicController {
    */
   @ApiOperation({ summary: 'OSS授权临时访问' })
   @Get('oss-sts')
-  async assumeRole(): Promise<ResponseRO> {
+  async assumeRole(): Promise<BaseResult> {
     if (!getEnv('WEB_OSS', EnvType.boolean)) {
       try {
         const token = await sts.assumeRole(
@@ -66,8 +66,7 @@ export class BasicController {
         )
 
         return {
-          success: true,
-          statusCode: 200,
+          code: 200,
           message: '成功',
           data: {
             ...token.credentials,
@@ -77,8 +76,7 @@ export class BasicController {
         }
       } catch (e) {
         return {
-          success: false,
-          statusCode: e.status,
+          code: e.status,
           message: e.message,
         }
       }
@@ -95,13 +93,12 @@ export class BasicController {
   async update(
     @Body()
     { projectId, platform }: UpdateAppDto
-  ): Promise<ResponseRO> {
+  ): Promise<BaseResult> {
     // 根据appid检查项目是否存在
     const project = await this.projectService.findOne(projectId)
     if (!project) {
       return {
-        success: false,
-        statusCode: 200,
+        code: 200,
         message: '项目不存在',
       }
     }
@@ -135,8 +132,7 @@ export class BasicController {
     // 存入redis
 
     return {
-      success: true,
-      statusCode: 200,
+      code: 200,
       message: '成功',
       data: {
         wgt,
@@ -149,10 +145,9 @@ export class BasicController {
   @ApiOperation({ summary: '获取系统配置' })
   @HttpCode(200)
   @Get('config')
-  async getConfig(): Promise<ResponseRO> {
+  async getConfig(): Promise<BaseResult> {
     return {
-      success: true,
-      statusCode: 200,
+      code: 200,
       message: '成功',
       data: {
         serviceTime: new Date().getTime(),
@@ -164,15 +159,14 @@ export class BasicController {
   @ApiOperation({ summary: '获取系统信息' })
   @HttpCode(200)
   @Get('config/system')
-  async getSystemConfig(): Promise<ResponseRO> {
+  async getSystemConfig(): Promise<BaseResult> {
     try {
       const disks = await nodeDiskInfo.getDiskInfo()
       const publicIpIpv4 = await publicIp.v4()
       const internalIpIpv4 = await internalIp.v4()
 
       return {
-        success: true,
-        statusCode: 200,
+        code: 200,
         message: '成功',
         data: {
           serviceTime: new Date().getTime(),
@@ -226,8 +220,7 @@ export class BasicController {
       }
     } catch (error) {
       return {
-        success: false,
-        statusCode: 500,
+        code: 500,
         message: error.message,
       }
     }

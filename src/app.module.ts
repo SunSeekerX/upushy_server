@@ -3,10 +3,10 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 00:29:11
+ * @LastEditTime: 2021-09-14 18:13:06
  */
 
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -23,6 +23,7 @@ import { SourceModule } from './source/source.module'
 import { LogModule } from './log/log.module'
 import { CacheModule } from './cache/cache.module'
 import { BasicModule } from './basic/basic.module'
+import { ApiSignMiddleware } from 'src/shared/middleware'
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { BasicModule } from './basic/basic.module'
       synchronize: getEnv('DB_TABLE_SYNC', EnvType.boolean),
       logging: false,
       extra: {
-        // If without this filed emoji can't be stored
+        // 不配置这个 emoji 无法保存
         charset: 'utf8mb4_general_ci',
       },
     }),
@@ -59,4 +60,9 @@ import { BasicModule } from './basic/basic.module'
     },
   ],
 })
-export class AppModule {}
+// export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX', EnvType.string)}/basic/update`, method: RequestMethod.POST }).forRoutes('*')
+  }
+}

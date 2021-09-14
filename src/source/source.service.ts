@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-02-14 20:56:16
+ * @LastEditTime: 2021-09-14 18:16:24
  */
 
 import { Injectable } from '@nestjs/common'
@@ -16,8 +16,8 @@ import {
   FindConditions,
 } from 'typeorm'
 
-import { ProjectEntity } from 'src/project/project.entity'
-import { SourceEntity } from './source.entity'
+import { ProjectEntity } from 'src/project/entities'
+import { SourceEntity } from './entities'
 
 import {
   CreateSourceDto,

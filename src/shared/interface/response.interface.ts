@@ -1,21 +1,25 @@
 /**
- * @name:
+ * 统一响应
  * @author: SunSeekerX
  * @Date: 2020-06-26 11:39:50
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-04-28 00:18:21
+ * @LastEditTime: 2021-09-14 18:22:39
  */
 
-// Base response
-export interface ResponseRO {
+import { HttpStatus } from '@nestjs/common'
+
+/**
+ * 基础响应接口
+ */
+export interface BaseResult {
   // Is request success?
-  success: boolean
+  // success: boolean
+
+  // Response code
+  code: HttpStatus | number
 
   // Message
   message: string
-
-  // Response code
-  statusCode: number
 
   // Response content
   data?: Record<string, any> | string | number
@@ -33,8 +37,10 @@ interface PaginationData<T> {
   records: Array<T>
 }
 
-// Pagination response
-export interface PaginationRO extends ResponseRO {
+/**
+ * 分页响应接口
+ */
+export interface PagingResult extends BaseResult {
   // Response content
   data?: PaginationData<unknown>
 }

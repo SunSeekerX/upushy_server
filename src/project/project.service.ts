@@ -3,33 +3,28 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:56:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-02 14:40:08
+ * @LastEditTime: 2021-09-14 18:14:30
  */
 
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, DeleteResult } from 'typeorm'
+import type { FindManyOptions } from 'typeorm'
 
-import { ProjectEntity } from './project.entity'
+import { ProjectEntity } from './entities/project.entity'
 
-import {
-  CreateProjectDto,
-  UpdateProjectDto,
-  DeleteProjectDto,
-  QueryProjectDto,
-  QuerySourceDto,
-} from './dto/index'
+import { CreateProjectDto, UpdateProjectDto, DeleteProjectDto, QueryProjectDto, QuerySourceDto } from './dto/index'
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(ProjectEntity)
-    private readonly projectEntity: Repository<ProjectEntity>,
+    private readonly projectEntity: Repository<ProjectEntity>
   ) {}
 
   // 获取项目总数
-  async getProjectCount(): Promise<number> {
-    return await this.projectEntity.count()
+  async getProjectCount(options?: FindManyOptions<ProjectEntity>): Promise<number> {
+    return await this.projectEntity.count(options)
   }
 
   // 查找单个项目
@@ -52,11 +47,7 @@ export class ProjectService {
   }
 
   // 分页查询项目
-  async queryProject({
-    userId,
-    pageNum,
-    pageSize,
-  }: QueryProjectDto): Promise<Array<ProjectEntity>> {
+  async queryProject({ userId, pageNum, pageSize }: QueryProjectDto): Promise<Array<ProjectEntity>> {
     return await this.projectEntity.find({
       where: {
         userId,
@@ -67,11 +58,7 @@ export class ProjectService {
   }
 
   // 创建项目
-  async create({
-    userId,
-    name,
-    describe,
-  }: CreateProjectDto): Promise<ProjectEntity> {
+  async create({ userId, name, describe }: CreateProjectDto): Promise<ProjectEntity> {
     const project = new ProjectEntity()
     project.userId = userId
     project.name = name

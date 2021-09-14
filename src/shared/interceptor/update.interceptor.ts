@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-11-03 10:57:32
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 00:28:06
+ * @LastEditTime: 2021-09-14 18:34:16
  */
 
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
@@ -16,7 +16,7 @@ import { UpdateAppDto } from 'src/basic/dto'
 import { LogService } from 'src/log/log.service'
 
 import { CreateDeviceInfoLogDto, CreateUpdateLogDto } from 'src/log/dto'
-import { ResponseRO } from '../interface/response.interface'
+import { BaseResult } from '../interface/response.interface'
 
 @Injectable()
 export class UpdateInterceptor implements NestInterceptor {
@@ -26,14 +26,14 @@ export class UpdateInterceptor implements NestInterceptor {
     const req: Request = context.switchToHttp().getRequest<Request>()
 
     return next.handle().pipe(
-      tap(async (data: ResponseRO) => {
+      tap(async (data: BaseResult) => {
         const updateAppDto: UpdateAppDto = plainToClass(UpdateAppDto, req.body)
         const updateLogDto: CreateUpdateLogDto = plainToClass(
           CreateUpdateLogDto,
           Object.assign(updateAppDto, {
             uuid: updateAppDto.systemInfo.uuid,
             message: data.message,
-            statusCode: data.statusCode,
+            statusCode: data.code,
           })
         )
 

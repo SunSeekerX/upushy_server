@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:07:16
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 00:34:49
+ * @LastEditTime: 2021-09-14 17:48:38
  */
 
 import { Module, NestModule, MiddlewareConsumer, Global, CacheModule } from '@nestjs/common'
@@ -15,10 +15,7 @@ import { EnvType } from 'src/shared/enums'
 
 import { UserService } from './user.service'
 import { UserController } from './user.controller'
-import { UserEntity } from './user.entity'
-
-// import { AuthMiddleware } from 'src/shared/middleware/auth.middleware'
-import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
+import { UserEntity } from './entities'
 
 @Global()
 @Module({
@@ -36,9 +33,4 @@ import { SignMiddleware } from 'src/shared/middleware/sign.middleware'
   controllers: [UserController],
   exports: [UserService],
 })
-// export class UserModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer): void {
-//     consumer.apply(SignMiddleware).forRoutes(UserController)
-//   }
-// }
 export class UserModule {}

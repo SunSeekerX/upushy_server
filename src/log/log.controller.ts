@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-11-03 10:27:59
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 13:28:17
+ * @LastEditTime: 2021-09-14 18:35:42
  */
 
 import { Controller, Get, Query } from '@nestjs/common'
@@ -18,7 +18,7 @@ import {
 import { LogService } from './log.service'
 
 import { QueryLoginLogDto } from './dto/index'
-import { ResponseRO } from 'src/shared/interface/response.interface'
+import { BaseResult } from 'src/shared/interface/response.interface'
 
 @ApiBearerAuth()
 @ApiTags('Log')
@@ -32,7 +32,7 @@ export class LogController {
   @Get('login')
   async getLoginLogs(
     @Query() queryLoginLogDto: QueryLoginLogDto,
-  ): Promise<ResponseRO> {
+  ): Promise<BaseResult> {
     const count = await this.logService.getLoginLogCount()
     let res = []
     const orderCondition = {}
@@ -49,8 +49,7 @@ export class LogController {
     }
 
     return {
-      success: true,
-      statusCode: 200,
+      code: 200,
       message: '查询成功',
       data: {
         total: count,

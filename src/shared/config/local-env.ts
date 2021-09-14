@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 12:49:06
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 20:53:46
+ * @LastEditTime: 2021-09-14 16:39:22
  */
 
 import { IsNotEmpty, IsNumber, Max, Min, ValidateIf } from 'class-validator'
@@ -50,9 +50,8 @@ export default class LocalEnv {
    * Api 加密私钥
    */
   @Expose()
-  @ValidateIf((o) => !emptyList.includes(o.API_SIGN_RSA_PRIVATE_KEY))
   @IsNotEmpty()
-  readonly API_SIGN_RSA_PRIVATE_KEY: string
+  readonly API_SIGN_RSA_PRIVATE_KEY_BASE64: string
 
   @Expose()
   @ValidateIf((o) => !emptyList.includes(o.API_SIGN_TIME_OUT))

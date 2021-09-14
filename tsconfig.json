@@ -12,6 +12,5 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "typeRoots" : ["./node_modules/@types", "./typings"]
   }
 }

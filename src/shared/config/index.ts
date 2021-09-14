@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:40:07
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 20:18:40
+ * @LastEditTime: 2021-09-14 18:00:18
  */
 
 import { load as yamlLoad } from 'js-yaml'
@@ -20,7 +20,7 @@ import LocalEnv from 'src/shared/config/local-env'
 const TAG = 'Environment'
 const emptyList = [null, undefined]
 
-console.log(chalk.white(`${TAG}: 准备验证环境变量配置...`))
+console.log(chalk.white(`${TAG}: 验证环境变量配置...`))
 
 const envPath: string = process.env.NODE_ENV
 if (!ENVS.includes(envPath)) {

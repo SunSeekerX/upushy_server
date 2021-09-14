@@ -53,10 +53,14 @@
 1. 【重要】升级 nestjs 到 8
 2. 【重要】移除 `nestjs-redis` 包，改为官方推荐方式实现 redis 访问
 3. 【重要】拆分基础模块到 `/basic` 下，`uni-pushy-admin` 项目 api 路径有修改
-4. 代码结构优化
-5. 注释优化
+4. 【重要】环境变量配置 `API_SIGN_RSA_PRIVATE_KEY` 变更为 `API_SIGN_RSA_PRIVATE_KEY_BASE64`
+5. 【重要】移除默认 `API_SIGN_RSA_PRIVATE_KEY` 配置
+6. 代码结构优化
+7. 注释优化
 
 **Bug 修复 （Bug Fixes）**
+
+1. 修复项目列表分页数据不正确的问题
 
 ### 0.1.0
 

@@ -1,9 +1,9 @@
 /**
- * @name:
+ * Token 校验中间件
  * @author: SunSeekerX
  * @Date: 2020-07-10 14:55:14
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-13 20:29:19
+ * @LastEditTime: 2021-09-14 17:41:49
  */
 
 import { NestMiddleware, HttpStatus, Injectable, HttpException } from '@nestjs/common'
@@ -15,16 +15,18 @@ import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware {
+export class TokenAuthMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void | Error> {
+    const { method, originalUrl, ip } = req
     const authorization: string = req.headers.authorization
     if (!authorization) {
-      // No token
-      throw new HttpException('Not authorized.', HttpStatus.UNAUTHORIZED)
+      // 无 Token
+      throw new HttpException(`code: ${
+        HttpStatus.FORBIDDEN
+      } | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 未登录！`, HttpStatus.UNAUTHORIZED)
     }
-    // Get token
     const token = authorization.split(' ')[1]
 
     try {
@@ -39,7 +41,7 @@ export class AuthMiddleware implements NestMiddleware {
       res.json({
         success: false,
         statusCode: 401,
-        message: 'Token expired',
+        message: '登录过期',
         errors: [error.message],
       })
       // throw new HttpException(error.message, HttpStatus.UNAUTHORIZED)

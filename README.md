@@ -26,7 +26,47 @@
 
 ## 📌 快速上手
 
-### Docker 部署
+### 开发
+
+**克隆仓库**
+
+```bash
+git clone https://github.com/SunSeekerX/uni-pushy-server.git
+```
+
+**进入项目目录**
+
+```bash
+cd uni-pushy-server/
+```
+
+**安装依赖 ，项目根目录下执行**
+
+国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](https://sunseekerx.yoouu.cn/front-end/npm/#📂-tbify)
+
+```bash
+npm i
+```
+
+**配置环境变量，根目录下执行**
+
+```bash
+cp env.example.yaml env.development.yaml
+```
+
+**打开 `env.development.yaml`，填写相关环境变量，参考 [Docker 部署](#Docker-部署)**
+
+**启动**
+
+```bash
+npm run serve
+```
+
+### 部署
+
+#### Docker 部署
+
+这里演示的是我打包的镜像。自行打包镜像查看 [Docker 构建](#Docker 构建)
 
 **拉取镜像**
 
@@ -78,6 +118,8 @@ REDIS_PASSWORD: 'password'
 
 默认端口为 `3000`，如果你通过配置文件改变了端口号，需要映射为你更新过后的端口。
 
+> 如果无法同步数据库表格，请配置不自动同步数据库表格 `DB_TABLE_SYNC`，到项目根目录下找到 `sql` 文件夹下最新的 `sql` 脚本手动执行一遍。然后再启动容器!
+
 ```shell
 # 带面板
 docker run -d -p 3000:3000 --name=upushy -v /etc/upushy/env.production.yaml:/app/env.production.yaml --restart=always sunseekerx/upushy
@@ -85,11 +127,7 @@ docker run -d -p 3000:3000 --name=upushy -v /etc/upushy/env.production.yaml:/app
 docker run -d -p 3000:3000 --name=upushy-server -v /etc/upushy/env.production.yaml:/app/env.production.yaml --restart=always sunseekerx/upushy-server
 ```
 
-> 如果无法同步数据库表格，请配置不自动同步数据库表格 `DB_TABLE_SYNC`，到项目根目录下找到 `sql` 文件夹下最新的 `sql` 脚本手动执行一遍。然后在启动容器
-
-### Pm2 部署
-
-[pm2 官网](https://pm2.keymetrics.io/docs/usage/quick-start/)
+#### Pm2 部署
 
 **克隆项目**
 
@@ -97,74 +135,32 @@ docker run -d -p 3000:3000 --name=upushy-server -v /etc/upushy/env.production.ya
 
 ```bash
 npm install pm2@latest -g
-# or
-yarn global add pm2
 ```
 
 **安装运行依赖**
 
 ```shell
 npm install --production
-# or
-yarn --prod
 ```
 
-**新建配置文件 `uni-pushy-server/env.production.yaml`**
+**配置环境变量，根目录下执行**
 
 需要填写的项查看 [Docker 部署](#Docker-部署)
+
+```shell
+cp env.example.yaml env.production.yaml
+```
 
 **编译项目**
 
 ```bash
 npm run build
-# or
-yarn build
 ```
 
 **启动项目**
 
 ```bash
 pm2 start ecosystem.config.js --env production
-```
-
-### 开发
-
-**克隆仓库**
-
-```bash
-git clone https://github.com/SunSeekerX/uni-pushy-server.git
-```
-
-**进入项目目录**
-
-```bash
-cd uni-pushy-server/
-```
-
-**安装依赖**
-
-```bash
-npm i
-# or
-yarn
-```
-
-> 国内网络安装过慢可以安装 `tbify`， 使用说明：[tbify](https://doc.yoouu.cn/front-end/npm/#%F0%9F%93%8C-%E5%8A%A0%E9%80%9F%E4%B8%8B%E8%BD%BD-tbify)
-
-**配置环境变量，根目录下执行**
-
-```bash
-mv env.development.yaml env.development.yaml
-```
-
-**打开 `env.development.yaml`，填写相关环境变量，参考 [Docker 部署](#Docker-部署)**
-
-**启动**
-
-```bash
-npm run serve
-# or
-yarn serve
 ```
 
 ### Docker 构建
@@ -389,10 +385,6 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 
    > ETag x-oss-request-id
 
-## 📌 更新日志
-
-[CHANGELOG](./CHANGELOG.md)
-
 ## 📌 uni-app 接入
 
 请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
@@ -401,7 +393,7 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 
 有一部分同学需要我的后台设计思路，想集成到自己的后台。事实上现在的热更新后台功能确实不是很强大。这里提供一下后台开发的一些思路和怎么构建一个后台和 `uni-pushy-client` 进行配合工作。
 
-### 检查更新接口
+**检查更新接口**
 
 `uni-pushy-client` 只需要一个接口就可以进行工作了。[update](https://api.uni-pushy.yoouu.cn/docs/#/Basic/AppController_update)，也就是这个接口。看下请求参数和返回信息
 
@@ -483,6 +475,10 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 `status`
 
 资源状态（0：禁用 1：启用）
+
+## 📌 更新日志
+
+[CHANGELOG](./CHANGELOG.md)
 
 ## 📌 FAQ
 
