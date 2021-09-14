@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-22 11:08:40
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:13:06
+ * @LastEditTime: 2021-09-14 21:59:31
  */
 
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
@@ -15,7 +15,7 @@ import { join } from 'path'
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
 
-import { LogInterceptor } from 'src/shared/interceptor/log.interceptor'
+import { LogInterceptor } from 'src/shared/interceptor'
 
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
@@ -23,7 +23,7 @@ import { SourceModule } from './source/source.module'
 import { LogModule } from './log/log.module'
 import { CacheModule } from './cache/cache.module'
 import { BasicModule } from './basic/basic.module'
-import { ApiSignMiddleware } from 'src/shared/middleware'
+// import { ApiSignMiddleware } from 'src/shared/middleware'
 
 @Module({
   imports: [
@@ -60,9 +60,9 @@ import { ApiSignMiddleware } from 'src/shared/middleware'
     },
   ],
 })
-// export class AppModule {}
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX', EnvType.string)}/basic/update`, method: RequestMethod.POST }).forRoutes('*')
-  }
-}
+export class AppModule {}
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer): void {
+//     consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX', EnvType.string)}/basic/update`, method: RequestMethod.POST }).forRoutes('*')
+//   }
+// }

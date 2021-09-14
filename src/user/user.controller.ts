@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-06-25 23:08:25
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:33:09
+ * @LastEditTime: 2021-09-14 20:52:38
  */
 
 import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors } from '@nestjs/common'
@@ -16,7 +16,7 @@ import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 
 import { BaseResult } from 'src/shared/interface/response.interface'
-import { LoggingInterceptor } from 'src/shared/interceptor/logging.interceptor'
+import { LoginInterceptor } from 'src/shared/interceptor'
 import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
@@ -56,7 +56,7 @@ export class UserController {
         ttl: 60,
       })
       return {
-        code: 200,
+        statusCode: 200,
         message: '获取验证码成功',
         data: {
           img: captcha.data,
@@ -65,7 +65,7 @@ export class UserController {
       }
     } catch (error) {
       return {
-        code: 400,
+        statusCode: 400,
         message: '获取验证码失败',
         errors: [error.message],
       }
@@ -78,7 +78,7 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<BaseResult> {
     if (!createUserDto.imgCaptcha) {
       return {
-        code: 400,
+        statusCode: 400,
         message: '非法请求',
       }
     }
@@ -93,14 +93,14 @@ export class UserController {
 
         if (user) {
           return {
-            code: 200,
+            statusCode: 200,
             message: '注册成功，请登录',
             data: user,
           }
         }
       } else {
         return {
-          code: 400,
+          statusCode: 400,
           message: '验证码错误',
         }
       }
@@ -108,7 +108,7 @@ export class UserController {
       Logger.error(error.message)
 
       return {
-        code: 400,
+        statusCode: 400,
         message: error.message,
       }
     }
@@ -118,11 +118,11 @@ export class UserController {
   @ApiOperation({ summary: '用户登录' })
   @HttpCode(200)
   @Post('/login')
-  @UseInterceptors(LoggingInterceptor)
+  @UseInterceptors(LoginInterceptor)
   async login(@Body() loginUserDto: LoginUserDto): Promise<BaseResult> {
     if (!loginUserDto.loginCaptchaKey) {
       return {
-        code: 400,
+        statusCode: 400,
         message: '非法请求',
       }
     }
@@ -133,7 +133,7 @@ export class UserController {
       const loginCaptchaText = await this.cacheManager.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
       if (!loginCaptchaText) {
         return {
-          code: 400,
+          statusCode: 400,
           message: '验证码已失效',
         }
       }
@@ -143,7 +143,7 @@ export class UserController {
 
         if (!_user) {
           return {
-            code: 200,
+            statusCode: 200,
             message: `${loginUserDto.username}不存在`,
           }
         }
@@ -155,7 +155,7 @@ export class UserController {
           // const user = { token, username, nickname }
 
           return {
-            code: 200,
+            statusCode: 200,
             message: '登录成功',
             data: {
               token,
@@ -167,18 +167,18 @@ export class UserController {
             },
           }
         } else {
-          return {  code: 200, message: '密码错误' }
+          return { statusCode: 200, message: '密码错误' }
         }
       } else {
         return {
-          code: 400,
+          statusCode: 400,
           message: '验证码错误',
         }
       }
     } catch (error) {
       Logger.error(error.message)
       return {
-        code: 400,
+        statusCode: 400,
         message: '登录失败',
         errors: error.message,
       }
@@ -204,7 +204,7 @@ export class UserController {
       })
 
       return {
-        code: 200,
+        statusCode: 200,
         message: '获取验证码成功',
         data: {
           img: captcha.data,
@@ -213,7 +213,7 @@ export class UserController {
       }
     } catch (error) {
       return {
-        code: 400,
+        statusCode: 400,
         message: '获取验证码失败',
         errors: [error.message],
       }
@@ -239,13 +239,13 @@ export class UserController {
       // }
       const token = await this.userService.generateJWT(user)
       return {
-        code: 200,
+        statusCode: 200,
         message: 'Success',
         data: token,
       }
     } catch (error) {
       return {
-        code: 401,
+        statusCode: 401,
         message: 'refreshToken 过期',
         errors: [error.message],
       }

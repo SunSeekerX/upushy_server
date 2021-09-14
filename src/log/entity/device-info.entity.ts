@@ -1,10 +1,12 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm'
+/**
+ * 设备信息日志实体
+ * @author: SunSeekerX
+ * @Date: 2021-02-09 13:28:49
+ * @LastEditors: SunSeekerX
+ * @LastEditTime: 2021-09-14 22:21:39
+ */
+
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('app_log_device_info')
 export class DeviceInfoLogEntity {

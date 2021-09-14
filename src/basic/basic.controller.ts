@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2021-09-13 23:30:57
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:36:55
+ * @LastEditTime: 2021-09-14 22:24:43
  */
 
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common'
@@ -13,7 +13,7 @@ import * as publicIp from 'public-ip'
 import * as internalIp from 'internal-ip'
 import * as OSS from 'ali-oss'
 import * as nodeDiskInfo from 'node-disk-info'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { getEnv } from 'src/shared/config'
 import { EnvType } from 'src/shared/enums'
@@ -21,13 +21,14 @@ import { BaseResult } from 'src/shared/interface/response.interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from 'src/project/project.service'
 import { SourceService } from 'src/source/source.service'
-import { UpdateInterceptor } from 'src/shared/interceptor/update.interceptor'
+import { UpdateInterceptor } from 'src/shared/interceptor'
 
 const sts = new OSS.STS({
   accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID', EnvType.string),
   accessKeySecret: getEnv('ALIYUN_RAM_ACCESS_KEY_SECRET', EnvType.string),
 })
 
+@ApiBearerAuth()
 @ApiTags('Basic')
 @Controller('basic')
 export class BasicController {
@@ -66,7 +67,7 @@ export class BasicController {
         )
 
         return {
-          code: 200,
+          statusCode: 200,
           message: '成功',
           data: {
             ...token.credentials,
@@ -76,7 +77,7 @@ export class BasicController {
         }
       } catch (e) {
         return {
-          code: e.status,
+          statusCode: e.status,
           message: e.message,
         }
       }
@@ -98,7 +99,7 @@ export class BasicController {
     const project = await this.projectService.findOne(projectId)
     if (!project) {
       return {
-        code: 200,
+        statusCode: 200,
         message: '项目不存在',
       }
     }
@@ -132,7 +133,7 @@ export class BasicController {
     // 存入redis
 
     return {
-      code: 200,
+      statusCode: 200,
       message: '成功',
       data: {
         wgt,
@@ -147,7 +148,7 @@ export class BasicController {
   @Get('config')
   async getConfig(): Promise<BaseResult> {
     return {
-      code: 200,
+      statusCode: 200,
       message: '成功',
       data: {
         serviceTime: new Date().getTime(),
@@ -166,7 +167,7 @@ export class BasicController {
       const internalIpIpv4 = await internalIp.v4()
 
       return {
-        code: 200,
+        statusCode: 200,
         message: '成功',
         data: {
           serviceTime: new Date().getTime(),
@@ -220,7 +221,7 @@ export class BasicController {
       }
     } catch (error) {
       return {
-        code: 500,
+        statusCode: 500,
         message: error.message,
       }
     }

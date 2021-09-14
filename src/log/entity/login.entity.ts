@@ -1,18 +1,12 @@
 /**
- * @name:
+ * 登录日志实体
  * @author: SunSeekerX
  * @Date: 2020-10-28 00:06:19
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2020-11-03 12:09:57
+ * @LastEditTime: 2021-09-14 22:21:30
  */
 
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('app_log_login')
 export class LoginLogEntity {

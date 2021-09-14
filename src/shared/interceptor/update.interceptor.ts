@@ -1,9 +1,9 @@
 /**
- * @name:
+ * 更新记录拦截器
  * @author: SunSeekerX
  * @Date: 2020-11-03 10:57:32
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:34:16
+ * @LastEditTime: 2021-09-14 20:51:18
  */
 
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
@@ -33,7 +33,7 @@ export class UpdateInterceptor implements NestInterceptor {
           Object.assign(updateAppDto, {
             uuid: updateAppDto.systemInfo.uuid,
             message: data.message,
-            statusCode: data.code,
+            statusCode: data.statusCode,
           })
         )
 

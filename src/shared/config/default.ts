@@ -3,13 +3,18 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:02:12
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 16:33:42
+ * @LastEditTime: 2021-09-14 20:39:47
  */
 
 /**
  * 环境变量名配置
  */
 export const ENVS = ['development', 'test', 'production', 'stage', 'prod', 'staging']
+
+/**
+ * 是否真实环境
+ */
+export const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
 /**
  * 默认运行端口

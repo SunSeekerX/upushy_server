@@ -1,9 +1,9 @@
 /**
- * @name:
+ * 登陆拦截器
  * @author: SunSeekerX
  * @Date: 2020-10-28 15:56:31
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-07-09 16:35:50
+ * @LastEditTime: 2021-09-14 20:00:21
  */
 
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Logger } from '@nestjs/common'
@@ -16,7 +16,7 @@ import { getIPLocation } from 'src/shared/utils/index'
 import { getClientIp } from 'src/shared/utils/request-ip'
 
 @Injectable()
-export class LoggingInterceptor implements NestInterceptor {
+export class LoginInterceptor implements NestInterceptor {
   constructor(private readonly logService: LogService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

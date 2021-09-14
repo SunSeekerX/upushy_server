@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-07-04 17:58:24
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:39:09
+ * @LastEditTime: 2021-09-14 20:51:28
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
@@ -56,7 +56,7 @@ export class SourceController {
     const project = await this.projectEntity.findOne(createSourceDto.projectId)
     // 检查项目是否存在
     if (!project) {
-      return { code: 200, message: '项目不存在' }
+      return { statusCode: 200, message: '项目不存在' }
     }
 
     // 相同类型的资源版本号必须递增
@@ -67,7 +67,7 @@ export class SourceController {
 
     if (createSourceDto.versionCode <= maxVersionCode) {
       return {
-        code: 400,
+        statusCode: 400,
         message: `最低版本号必须大于：${maxVersionCode}`,
       }
     }
@@ -86,20 +86,20 @@ export class SourceController {
             url: `${OSS_BASE_URL}/${res.url}`,
           })
         return {
-          code: 200,
+          statusCode: 200,
           message: '操作成功',
           data: res,
         }
       } else {
         return {
-          code: 400,
+          statusCode: 400,
           message: '原生版本资源不存在',
         }
       }
     } else {
       if (createSourceDto.nativeVersionCode !== 0) {
         return {
-          code: 400,
+          statusCode: 400,
           message: '原生资源无原生版本号',
         }
       }
@@ -109,7 +109,7 @@ export class SourceController {
           url: `${OSS_BASE_URL}/${res.url}`,
         })
       return {
-        code: 200,
+        statusCode: 200,
         message: '操作成功',
         data: res,
       }
@@ -137,7 +137,7 @@ export class SourceController {
       })
       if (count !== 0) {
         return {
-          code: 400,
+          statusCode: 400,
           message: '有wgt资源依赖该资源，无法删除',
         }
       }
@@ -145,9 +145,9 @@ export class SourceController {
 
     if (source) {
       const res = await this.sourceService.deleteSource(deleteSourceDto)
-      return { code: 200, message: '操作成功', data: res }
+      return { statusCode: 200, message: '操作成功', data: res }
     } else {
-      return { code: 200, message: '资源不存在' }
+      return { statusCode: 200, message: '资源不存在' }
     }
   }
 
@@ -167,7 +167,7 @@ export class SourceController {
     const nativeVersionCode: number = updateSourceDto.nativeVersionCode || source.nativeVersionCode
 
     if (!source) {
-      return { code: 200, message: '资源不存在' }
+      return { statusCode: 200, message: '资源不存在' }
     }
 
     // 相同类型的资源版本号必须递增
@@ -178,7 +178,7 @@ export class SourceController {
 
     if (versionCode !== source.versionCode && versionCode <= maxVersionCode) {
       return {
-        code: 400,
+        statusCode: 400,
         message: `最低版本号必须大于：${maxVersionCode}`,
       }
     }
@@ -192,27 +192,27 @@ export class SourceController {
       if (nativeSource) {
         const res = await this.sourceService.updateSource(updateSourceDto)
         return {
-          code: 200,
+          statusCode: 200,
           message: '更新成功',
           data: res,
         }
       } else {
         return {
-          code: 400,
+          statusCode: 400,
           message: '原生版本资源不存在',
         }
       }
     } else {
       if (nativeVersionCode && nativeVersionCode !== 0) {
         return {
-          code: 400,
+          statusCode: 400,
           message: '原生资源无原生版本号',
         }
       }
 
       const res = await this.sourceService.updateSource(updateSourceDto)
       return {
-        code: 200,
+        statusCode: 200,
         message: '更新成功',
         data: res,
       }
@@ -255,7 +255,7 @@ export class SourceController {
     }
 
     return {
-      code: 200,
+      statusCode: 200,
       message: '查询成功',
       data: {
         total,
@@ -287,7 +287,7 @@ export class SourceController {
     })
 
     return {
-      code: 200,
+      statusCode: 200,
       message: '查询成功',
       data: {
         android: latestAndroid?.versionCode,

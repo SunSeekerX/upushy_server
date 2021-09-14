@@ -1,19 +1,14 @@
 /**
- * @name:
+ * 日志控制器
  * @author: SunSeekerX
  * @Date: 2020-11-03 10:27:59
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:35:42
+ * @LastEditTime: 2021-09-14 22:20:49
  */
 
 import { Controller, Get, Query } from '@nestjs/common'
 
-import {
-  ApiResponse,
-  ApiOperation,
-  ApiTags,
-  ApiBearerAuth,
-} from '@nestjs/swagger'
+import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { LogService } from './log.service'
 
@@ -30,26 +25,20 @@ export class LogController {
   @ApiOperation({ summary: '获取登录日志' })
   @ApiResponse({ status: 200, description: '获取成功.' })
   @Get('login')
-  async getLoginLogs(
-    @Query() queryLoginLogDto: QueryLoginLogDto,
-  ): Promise<BaseResult> {
+  async getLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto): Promise<BaseResult> {
     const count = await this.logService.getLoginLogCount()
     let res = []
     const orderCondition = {}
-    queryLoginLogDto.sortKey &&
-      (orderCondition[queryLoginLogDto.sortKey] = queryLoginLogDto.order)
+    queryLoginLogDto.sortKey && (orderCondition[queryLoginLogDto.sortKey] = queryLoginLogDto.order)
 
     if (queryLoginLogDto.pageNum && queryLoginLogDto.pageSize) {
-      res = await this.logService.queryLoginLog(
-        queryLoginLogDto,
-        orderCondition,
-      )
+      res = await this.logService.queryLoginLog(queryLoginLogDto, orderCondition)
     } else {
       res = await this.logService.findAllLoginLog()
     }
 
     return {
-      code: 200,
+      statusCode: 200,
       message: '查询成功',
       data: {
         total: count,

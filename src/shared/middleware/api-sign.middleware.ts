@@ -3,7 +3,7 @@
  * @author: SunSeekerX
  * @Date: 2020-08-17 15:18:20
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 17:57:58
+ * @LastEditTime: 2021-09-14 22:09:50
  */
 
 import { Injectable, NestMiddleware, HttpException, HttpStatus, Logger } from '@nestjs/common'
@@ -38,9 +38,15 @@ export class ApiSignMiddleware implements NestMiddleware {
     const { method, originalUrl, ip } = req
     const { nonce = '', sign = '' } = req.headers
     if (!nonce || !sign) {
-      this.logger.error(`code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 非法请求`)
+      this.logger.warn(
+        `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 非法请求`
+      )
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
     }
+    this.logger.warn(
+      `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 非法请求`
+    )
+    throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
 
     try {
       const decrypted: string = rsaDecrypt(nodeRSAObj, nonce as string)
@@ -51,14 +57,10 @@ export class ApiSignMiddleware implements NestMiddleware {
        */
       const TDOA: number = new Date().getTime() - Number(nonceArr[1])
       if (TDOA > API_SIGN_TIME_OUT * 1000) {
-        throw new HttpException(
-          `code: ${
-            HttpStatus.FORBIDDEN
-          } | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 请求过期,请求到达时间：${(
-            TDOA / 1000
-          ).toFixed(2)}s`,
-          HttpStatus.FORBIDDEN
+        this.logger.warn(
+          `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 非法请求`
         )
+        throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
 
       /**
@@ -66,10 +68,10 @@ export class ApiSignMiddleware implements NestMiddleware {
        */
       const uuid = await this.cacheManager.get(`ApiSign:Nonce:${nonceArr[0]}`)
       if (uuid) {
-        throw new HttpException(
-          `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: ${API_SIGN_TIME_OUT}s 内重复请求`,
-          HttpStatus.FORBIDDEN
+        this.logger.warn(
+          `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: ${API_SIGN_TIME_OUT}s 内重复请求`
         )
+        throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
       await this.cacheManager.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], {
         ttl: API_SIGN_TIME_OUT,
@@ -106,13 +108,15 @@ export class ApiSignMiddleware implements NestMiddleware {
       }
       const Sign = md5(keys.sort().toString())
       if (sign !== Sign) {
-        throw new HttpException(
-          `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 参数被篡改`,
-          HttpStatus.FORBIDDEN
+        this.logger.warn(
+          `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 参数被篡改`
         )
+        throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
     } catch (error) {
-      Logger.error(error.message)
+      this.logger.error(
+        `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: ${error.message}`
+      )
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
     }
     next()
