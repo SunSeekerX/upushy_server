@@ -122,7 +122,7 @@ export async function getIPLocation(ip: string): Promise<any> {
   if (isInternalIPAdress(ip)) {
     return '内网IP'
   } else {
-    const res = await axios.get(`${IP_URL}?ip=${ip}&json=true`, {
+    const res: any = await axios.get(`${IP_URL}?ip=${ip}&json=true`, {
       responseType: 'stream',
     })
     return new Promise((resolve, reject) => {
