@@ -38,7 +38,7 @@ async function bootstrap() {
       // disableErrorMessages: true,
     })
   )
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter())
   app.use(
     helmet({
       contentSecurityPolicy: false,
@@ -49,7 +49,7 @@ async function bootstrap() {
 
   let docTips = ''
   let runningTips = `
-    App running at:
+    Server running at:
       - Local:   ${chalk.green(`http://localhost:${port}/${globalPrefix}/`)}
       - Network: ${chalk.green(`http://${ipv4}:${port}/${globalPrefix}/`)}
     Client running at:
