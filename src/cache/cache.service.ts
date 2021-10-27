@@ -13,7 +13,7 @@ import { Cache } from 'cache-manager'
 export class CacheService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
-  getCacheManager(): Cache {
+  public getCacheManager(): Cache {
     return this.cacheManager
   }
 }
