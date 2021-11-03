@@ -70,6 +70,7 @@ export class AppController {
     // 存入redis
 
     return {
+      success: true,
       statusCode: 200,
       message: '成功',
       data: {

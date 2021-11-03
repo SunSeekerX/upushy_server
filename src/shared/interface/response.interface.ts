@@ -12,6 +12,7 @@ import { HttpStatus } from '@nestjs/common'
  * 基础响应接口
  */
 export interface BaseResult {
+  success?: boolean
   statusCode: HttpStatus | number
   message: string
   data?: Record<string, any> | string | number
