@@ -15,12 +15,6 @@ export class CreateDeviceInfoLogDto {
   })
   readonly uuid?: string
 
-  // @ApiProperty({
-  //   type: String,
-  //   description: '原生版本名',
-  // })
-  // readonly nativeVersion: string
-
   @ApiProperty({
     type: String,
     description: '手机品牌',

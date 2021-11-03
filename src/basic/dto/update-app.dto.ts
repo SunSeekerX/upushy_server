@@ -66,6 +66,6 @@ export class UpdateAppDto {
     type: CreateDeviceInfoLogDto,
     description: '系统信息',
   })
-  @ValidateNested()
+  // @ValidateNested()
   readonly systemInfo: CreateDeviceInfoLogDto
 }
