@@ -89,7 +89,8 @@ export class BasicController {
   // 检查更新
   @ApiOperation({ summary: '检查更新' })
   @HttpCode(200)
-  @Post('update')
+  // @Post('update')
+  @Post('/update')
   @UseInterceptors(UpdateInterceptor)
   async update(
     @Body()

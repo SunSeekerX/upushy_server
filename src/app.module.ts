@@ -17,6 +17,7 @@ import { EnvType } from 'src/shared/enums'
 
 import { LogInterceptor } from 'src/shared/interceptor'
 
+import { AppController } from './app.controller'
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
 import { SourceModule } from './source/source.module'
@@ -59,6 +60,7 @@ import { BasicModule } from './basic/basic.module'
       useClass: LogInterceptor,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
 // export class AppModule implements NestModule {
