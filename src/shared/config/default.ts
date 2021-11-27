@@ -12,7 +12,7 @@
 export const ENVS = ['development', 'test', 'production', 'stage', 'prod', 'staging']
 
 /**
- * 是否真实环境
+ * 是否正式环境
  */
 export const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
