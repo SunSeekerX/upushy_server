@@ -7,7 +7,6 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common'
-import { Cron } from '@nestjs/schedule'
 
 import { ProjectService } from '../project/project.service'
 import { SourceService } from '../source/source.service'
@@ -16,10 +15,7 @@ import { SourceService } from '../source/source.service'
 export class TasksService {
   private readonly logger = new Logger(TasksService.name)
 
-  constructor(
-    private readonly sourceService: SourceService,
-    private readonly projectService: ProjectService,
-  ) {}
+  constructor(private readonly sourceService: SourceService, private readonly projectService: ProjectService) {}
 
   // @Cron('*/3 * * * * *')
   // async handleCron() {

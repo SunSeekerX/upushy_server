@@ -6,7 +6,7 @@
  * @LastEditTime: 2021-09-14 20:52:38
  */
 
-import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors } from '@nestjs/common'
+import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors, HttpStatus } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
 import { Cache } from 'cache-manager'
@@ -78,37 +78,30 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<BaseResult> {
     if (!createUserDto.imgCaptcha) {
       return {
-        statusCode: 400,
+        statusCode: HttpStatus.FORBIDDEN,
         message: '非法请求',
       }
     }
-
     try {
-      // const redisClient = await this._getRedisClient()
-      // const captchaText = await redisClient.get(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
       const captchaText = await this.cacheManager.get<string>(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
-
       if (captchaText === createUserDto.imgCaptcha) {
         const user = await this.userService.create(createUserDto)
-
         if (user) {
           return {
             statusCode: 200,
             message: '注册成功，请登录',
-            data: user,
           }
         }
       } else {
         return {
-          statusCode: 400,
+          statusCode: HttpStatus.FORBIDDEN,
           message: '验证码错误',
         }
       }
     } catch (error) {
       Logger.error(error.message)
-
       return {
-        statusCode: 400,
+        statusCode: HttpStatus.FORBIDDEN,
         message: error.message,
       }
     }
@@ -133,7 +126,7 @@ export class UserController {
       const loginCaptchaText = await this.cacheManager.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
       if (!loginCaptchaText) {
         return {
-          statusCode: 400,
+          statusCode: HttpStatus.BAD_REQUEST,
           message: '验证码已失效',
         }
       }
@@ -143,7 +136,7 @@ export class UserController {
 
         if (!_user) {
           return {
-            statusCode: 200,
+            statusCode: HttpStatus.NOT_FOUND,
             message: `${loginUserDto.username}不存在`,
           }
         }
@@ -167,18 +160,18 @@ export class UserController {
             },
           }
         } else {
-          return { statusCode: 200, message: '密码错误' }
+          return { statusCode: HttpStatus.FORBIDDEN, message: '密码错误' }
         }
       } else {
         return {
-          statusCode: 400,
+          statusCode: HttpStatus.FORBIDDEN,
           message: '验证码错误',
         }
       }
     } catch (error) {
       Logger.error(error.message)
       return {
-        statusCode: 400,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: '登录失败',
         errors: error.message,
       }

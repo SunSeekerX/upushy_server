@@ -9,7 +9,7 @@
 module.exports = {
   apps: [
     {
-      name: 'uni-pushy-server',
+      name: 'upushy-server',
       script: 'dist/main.js',
       watch: false,
       min_uptime: '60s',

@@ -7,7 +7,7 @@
  */
 
 import * as chalk from 'chalk'
-import * as helmet from 'helmet'
+import helmet from 'helmet'
 import * as useragent from 'express-useragent'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
@@ -34,8 +34,6 @@ async function bootstrap() {
       whitelist: true,
       // 如果设置为true，尝试验证未知对象会立即失败
       forbidUnknownValues: true,
-      // 如果设置为true,验证错误不会返回给客户端
-      // disableErrorMessages: true,
     })
   )
   app.useGlobalFilters(new HttpExceptionFilter())
@@ -57,7 +55,7 @@ async function bootstrap() {
       - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`
 
   if (getEnv<boolean>('PRO_DOC', EnvType.boolean)) {
-    const options = new DocumentBuilder().setTitle('uni-pushy server').setVersion('1.0').addBearerAuth().build()
+    const options = new DocumentBuilder().setTitle('upushy server').setVersion('1.0').addBearerAuth().build()
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('/docs', app, document)
 

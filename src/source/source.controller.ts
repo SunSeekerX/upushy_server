@@ -53,7 +53,11 @@ export class SourceController {
       'ALIYUN_OSS_ENDPOINT',
       EnvType.string
     )}.aliyuncs.com`
-    const project = await this.projectEntity.findOne(createSourceDto.projectId)
+    const project = await this.projectEntity.findOne({
+      where: {
+        id: createSourceDto.projectId,
+      },
+    })
     // 检查项目是否存在
     if (!project) {
       return { statusCode: 200, message: '项目不存在' }
@@ -75,8 +79,10 @@ export class SourceController {
     // 检查wgt类型的原生类型是否存在
     if ([1, 2].includes(createSourceDto.type)) {
       const nativeSource = await this.sourceService.findOne({
-        type: createSourceDto.type + 2,
-        versionCode: createSourceDto.nativeVersionCode,
+        where: {
+          type: createSourceDto.type + 2,
+          versionCode: createSourceDto.nativeVersionCode,
+        },
       })
 
       if (nativeSource) {
@@ -126,14 +132,18 @@ export class SourceController {
   @Delete()
   async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult> {
     const source = await this.sourceService.findOne({
-      id: deleteSourceDto.id,
+      where: {
+        id: deleteSourceDto.id,
+      },
     })
 
     if ([3, 4].includes(source.type)) {
       const count: number = await this.sourceService.getSourceCount({
-        nativeVersionCode: source.versionCode,
-        type: source.type - 2,
-        projectId: source.projectId,
+        where: {
+          nativeVersionCode: source.versionCode,
+          type: source.type - 2,
+          projectId: source.projectId,
+        },
       })
       if (count !== 0) {
         return {
@@ -162,7 +172,9 @@ export class SourceController {
   async update(@Body() updateSourceDto: UpdateSourceDto): Promise<BaseResult> {
     const { id, versionCode } = updateSourceDto
     const source = await this.sourceService.findOne({
-      id,
+      where: {
+        id,
+      },
     })
     const nativeVersionCode: number = updateSourceDto.nativeVersionCode || source.nativeVersionCode
 
@@ -186,8 +198,10 @@ export class SourceController {
     // 检查wgt类型的原生类型是否存在
     if ([1, 2].includes(source.type)) {
       const nativeSource = await this.sourceService.findOne({
-        type: source.type + 2,
-        versionCode: nativeVersionCode,
+        where: {
+          type: source.type + 2,
+          versionCode: nativeVersionCode,
+        },
       })
       if (nativeSource) {
         const res = await this.sourceService.updateSource(updateSourceDto)
@@ -235,8 +249,10 @@ export class SourceController {
     )}.aliyuncs.com`
 
     const total = await this.sourceService.getSourceCount({
-      projectId,
-      type,
+      where: {
+        projectId,
+        type,
+      },
     })
 
     let res: Array<SourceEntity> = []

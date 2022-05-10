@@ -6,14 +6,7 @@
  * @LastEditTime: 2021-09-14 17:47:26
  */
 
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BeforeInsert,
-} from 'typeorm'
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert } from 'typeorm'
 import * as argon2 from 'argon2'
 import { guid } from 'src/shared/utils'
 
@@ -55,15 +48,16 @@ export class UserEntity {
   @Column({
     type: 'varchar',
     length: 320,
-    unique: true,
     comment: '邮箱',
+    nullable: true,
   })
-  email: string
+  email?: string
 
   @Column({
     comment: '昵称',
+    nullable: true,
   })
-  nickname: string
+  nickname?: string
 
   @CreateDateColumn({
     type: 'timestamp',

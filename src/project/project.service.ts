@@ -29,7 +29,11 @@ export class ProjectService {
 
   // 查找单个项目
   async findOne(id: string): Promise<ProjectEntity> {
-    return await this.projectEntity.findOne(id)
+    return await this.projectEntity.findOne({
+      where: {
+        id,
+      },
+    })
   }
 
   async findSource({ projectId }: QuerySourceDto) {

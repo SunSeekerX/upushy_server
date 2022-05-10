@@ -8,7 +8,7 @@
 
 import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, getRepository, DeleteResult } from 'typeorm'
+import { Repository, DeleteResult } from 'typeorm'
 import { validate } from 'class-validator'
 import * as jwt from 'jsonwebtoken'
 
@@ -32,29 +32,22 @@ export class UserService {
 
   // 查找单个用户
   async findOne({ username }: LoginUserDto): Promise<UserEntity> {
-    return (await this.userRepository.findOne({ username })) || null
+    return await this.userRepository.findOne({
+      where: { username },
+    })
   }
 
   // 创建用户
   async create({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
-    const qb = await getRepository(UserEntity)
-      .createQueryBuilder('user')
-      .where('user.username = :username', { username })
-      .orWhere('user.email = :email', { email })
-
-    const user = await qb.getOne()
-
+    const user = await this.userRepository.findOne({
+      where: { username },
+    })
     if (user) {
-      const errors = { username: 'Username must be unique.' }
-
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        // message: `用户名：${username}，或邮箱：${email}已存在`,
-        message: '用户名或邮箱已存在',
-        errors,
+        message: '用户名已存在',
       })
     }
-
     // create new user
     const newUser = new UserEntity()
     newUser.username = username
@@ -73,8 +66,10 @@ export class UserService {
   }
 
   // 更新用户
-  async update(id: number, dto: UpdateUserDto): Promise<UserEntity> {
-    const toUpdate = await this.userRepository.findOne(id)
+  async update(id: string, dto: UpdateUserDto): Promise<UserEntity> {
+    const toUpdate = await this.userRepository.findOne({
+      where: { id },
+    })
     delete toUpdate.password
 
     const updated = Object.assign(toUpdate, dto)
@@ -86,8 +81,12 @@ export class UserService {
     return await this.userRepository.delete({ username: username })
   }
 
-  async findById(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne(id)
+  async findById(id: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    })
     if (!user) {
       throw new HttpException({ errors: { User: ' not found' } }, 401)
     }

@@ -5,9 +5,10 @@
  * @LastEditors: SunSeekerX
  * @LastEditTime: 2021-09-14 22:20:58
  */
+
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindConditions, ObjectLiteral, Repository } from 'typeorm'
+import { FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm'
 
 import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entity/index'
 import { CreateLoginLogDto, QueryLoginLogDto, CreateDeviceInfoLogDto, CreateUpdateLogDto } from './dto/index'
@@ -40,7 +41,8 @@ export class LogService {
       [P in keyof LoginLogEntity]?: 'ASC' | 'DESC' | 1 | -1
     }
   ): Promise<LoginLogEntity[]> {
-    const conditions: FindConditions<LoginLogEntity>[] | FindConditions<LoginLogEntity> | ObjectLiteral | string = {}
+    const conditions: FindOptionsWhere<LoginLogEntity>[] | FindOptionsWhere<LoginLogEntity> | ObjectLiteral | string =
+      {}
 
     id && (conditions.id = id)
     return await this.loginLogRepository.find({
@@ -74,7 +76,7 @@ export class LogService {
   // 查询单个设备记录
   async querySingleDeviceInfo(
     // where: FindOneOptions<DeviceInfoLogEntity>,
-    where: FindConditions<DeviceInfoLogEntity>
+    where: FindOptionsWhere<DeviceInfoLogEntity>
   ): Promise<DeviceInfoLogEntity | null> {
     return await this.deviceInfoLogRepository.findOne({
       where,

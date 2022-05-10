@@ -20,31 +20,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
-    // const request = ctx.getRequest<Request>()
     const status = exception.getStatus()
     const exceptionResponse = exception.getResponse()
-    // const { method, url, ip } = request
-
     let message = 'Unknown'
-
     if (typeof exceptionResponse === 'string') {
       message = exceptionResponse
     } else if (exceptionResponse['error']) {
       message = exceptionResponse['error']
     }
-    // this.logger.warn(`code: ${status} | method: ${method} | path: ${url} | ip: ${ip}`)
     this.logger.debug(exceptionResponse)
-
-    // console.log({exception,response:exception.getResponse(), });
     const result = {
       statusCode: status,
       message,
     }
-
     if (!getEnv('IS_PROD', EnvType.boolean)) {
       result['origin'] = exceptionResponse
     }
-
     response.status(status).json(result)
   }
 }

@@ -28,15 +28,13 @@ export class CreateUserDto {
     type: String,
     description: '邮箱',
   })
-  @IsNotEmpty()
-  readonly email: string
+  readonly email?: string
 
   @ApiProperty({
     type: String,
     description: '昵称',
   })
-  @IsNotEmpty()
-  readonly nickname: string
+  readonly nickname?: string
 
   @ApiProperty({
     type: String,

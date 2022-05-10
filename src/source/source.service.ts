@@ -1,39 +1,16 @@
-/**
- * @name:
- * @author: SunSeekerX
- * @Date: 2020-07-04 17:58:31
- * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 18:16:24
- */
-
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-  Repository,
-  getRepository,
-  DeleteResult,
-  Connection,
-  FindConditions,
-} from 'typeorm'
+import { Repository, getRepository, DeleteResult, FindManyOptions, FindOptionsOrder } from 'typeorm'
 
-import { ProjectEntity } from 'src/project/entities'
 import { SourceEntity } from './entities'
 
-import {
-  CreateSourceDto,
-  UpdateSourceDto,
-  DeleteSourceDto,
-  QuerySourceDto,
-} from './dto/index'
+import { CreateSourceDto, UpdateSourceDto, DeleteSourceDto, QuerySourceDto } from './dto/index'
 
 @Injectable()
 export class SourceService {
   constructor(
     @InjectRepository(SourceEntity)
-    private readonly sourceEntity: Repository<SourceEntity>,
-    @InjectRepository(ProjectEntity)
-    private readonly projectEntity: Repository<ProjectEntity>,
-    private readonly connection: Connection,
+    private readonly sourceEntity: Repository<SourceEntity>
   ) {}
 
   // 添加资源
@@ -51,7 +28,11 @@ export class SourceService {
 
   // 更新资源
   async updateSource(updateSourceDto: UpdateSourceDto): Promise<SourceEntity> {
-    const toUpdate = await this.sourceEntity.findOne(updateSourceDto.id)
+    const toUpdate = await this.sourceEntity.findOne({
+      where: {
+        id: updateSourceDto.id,
+      },
+    })
     const updated = Object.assign(toUpdate, updateSourceDto)
 
     return await this.sourceEntity.save(updated)
@@ -62,20 +43,19 @@ export class SourceService {
     const { max } = await getRepository(SourceEntity)
       .createQueryBuilder('app_source')
       .select('MAX(app_source.versionCode)', 'max')
-      .where(
-        'app_source.projectId = :projectId and app_source.type = :type and status = :status',
-        {
-          projectId,
-          type,
-          status,
-        },
-      )
+      .where('app_source.projectId = :projectId and app_source.type = :type and status = :status', {
+        projectId,
+        type,
+        status,
+      })
       .getRawOne()
 
     return await this.sourceEntity.findOne({
-      projectId,
-      versionCode: max,
-      type,
+      where: {
+        projectId,
+        versionCode: max,
+        type,
+      },
     })
   }
 
@@ -94,23 +74,19 @@ export class SourceService {
   }
 
   // 条件查找资源数量
-  async getSourceCount(
-    options?: FindConditions<SourceEntity>,
-  ): Promise<number> {
+  async getSourceCount(options?: FindManyOptions<SourceEntity>): Promise<number> {
     return await this.sourceEntity.count(options)
   }
 
   // 查找单个资源
-  async findOne(where: FindConditions<SourceEntity>): Promise<SourceEntity> {
+  async findOne(where: FindManyOptions<SourceEntity>): Promise<SourceEntity> {
     return await this.sourceEntity.findOne(where)
   }
 
   // 分页查找资源
   async querySource(
     { projectId, pageSize, pageNum, type }: QuerySourceDto,
-    orderCondition: {
-      [P in keyof SourceEntity]?: 'ASC' | 'DESC' | 1 | -1
-    },
+    orderCondition: FindOptionsOrder<SourceEntity>
   ): Promise<SourceEntity[]> {
     return await this.sourceEntity.find({
       take: pageSize,
@@ -126,9 +102,7 @@ export class SourceService {
   // 查找全部资源
   async querySourceAll(
     { projectId, type }: QuerySourceDto,
-    orderCondition: {
-      [P in keyof SourceEntity]?: 'ASC' | 'DESC' | 1 | -1
-    },
+    orderCondition: FindOptionsOrder<SourceEntity>
   ): Promise<SourceEntity[]> {
     return await this.sourceEntity.find({
       where: {
@@ -149,10 +123,7 @@ export class SourceService {
   }
 
   // 查找单类型全部资源数量
-  async querySourceTypeCount({
-    projectId,
-    type,
-  }: QuerySourceDto): Promise<number> {
+  async querySourceTypeCount({ projectId, type }: QuerySourceDto): Promise<number> {
     return await this.sourceEntity.count({
       where: {
         type,

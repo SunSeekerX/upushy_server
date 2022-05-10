@@ -17,7 +17,7 @@ import { join } from 'path'
 import { ENVS } from 'src/shared/config/default'
 import LocalEnv from 'src/shared/config/local-env'
 
-const TAG = 'Environment'
+const TAG = 'Env'
 const emptyList = [null, undefined]
 
 console.log(chalk.white(`${TAG}: 验证环境变量配置...`))

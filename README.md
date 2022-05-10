@@ -1,24 +1,24 @@
-# uni-pushy-server
+# upushy-server
 
 ## 📌 简介
 
-`uni-pushy` uni-app 热更新管理平台。简称 `upushy`。
+`upushy` uni-app 热更新管理平台。简称 `upushy`。
 
-这是 `uni-pushy` 的后端仓库。Github：[uni-pushy-server](https://github.com/SunSeekerX/uni-pushy-server)
+这是 `upushy` 的后端仓库。Github：[upushy-server](https://github.com/SunSeekerX/upushy-server)
 
 基于 `nestjs` +`typeorm`+`redis`+`mysql`+`jsonwebtoken`+`class-validator`+`restful`。
 
-**配套客户端 SDK**：**[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)**
+**配套客户端 SDK**：**[uni-pushy-client](https://github.com/SunSeekerX/uni-app-starter/tree/main/packages/uni-pushy-client)**
 
-**配套管理面板**：**[uni-pushy-admin](https://github.com/SunSeekerX/uni-pushy-admin)**
+**配套管理面板**：**[upushy-admin](https://github.com/SunSeekerX/upushy-admin)**
 
-**预览地址**：**[https://uni-pushy.yoouu.cn/](https://uni-pushy.yoouu.cn/)**
+**预览地址**：**[https://upushy.yoouu.cn/](https://upushy.yoouu.cn/)**
 
 > 自行注册账号使用即可体验，对项目部署不熟悉的同学可以先使用我部署的服务做为测试。
 >
 > 只需要简单的配置下客户端就行。
 
-**预览接口文档**：[https://api.uni-pushy.yoouu.cn/docs/](https://api.uni-pushy.yoouu.cn/docs/)
+**预览接口文档**：[https://api-upushy.yoouu.cn/docs/](https://api-upushy.yoouu.cn/docs/)
 
 > **uni-app App 整包升级检测：** https://ask.dcloud.net.cn/article/34972
 >
@@ -31,13 +31,13 @@
 **克隆仓库**
 
 ```bash
-git clone https://github.com/SunSeekerX/uni-pushy-server.git
+git clone https://github.com/SunSeekerX/upushy-server.git
 ```
 
 **进入项目目录**
 
 ```bash
-cd uni-pushy-server/
+cd upushy-server/
 ```
 
 **安装依赖 ，项目根目录下执行**
@@ -95,7 +95,7 @@ vim env.production.yaml
 WEB_OSS: false
 
 ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
-ALIYUN_OSS_BUCKET: 'uni-pushy'
+ALIYUN_OSS_BUCKET: 'upushy'
 
 ALIYUN_ACCOUNT_ID: 'xxxxxxxxxxxx'
 ALIYUN_ACCOUNT_RAM_ROLE: 'xxxxxx'
@@ -165,9 +165,9 @@ pm2 start ecosystem.config.js --env production
 
 ### Docker 构建
 
-本地构建带管理面板的镜像需要拉取管理面板编译导出的资源放到 `uni-pushy-server/client` 下！管理面板编译环境变量参考
+本地构建带管理面板的镜像需要拉取管理面板编译导出的资源放到 `upushy-server/client` 下！管理面板编译环境变量参考
 
-`uni-pushy-admin/.env.production`
+`upushy-admin/.env.production`
 
 ```shell
 # 运行模式
@@ -237,7 +237,7 @@ DB_TABLE_SYNC: true
 # OSS 入口
 ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
 # OSS 存储桶名
-ALIYUN_OSS_BUCKET: 'uni-pushy'
+ALIYUN_OSS_BUCKET: 'upushy'
 
 # 阿里云账号相关，如果 WEB_OSS 为 true 可以不填写，具体获取方式在下方
 ALIYUN_ACCOUNT_ID: 'xxxxxxxxxxxx'
@@ -387,15 +387,15 @@ ram 用户访问 id，该用户必须具有 `AliyunSTSAssumeRoleAccess` 权限
 
 ## 📌 uni-app 接入
 
-请查看 **[ uni-pushy-client](https://github.com/SunSeekerX/uni-pushy-client)** 说明。
+请查看 **[upushy-client](https://github.com/SunSeekerX/uni-app-starter/tree/main/packages/uni-pushy-client)** 说明。
 
 ## 📌 自建后台
 
-有一部分同学需要我的后台设计思路，想集成到自己的后台。事实上现在的热更新后台功能确实不是很强大。这里提供一下后台开发的一些思路和怎么构建一个后台和 `uni-pushy-client` 进行配合工作。
+有一部分同学需要我的后台设计思路，想集成到自己的后台。事实上现在的热更新后台功能确实不是很强大。这里提供一下后台开发的一些思路和怎么构建一个后台和 `upushy-client` 进行配合工作。
 
 **检查更新接口**
 
-`uni-pushy-client` 只需要一个接口就可以进行工作了。[update](https://api.uni-pushy.yoouu.cn/docs/#/Basic/AppController_update)，也就是这个接口。看下请求参数和返回信息
+`upushy-client` 只需要一个接口就可以进行工作了。[update](https://api-upushy.yoouu.cn/docs/#/Basic/AppController_update)，也就是这个接口。看下请求参数和返回信息
 
 **入参**
 
