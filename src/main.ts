@@ -9,18 +9,17 @@
 import * as chalk from 'chalk'
 import helmet from 'helmet'
 import * as useragent from 'express-useragent'
-import { NestFactory } from '@nestjs/core'
+import { NestFactory, HttpAdapterHost } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { v4 } from 'internal-ip'
-import { HttpExceptionFilter } from 'src/shared/filter'
+import { AllExceptionsFilter } from 'src/app-shared/filter'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 import { AppModule } from 'src/app.module'
 
-const port = getEnv<number>('SERVER_PORT', EnvType.number)
-const globalPrefix = getEnv<string>('API_GLOBAL_PREFIX', EnvType.string)
+const port = getEnv<number>('SERVER_PORT')
+const globalPrefix = getEnv<string>('API_GLOBAL_PREFIX')
 const ipv4 = v4.sync()
 
 async function bootstrap() {
@@ -36,7 +35,9 @@ async function bootstrap() {
       forbidUnknownValues: true,
     })
   )
-  app.useGlobalFilters(new HttpExceptionFilter())
+  // 错误过滤器
+  const { httpAdapter } = app.get(HttpAdapterHost)
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter))
   app.use(
     helmet({
       contentSecurityPolicy: false,
@@ -54,7 +55,7 @@ async function bootstrap() {
       - Local:   ${chalk.green(`http://localhost:${port}/`)}
       - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`
 
-  if (getEnv<boolean>('PRO_DOC', EnvType.boolean)) {
+  if (getEnv<boolean>('SERVER_DOC')) {
     const options = new DocumentBuilder().setTitle('upushy server').setVersion('1.0').addBearerAuth().build()
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('/docs', app, document)

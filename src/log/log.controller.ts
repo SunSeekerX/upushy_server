@@ -13,7 +13,7 @@ import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagg
 import { LogService } from './log.service'
 
 import { QueryLoginLogDto } from './dto/index'
-import { BaseResult } from 'src/shared/interface/response.interface'
+import { BaseResult } from 'src/app-shared/interface'
 
 @ApiBearerAuth()
 @ApiTags('Log')

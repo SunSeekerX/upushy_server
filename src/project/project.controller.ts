@@ -10,9 +10,9 @@ import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
 
 import { ProjectService } from './project.service'
 import { SourceService } from 'src/source/source.service'
-import { User } from 'src/shared/decorator/user.decorator'
+import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
 
-import { BaseResult } from 'src/shared/interface/response.interface'
+import { BaseResult } from 'src/app-shared/interface'
 
 import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/index'
 
@@ -32,7 +32,7 @@ export class ProjectController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Post('project')
-  async create(@Body() createProjectDto: CreateProjectDto, @User() user): Promise<BaseResult> {
+  async create(@Body() createProjectDto: CreateProjectDto, @RequestUser() user): Promise<BaseResult> {
     createProjectDto.userId = user.id
     const res = await this.projectService.create(createProjectDto)
 
@@ -100,7 +100,7 @@ export class ProjectController {
   @ApiOperation({ summary: 'Get all projects' })
   @ApiResponse({ status: 200, description: 'Return all projects.' })
   @Get('projects')
-  async getProjects(@Query() queryProjectDto: QueryProjectDto, @User() user): Promise<BaseResult> {
+  async getProjects(@Query() queryProjectDto: QueryProjectDto, @RequestUser() user): Promise<BaseResult> {
     queryProjectDto.userId = user.id
 
     const count = await this.projectService.getProjectCount({

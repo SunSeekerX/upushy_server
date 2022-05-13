@@ -15,8 +15,7 @@ import * as jwt from 'jsonwebtoken'
 import { UserRO } from './interface'
 import { UserEntity } from './entities'
 import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 
 @Injectable()
 export class UserService {
@@ -107,7 +106,7 @@ export class UserService {
         // exp: Math.floor(Date.now() / 1000) + 1 * 24 * 60 * 60,
         // exp: Math.floor(Date.now() / 1000) + 5,
       },
-      getEnv<string>('TOKEN_SECRET', EnvType.string),
+      getEnv<string>('JWT_SECRET'),
       {
         // 过期时间/seconds
         expiresIn: 1 * 24 * 60 * 60,
@@ -123,7 +122,7 @@ export class UserService {
         id: user.id,
         username: user.username,
       },
-      getEnv<string>('TOKEN_SECRET', EnvType.string),
+      getEnv<string>('JWT_SECRET'),
       {
         // 过期时间/seconds
         expiresIn: 30 * 24 * 60 * 60,

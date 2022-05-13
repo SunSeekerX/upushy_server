@@ -12,17 +12,19 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 
 import { LogInterceptor } from 'src/shared/interceptor'
 
+/**
+ * 系统模块
+ */
+import { AppCacheModule } from 'src/app-system/app-cache/app-cache.module'
 import { AppController } from './app.controller'
 import { UserModule } from './user/user.module'
 import { ProjectModule } from './project/project.module'
 import { SourceModule } from './source/source.module'
 import { LogModule } from './log/log.module'
-import { CacheModule } from './cache/cache.module'
 import { BasicModule } from './basic/basic.module'
 // import { ApiSignMiddleware } from 'src/shared/middleware'
 
@@ -34,13 +36,13 @@ import { BasicModule } from './basic/basic.module'
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: getEnv('DB_HOST', EnvType.string),
-      port: getEnv('DB_PORT', EnvType.number),
-      username: getEnv('DB_USER', EnvType.string),
-      password: getEnv('DB_PASSWORD', EnvType.string),
-      database: getEnv('DB_DATABASE', EnvType.string),
+      host: getEnv('DB_HOST'),
+      port: getEnv('DB_PORT'),
+      username: getEnv('DB_USER'),
+      password: getEnv('DB_PASSWORD'),
+      database: getEnv('DB_DATABASE'),
       entities: ['dist/**/*.entity.js'],
-      synchronize: getEnv('DB_TABLE_SYNC', EnvType.boolean),
+      synchronize: getEnv('DB_TABLE_SYNC'),
       logging: false,
       extra: {
         // 不配置这个 emoji 无法保存
@@ -51,7 +53,7 @@ import { BasicModule } from './basic/basic.module'
     ProjectModule,
     SourceModule,
     LogModule,
-    CacheModule,
+    AppCacheModule,
     BasicModule,
   ],
   providers: [
@@ -65,6 +67,6 @@ import { BasicModule } from './basic/basic.module'
 export class AppModule {}
 // export class AppModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer): void {
-//     consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX', EnvType.string)}/basic/update`, method: RequestMethod.POST }).forRoutes('*')
+//     consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX')}/basic/update`, method: RequestMethod.POST }).forRoutes('*')
 //   }
 // }

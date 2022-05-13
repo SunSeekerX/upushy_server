@@ -11,10 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 
-import { BaseResult, PagingResult } from 'src/shared/interface'
+import { BaseResult, PagingResult } from 'src/app-shared/interface'
 import { ProjectEntity } from 'src/project/entities'
 import { SourceEntity } from 'src/source/entities'
 import {
@@ -49,10 +48,7 @@ export class SourceController {
     @Body()
     createSourceDto: CreateSourceDto
   ): Promise<BaseResult> {
-    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
-      'ALIYUN_OSS_ENDPOINT',
-      EnvType.string
-    )}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
     const project = await this.projectEntity.findOne({
       where: {
         id: createSourceDto.projectId,
@@ -241,12 +237,9 @@ export class SourceController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get()
-  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PagingResult> {
+  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PagingResult<SourceEntity>> {
     const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
-    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
-      'ALIYUN_OSS_ENDPOINT',
-      EnvType.string
-    )}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
 
     const total = await this.sourceService.getSourceCount({
       where: {

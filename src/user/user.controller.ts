@@ -15,27 +15,19 @@ import { Cache } from 'cache-manager'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 
-import { BaseResult } from 'src/shared/interface/response.interface'
+import { BaseResult } from 'src/app-shared/interface'
 import { LoginInterceptor } from 'src/shared/interceptor'
 import { LoginUserDto, CreateUserDto, RefreshTokenDto } from './dto/index'
 import { UserService } from './user.service'
 import { guid } from 'src/shared/utils/index'
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
-import { CacheService } from 'src/cache/cache.service'
+import { getEnv } from 'src/app-shared/config'
+import { AppCacheService } from 'src/app-system/app-cache/app-cache.service'
 
 @ApiBearerAuth()
 @ApiTags('users')
 @Controller('user')
 export class UserController {
-  // redis 客户端
-  // redisClient: Redis.Redis | null = null
-  cacheManager: Cache
-
-  // constructor(private readonly redisService: RedisService, private readonly userService: UserService) {}
-  constructor(private cacheService: CacheService, private readonly userService: UserService) {
-    this.cacheManager = this.cacheService.getCacheManager()
-  }
+  constructor(private readonly cacheManager: AppCacheService, private readonly userService: UserService) {}
 
   // 注册图片验证码
   @ApiOperation({ summary: '注册图片验证码' })
@@ -52,7 +44,7 @@ export class UserController {
       // const redisClient = await this._getRedisClient()
       // await redisClient.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
 
-      await this.cacheManager.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), {
+      await this.cacheManager.INSTANCE.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), {
         ttl: 60,
       })
       return {
@@ -83,7 +75,9 @@ export class UserController {
       }
     }
     try {
-      const captchaText = await this.cacheManager.get<string>(`imgCaptcha:register:${createUserDto.imgCaptchaKey}`)
+      const captchaText = await this.cacheManager.INSTANCE.get<string>(
+        `imgCaptcha:register:${createUserDto.imgCaptchaKey}`
+      )
       if (captchaText === createUserDto.imgCaptcha) {
         const user = await this.userService.create(createUserDto)
         if (user) {
@@ -123,7 +117,7 @@ export class UserController {
     try {
       // const redisClient = await this._getRedisClient()
       // const loginCaptchaText = await redisClient.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
-      const loginCaptchaText = await this.cacheManager.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
+      const loginCaptchaText = await this.cacheManager.INSTANCE.get(`imgCaptcha:login:${loginUserDto.loginCaptchaKey}`)
       if (!loginCaptchaText) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -192,7 +186,7 @@ export class UserController {
     try {
       // const redisClient = await this._getRedisClient()
       // await redisClient.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
-      await this.cacheManager.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), {
+      await this.cacheManager.INSTANCE.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), {
         ttl: 60,
       })
 
@@ -220,7 +214,7 @@ export class UserController {
   async refreshToken(@Body() { refreshToken }: RefreshTokenDto): Promise<BaseResult> {
     try {
       // 解码 refreshToken
-      const decoded: any = verify(refreshToken, getEnv<string>('TOKEN_SECRET', EnvType.string))
+      const decoded: any = verify(refreshToken, getEnv<string>('JWT_SECRET'))
       // 获取用户
       const user = await this.userService.findById(decoded.id)
       // if (!user) {

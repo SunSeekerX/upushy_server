@@ -10,10 +10,10 @@ import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
 import { Cache } from 'cache-manager'
 
 @Injectable()
-export class CacheService {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+export class AppCacheService {
+  public INSTANCE: Cache
 
-  public getCacheManager(): Cache {
-    return this.cacheManager
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {
+    this.INSTANCE = this.cacheManager
   }
 }

@@ -11,28 +11,23 @@ import { Request, Response, NextFunction } from 'express'
 import * as md5 from 'md5'
 import { Cache } from 'cache-manager'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
-import { CacheService } from 'src/cache/cache.service'
+import { getEnv } from 'src/app-shared/config'
+import { AppCacheService } from 'src/app-system/app-cache/app-cache.service'
+
 import { genNodeRSAObj, rsaDecrypt, base64Decode } from 'src/shared/utils'
 
-const API_SIGN_RSA_PRIVATE_KEY = base64Decode(getEnv<string>('API_SIGN_RSA_PRIVATE_KEY_BASE64', EnvType.string))
+const API_SIGN_RSA_PRIVATE_KEY = base64Decode(getEnv<string>('API_SIGN_RSA_PRIVATE_KEY_BASE64'))
 const nodeRSAObj = genNodeRSAObj(API_SIGN_RSA_PRIVATE_KEY, 'pkcs8', {
   encryptionScheme: 'pkcs1',
 })
 
-const API_SIGN_TIME_OUT = getEnv<number>('API_SIGN_TIME_OUT', EnvType.number)
+const API_SIGN_TIME_OUT = getEnv<number>('API_SIGN_TIME_OUT')
 
 @Injectable()
 export class ApiSignMiddleware implements NestMiddleware {
   private readonly ctxPrefix: string = ApiSignMiddleware.name
   private readonly logger: Logger = new Logger(this.ctxPrefix)
-
-  cacheManager: Cache
-
-  constructor(private cacheService: CacheService) {
-    this.cacheManager = this.cacheService.getCacheManager()
-  }
+  constructor(private readonly cacheManager: AppCacheService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { method, originalUrl, ip } = req
@@ -66,14 +61,14 @@ export class ApiSignMiddleware implements NestMiddleware {
       /**
        * @description 防止请求重放
        */
-      const uuid = await this.cacheManager.get(`ApiSign:Nonce:${nonceArr[0]}`)
+      const uuid = await this.cacheManager.INSTANCE.get(`ApiSign:Nonce:${nonceArr[0]}`)
       if (uuid) {
         this.logger.warn(
           `code: ${HttpStatus.FORBIDDEN} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: ${API_SIGN_TIME_OUT}s 内重复请求`
         )
         throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
-      await this.cacheManager.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], {
+      await this.cacheManager.INSTANCE.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], {
         ttl: API_SIGN_TIME_OUT,
       })
 

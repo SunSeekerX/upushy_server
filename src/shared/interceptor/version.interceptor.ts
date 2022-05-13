@@ -9,15 +9,14 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import type { BaseResult } from 'src/shared/interface/response.interface'
-// import { version } from '../../package.json'
+
+import type { BaseResult } from 'src/app-shared/interface'
 
 @Injectable()
 export class VersionInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data: BaseResult) => {
-        // data.version = version
         return data
       })
     )

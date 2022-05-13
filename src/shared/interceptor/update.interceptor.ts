@@ -16,7 +16,7 @@ import { UpdateAppDto } from 'src/basic/dto'
 import { LogService } from 'src/log/log.service'
 
 import { CreateDeviceInfoLogDto, CreateUpdateLogDto } from 'src/log/dto'
-import { BaseResult } from '../interface/response.interface'
+import { BaseResult } from 'src/app-shared/interface'
 
 @Injectable()
 export class UpdateInterceptor implements NestInterceptor {

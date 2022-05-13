@@ -15,17 +15,16 @@ import * as OSS from 'ali-oss'
 import * as nodeDiskInfo from 'node-disk-info'
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
-import { BaseResult } from 'src/shared/interface/response.interface'
+import { getEnv } from 'src/app-shared/config'
+import { BaseResult } from 'src/app-shared/interface'
 import { UpdateAppDto } from './dto/index'
 import { ProjectService } from 'src/project/project.service'
 import { SourceService } from 'src/source/source.service'
 import { UpdateInterceptor } from 'src/shared/interceptor'
 
 const sts = new OSS.STS({
-  accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID', EnvType.string),
-  accessKeySecret: getEnv('ALIYUN_RAM_ACCESS_KEY_SECRET', EnvType.string),
+  accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID'),
+  accessKeySecret: getEnv('ALIYUN_RAM_ACCESS_KEY_SECRET'),
 })
 
 @ApiBearerAuth()
@@ -42,27 +41,24 @@ export class BasicController {
   @ApiOperation({ summary: 'OSS授权临时访问' })
   @Get('oss-sts')
   async assumeRole(): Promise<BaseResult> {
-    if (!getEnv('WEB_OSS', EnvType.boolean)) {
+    if (!getEnv('WEB_OSS')) {
       try {
         const token = await sts.assumeRole(
-          `acs:ram::${getEnv('ALIYUN_ACCOUNT_ID', EnvType.string)}:role/${getEnv(
-            'ALIYUN_ACCOUNT_RAM_ROLE',
-            EnvType.string
-          )}`,
+          `acs:ram::${getEnv('ALIYUN_ACCOUNT_ID')}:role/${getEnv('ALIYUN_ACCOUNT_RAM_ROLE')}`,
           {
             Statement: [
               {
                 Action: ['oss:PutObject'],
                 Effect: 'Allow',
                 Resource: [
-                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}/*`,
-                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}`,
+                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET')}/*`,
+                  `acs:oss:*:*:${getEnv('ALIYUN_OSS_BUCKET')}`,
                 ],
               },
             ],
             Version: '1',
           },
-          getEnv<number>('ALIYUN_RAM_TEMPORARY_EXPIRE', EnvType.number) * 60,
+          getEnv<number>('ALIYUN_RAM_TEMPORARY_EXPIRE') * 60,
           ''
         )
 
@@ -71,8 +67,8 @@ export class BasicController {
           message: '成功',
           data: {
             ...token.credentials,
-            region: getEnv('ALIYUN_OSS_ENDPOINT', EnvType.string),
-            bucket: getEnv('ALIYUN_OSS_BUCKET', EnvType.string),
+            region: getEnv('ALIYUN_OSS_ENDPOINT'),
+            bucket: getEnv('ALIYUN_OSS_BUCKET'),
           },
         }
       } catch (e) {
@@ -105,10 +101,7 @@ export class BasicController {
       }
     }
 
-    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
-      'ALIYUN_OSS_ENDPOINT',
-      EnvType.string
-    )}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
 
     // 资源类型
     let type = 1

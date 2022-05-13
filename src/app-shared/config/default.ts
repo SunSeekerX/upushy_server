@@ -3,13 +3,13 @@
  * @author: SunSeekerX
  * @Date: 2021-07-10 11:02:12
  * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 20:39:47
+ * @LastEditTime: 2021-09-13 20:54:51
  */
 
 /**
- * 环境变量名配置
+ * 默认运行端口
  */
-export const ENVS = ['development', 'test', 'production', 'stage', 'prod', 'staging']
+export const SERVER_PORT = '3000'
 
 /**
  * 是否正式环境
@@ -17,19 +17,14 @@ export const ENVS = ['development', 'test', 'production', 'stage', 'prod', 'stag
 export const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
 /**
- * 默认运行端口
- */
-export const SERVER_PORT = 3000
-
-/**
  * Api 前缀
  */
 export const API_GLOBAL_PREFIX = 'api'
 
 /**
- * 是否打开正式环境文档
+ * 是否打开接口文档
  */
-export const PRO_DOC = true
+export const SERVER_DOC = true
 
 /**
  * 是否自动同步数据库表格
@@ -37,19 +32,24 @@ export const PRO_DOC = true
 export const DB_TABLE_SYNC = true
 
 /**
- * Redis REDIS_PREFIX
+ * 是否使用 Redis 作为缓存
  */
-export const REDIS_PREFIX = ''
+export const IS_USING_REDIS = false
 
 /**
  * 阿里云 sts 临时账户有效期，单位 min
  */
-export const ALIYUN_RAM_TEMPORARY_EXPIRE = 15
+ export const ALIYUN_RAM_TEMPORARY_EXPIRE = 15
 
 /**
- * Token 生成加盐
+ * Token 有效期 （小 token） 默认：10h
  */
-export const TOKEN_SECRET = 'secret-key'
+export const JWT_TOKEN_EXPIRES_IN = 10 * 60 * 60
+
+/**
+ * 刷新 Token 有效期（大 token）,必须比小 token 过期时间长 默认：7d
+ */
+export const JWT_REFRESH_TOKEN_EXPIRES_IN = 7 * 24 * 60 * 60
 
 /**
  * Api 加密请求过期间隔，单位：秒

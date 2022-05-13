@@ -11,8 +11,7 @@ import { Request, Response, NextFunction } from 'express'
 import { verify } from 'jsonwebtoken'
 
 import { UserService } from 'src/user/user.service'
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 
 @Injectable()
 export class TokenAuthMiddleware implements NestMiddleware {
@@ -33,7 +32,7 @@ export class TokenAuthMiddleware implements NestMiddleware {
     const token = authorization.split(' ')[1]
 
     try {
-      const decoded: any = verify(token, getEnv<string>('TOKEN_SECRET', EnvType.string))
+      const decoded: any = verify(token, getEnv<string>('JWT_SECRET'))
       const user = await this.userService.findById(decoded.id)
       // if (!user) {
       //   throw new HttpException('User not found.', HttpStatus.UNAUTHORIZED)

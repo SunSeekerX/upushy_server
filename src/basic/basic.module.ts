@@ -10,8 +10,7 @@ import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/c
 import { BasicService } from './basic.service'
 import { BasicController } from './basic.controller'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 import { ProjectModule } from 'src/project/project.module'
 import { SourceModule } from 'src/source/source.module'
 import { TokenAuthMiddleware } from 'src/shared/middleware'
@@ -27,7 +26,7 @@ export class BasicModule implements NestModule {
     consumer
       .apply(TokenAuthMiddleware)
       .exclude({
-        path: `/${getEnv('API_GLOBAL_PREFIX', EnvType.string)}/basic/config`,
+        path: `/${getEnv('API_GLOBAL_PREFIX')}/basic/config`,
         method: RequestMethod.GET,
       })
       .forRoutes(BasicController)

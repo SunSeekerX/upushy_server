@@ -6,6 +6,4 @@
  * @LastEditTime: 2021-09-14 17:28:22
  */
 
-import { User } from './user.decorator'
-
-export { User }
+export * from './request-user.decorator'

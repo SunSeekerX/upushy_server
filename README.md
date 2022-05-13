@@ -226,7 +226,7 @@ PRO_DOC: true
 # 是否直接通过前端访问 oss
 WEB_OSS: false
 # Token 生成加盐 默认：'secret-key'
-TOKEN_SECRET: 'secret-key'
+JWT_SECRET: 'secret-key'
 # Api 加密 RSA 私钥 默认：请查看源码
 API_SIGN_RSA_PRIVATE_KEY: ''
 # Api 加密请求过期间隔，超出即被认为为过期请求 默认：15 单位：s

@@ -10,8 +10,7 @@ import { Module, NestModule, MiddlewareConsumer, Global, CacheModule } from '@ne
 import * as redisStore from 'cache-manager-redis-store'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
+import { getEnv } from 'src/app-shared/config'
 
 import { UserService } from './user.service'
 import { UserController } from './user.controller'
@@ -23,10 +22,10 @@ import { UserEntity } from './entities'
     TypeOrmModule.forFeature([UserEntity]),
     CacheModule.register({
       store: redisStore,
-      host: getEnv('REDIS_HOST', EnvType.string),
-      port: getEnv('REDIS_PORT', EnvType.number),
-      auth_pass: getEnv('REDIS_PASSWORD', EnvType.string),
-      db: getEnv('REDIS_DB', EnvType.number),
+      host: getEnv('REDIS_HOST'),
+      port: getEnv('REDIS_PORT'),
+      auth_pass: getEnv('REDIS_PASSWORD'),
+      db: getEnv('REDIS_DB'),
     }),
   ],
   providers: [UserService],

@@ -9,9 +9,8 @@
 import { Body, Controller, Get, HttpCode, Post, UseInterceptors, HttpStatus } from '@nestjs/common'
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
-import { getEnv } from 'src/shared/config'
-import { EnvType } from 'src/shared/enums'
-import { BaseResult } from 'src/shared/interface/response.interface'
+import { getEnv } from 'src/app-shared/config'
+import { BaseResult } from 'src/app-shared/interface'
 import { UpdateAppDto } from 'src/basic/dto/index'
 import { ProjectService } from 'src/project/project.service'
 import { SourceService } from 'src/source/source.service'
@@ -41,10 +40,7 @@ export class AppController {
       }
     }
 
-    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET', EnvType.string)}.${getEnv(
-      'ALIYUN_OSS_ENDPOINT',
-      EnvType.string
-    )}.aliyuncs.com`
+    const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
 
     // 资源类型
     let type = 1
@@ -70,7 +66,6 @@ export class AppController {
     // 存入redis
 
     return {
-      success: true,
       statusCode: 200,
       message: '成功',
       data: {
