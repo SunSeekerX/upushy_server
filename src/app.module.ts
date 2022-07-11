@@ -30,6 +30,7 @@ import { BasicModule } from './basic/basic.module'
 
 @Module({
   imports: [
+    AppCacheModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
       exclude: ['/api*'],
@@ -53,7 +54,6 @@ import { BasicModule } from './basic/basic.module'
     ProjectModule,
     SourceModule,
     LogModule,
-    AppCacheModule,
     BasicModule,
   ],
   providers: [
