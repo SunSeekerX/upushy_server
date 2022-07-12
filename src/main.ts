@@ -13,8 +13,8 @@ import { NestFactory, HttpAdapterHost } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { v4 } from 'internal-ip'
-import { AllExceptionsFilter } from 'src/app-shared/filter'
 
+import { AllExceptionsFilter } from 'src/app-shared/filter'
 import { getEnv } from 'src/app-shared/config'
 import { AppModule } from 'src/app.module'
 
@@ -55,7 +55,7 @@ async function bootstrap() {
       - Local:   ${chalk.green(`http://localhost:${port}/`)}
       - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`
 
-  if (getEnv<boolean>('SERVER_DOC')) {
+  if (getEnv('SERVER_DOC')) {
     const options = new DocumentBuilder().setTitle('upushy server').setVersion('1.0').addBearerAuth().build()
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('/docs', app, document)

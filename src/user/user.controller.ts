@@ -184,8 +184,6 @@ export class UserController {
 
     const captchaKey = guid()
     try {
-      // const redisClient = await this._getRedisClient()
-      // await redisClient.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 'ex', 60)
       await this.cacheManager.INSTANCE.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), {
         ttl: 60,
       })
@@ -217,13 +215,6 @@ export class UserController {
       const decoded: any = verify(refreshToken, getEnv<string>('JWT_SECRET'))
       // 获取用户
       const user = await this.userService.findById(decoded.id)
-      // if (!user) {
-      //   return {
-      //     success: false,
-      //     statusCode: 400,
-      //     message: 'User not found.',
-      //   }
-      // }
       const token = await this.userService.generateJWT(user)
       return {
         statusCode: 200,
@@ -236,15 +227,6 @@ export class UserController {
         message: 'refreshToken 过期',
         errors: [error.message],
       }
-      // throw new HttpException(error.message, HttpStatus.UNAUTHORIZED)
     }
   }
-
-  // 获取 redis 客户端
-  // async _getRedisClient(): Promise<Redis.Redis> {
-  //   if (!this.redisClient) {
-  //     this.redisClient = await this.redisService.getClient()
-  //   }
-  //   return this.redisClient
-  // }
 }

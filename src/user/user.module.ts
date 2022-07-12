@@ -6,7 +6,7 @@
  * @LastEditTime: 2021-09-14 17:48:38
  */
 
-import { Module, NestModule, MiddlewareConsumer, Global, CacheModule } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, Global } from '@nestjs/common'
 import * as redisStore from 'cache-manager-redis-store'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
@@ -18,16 +18,7 @@ import { UserEntity } from './entities'
 
 @Global()
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserEntity]),
-    CacheModule.register({
-      store: redisStore,
-      host: getEnv('REDIS_HOST'),
-      port: getEnv('REDIS_PORT'),
-      auth_pass: getEnv('REDIS_PASSWORD'),
-      db: getEnv('REDIS_DB'),
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([UserEntity])],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],

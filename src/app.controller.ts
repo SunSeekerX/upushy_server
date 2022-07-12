@@ -63,8 +63,6 @@ export class AppController {
     })
     native && native.type !== 4 && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
 
-    // 存入redis
-
     return {
       statusCode: 200,
       message: '成功',

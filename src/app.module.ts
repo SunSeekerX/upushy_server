@@ -9,7 +9,6 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
 import { getEnv } from 'src/app-shared/config'
@@ -31,10 +30,6 @@ import { BasicModule } from './basic/basic.module'
 @Module({
   imports: [
     AppCacheModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
-      exclude: ['/api*'],
-    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: getEnv('DB_HOST'),
