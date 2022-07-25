@@ -1,3 +1,10 @@
+import * as os from 'os'
+import { Request } from 'express'
+import axios from 'axios'
+import * as iconv from 'iconv-lite'
+export * from './rsa-encrypt'
+export * from './base64-encode'
+
 import { SnowFlake } from './snowflake'
 
 const idWorker = new SnowFlake(1n, 1n)
@@ -52,4 +59,127 @@ export function guid(len = 32, radix = 16): string {
 export function isValidValue(val: unknown): boolean {
   const emptyList = [null, undefined]
   return !emptyList.includes(val)
+}
+
+
+/**
+ * @name 获取本机ip
+ * @returns { String } 当前所在网络的ip地址
+ */
+ export function getIPAdress(): string {
+  const interfaces = os.networkInterfaces()
+  for (const devName in interfaces) {
+    const iface = interfaces[devName]
+    for (let i = 0; i < iface.length; i++) {
+      const alias = iface[i]
+      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+        return alias.address
+      }
+    }
+  }
+}
+
+/**
+ * Convert Bytes to Human-Readable Format
+ * @param { Number } bytes
+ * @returns { String }
+ */
+export function bytesToSize(bytes: number): string {
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+
+  if (bytes === 0) {
+    return 'n/a'
+  }
+
+  const i = parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))))
+
+  if (i === 0) {
+    return bytes + ' ' + sizes[i]
+  }
+
+  return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
+}
+
+/**
+ * 获取请求的客户端ip地址， 只能获取ipv4 情况下的地址。v6 需要额外的处理
+ * @param request 请求对象
+ */
+export function getIPAdressByRequest(request: Request): string | string[] {
+  if (!request) {
+    return 'unknown'
+  }
+  let ip = request.headers['x-forwarded-for']
+  !ip && (ip = request.headers['Proxy-Client-IP'])
+  !ip && (ip = request.headers['X-Forwarded-For'])
+  !ip && (ip = request.headers['WL-Proxy-Client-IP'])
+  !ip && (ip = request.headers['X-Real-IP'])
+  !ip && (ip = request.headers['X-Real-IP'])
+  !ip && (ip = request.ip)
+
+  return ip === '::1' ? '127.0.0.1' : ip
+}
+
+/**
+ * 判断 ip 地址是否为内网地址
+ */
+export function isInternalIPAdress(ip: string): boolean {
+  return /^(127\.0\.0\.1)|(localhost)|(10\.\d{1,3}\.\d{1,3}\.\d{1,3})|(172\.((1[6-9])|(2\d)|(3[01]))\.\d{1,3}\.\d{1,3})|(192\.168\.\d{1,3}\.\d{1,3})$/.test(
+    ip
+  )
+}
+
+/**
+ * 获取ip地址地理位置
+ */
+const IP_URL = 'http://whois.pconline.com.cn/ipJson.jsp'
+export async function getIPLocation(ip: string): Promise<any> {
+  if (isInternalIPAdress(ip)) {
+    return '内网IP'
+  } else {
+    const res: any = await axios.get(`${IP_URL}?ip=${ip}&json=true`, {
+      responseType: 'stream',
+    })
+    return new Promise((resolve, reject) => {
+      const chunks = []
+
+      res.data.on('data', (chunk) => {
+        chunks.push(chunk)
+      })
+
+      res.data.on('end', () => {
+        const buffer = Buffer.concat(chunks)
+        const str = iconv.decode(buffer, 'gbk')
+        const jsonRes = JSON.parse(str)
+        resolve(`${jsonRes.pro}${jsonRes.city}`)
+      })
+    })
+  }
+}
+
+/**
+ * compare ver1 > ver2
+ * @param {String} ver1 string like x.y.z
+ * @param {String} ver2 string like x.y.z
+ */
+export function compareVersion(ver1: string, ver2: string): boolean {
+  const ver1List: Array<string | number> = ver1.split('.')
+  const ver2List: Array<string | number> = ver2.split('.')
+  ver1List.forEach((v, i) => (ver1List[i] = Number(v)))
+  ver2List.forEach((v, i) => (ver2List[i] = Number(v)))
+
+  const len = ver1List.length > ver2List.length ? ver1List.length : ver2List.length
+
+  for (let i = 0; i < len; i++) {
+    if (ver1List[i] > ver2List[i]) {
+      return true
+    } else if (ver1List[i] === ver2List[i]) {
+      if ((!ver1List[i + 1] && !ver2List[i + 1]) || (!ver1List[i + 1] && ver2List[i + 1])) {
+        return false
+      } else if (ver1List[i + 1] && !ver2List[i + 1]) {
+        return true
+      }
+    } else {
+      return false
+    }
+  }
 }

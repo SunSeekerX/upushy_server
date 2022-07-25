@@ -1,11 +1,3 @@
-/**
- * 应用程序模块
- * @author: SunSeekerX
- * @Date: 2020-06-22 11:08:40
- * @LastEditors: SunSeekerX
- * @LastEditTime: 2021-09-14 21:59:31
- */
-
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -13,22 +5,23 @@ import { join } from 'path'
 
 import { getEnv } from 'src/app-shared/config'
 
-import { LogInterceptor } from 'src/shared/interceptor'
+import { LogInterceptor } from 'src/app-shared/interceptor'
 
 /**
  * 系统模块
  */
 import { AppCacheModule } from 'src/app-system/app-cache/app-cache.module'
-import { AppController } from './app.controller'
-import { UserModule } from './user/user.module'
-import { ProjectModule } from './project/project.module'
-import { SourceModule } from './source/source.module'
-import { LogModule } from './log/log.module'
-import { BasicModule } from './basic/basic.module'
-// import { ApiSignMiddleware } from 'src/shared/middleware'
+// import { AppController } from './app.controller'
+import { AppUserModule } from './app-system/app-user/app-user.module'
+import { UpushyProjectModule } from './app-upushy/upushy-project/upushy-project.module'
+import { UpushySourceModule } from './app-upushy/upushy-source/upushy-source.module'
+import { UpushyLogModule } from './app-upushy/upushy-log/upushy-log.module'
+import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module'
+// import { ApiSignMiddleware } from 'src/app-shared/middleware'
 
 @Module({
   imports: [
+    // 基础模块
     AppCacheModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -45,11 +38,13 @@ import { BasicModule } from './basic/basic.module'
         charset: 'utf8mb4_general_ci',
       },
     }),
-    UserModule,
-    ProjectModule,
-    SourceModule,
-    LogModule,
-    BasicModule,
+    // 系统模块
+    AppUserModule,
+    // 业务模块
+    UpushyProjectModule,
+    UpushySourceModule,
+    UpushyLogModule,
+    UpushyBasicModule,
   ],
   providers: [
     {
@@ -57,7 +52,7 @@ import { BasicModule } from './basic/basic.module'
       useClass: LogInterceptor,
     },
   ],
-  controllers: [AppController],
+  // controllers: [AppController],
 })
 export class AppModule {}
 // export class AppModule implements NestModule {
