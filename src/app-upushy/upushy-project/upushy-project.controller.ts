@@ -19,18 +19,18 @@ import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto }
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 @ApiBearerAuth()
-@ApiTags('Project')
+@ApiTags('业务模块 - 项目管理')
 @Controller()
 export class UpushyProjectController {
   constructor(private readonly upushySourceService: UpushySourceService, private readonly upushyProjectService: UpushyProjectService) {}
 
   // 创建项目
-  @ApiOperation({ summary: 'Create project' })
+  @ApiOperation({ summary: '项目管理 - 创建项目' })
   @ApiResponse({
     status: 201,
     description: '创建成功',
   })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 403, description: ' Api 签名验证失败' })
   @Post('project')
   async create(@Body() createProjectDto: CreateProjectDto, @RequestUser() user): Promise<BaseResult> {
     createProjectDto.userId = user.id
@@ -46,12 +46,12 @@ export class UpushyProjectController {
   }
 
   // 删除项目
-  @ApiOperation({ summary: 'Delete project' })
+  @ApiOperation({ summary: '项目管理 - 删除项目' })
   @ApiResponse({
     status: 201,
     description: 'The project has been successfully deleted.',
   })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 403, description: ' Api 签名验证失败' })
   @Delete('project')
   async delete(@Body() deleteProjectDto: DeleteProjectDto): Promise<BaseResult> {
     const sourceCount = await this.upushySourceService.querySourceCount({
@@ -80,7 +80,7 @@ export class UpushyProjectController {
   }
 
   // 更新项目信息
-  @ApiOperation({ summary: 'Update project' })
+  @ApiOperation({ summary: '项目管理 - 更新项目' })
   @Put('project')
   async update(@Body() updateProjectDto: UpdateProjectDto): Promise<BaseResult> {
     const project = await this.upushyProjectService.findOne(updateProjectDto.id)
@@ -97,8 +97,8 @@ export class UpushyProjectController {
   }
 
   // 获取项目列表
-  @ApiOperation({ summary: 'Get all projects' })
-  @ApiResponse({ status: 200, description: 'Return all projects.' })
+  @ApiOperation({ summary: '项目管理 - 根据用户 id 获取用户的项目' })
+  @ApiResponse({ status: 200, description: '成功' })
   @Get('projects')
   async getProjects(@Query() queryProjectDto: QueryProjectDto, @RequestUser() user): Promise<BaseResult> {
     queryProjectDto.userId = user.id

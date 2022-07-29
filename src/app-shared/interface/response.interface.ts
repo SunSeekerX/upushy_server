@@ -7,6 +7,7 @@
  */
 
 import { HttpStatus } from '@nestjs/common'
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * 基础响应接口

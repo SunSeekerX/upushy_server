@@ -9,11 +9,12 @@
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import type { DeleteResult } from 'typeorm'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { getEnv } from 'src/app-shared/config'
 
-import { BaseResult, PagingResult } from 'src/app-shared/interface'
+import { BaseResult, PaginationResult } from 'src/app-shared/base'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
 import {
@@ -24,9 +25,11 @@ import {
   QueryLatestNativeVersionDto,
 } from './dto/index'
 import { UpushySourceService } from './upushy-source.service'
+import { ApiResponseConstant } from 'src/app-shared/constant'
+import { LatestNativeSourceVO } from './vo'
 
 @ApiBearerAuth()
-@ApiTags('资源管理')
+@ApiTags('业务模块 - 资源管理')
 @Controller('source')
 export class UpushySourceController {
   constructor(
@@ -37,17 +40,19 @@ export class UpushySourceController {
   ) {}
 
   // 添加资源
-  @ApiOperation({ summary: '添加资源' })
+  @ApiOperation({ summary: '资源管理 - 添加资源' })
   @ApiResponse({
-    status: 201,
-    description: 'The source has been successfully created.',
+    type: BaseResult<SourceEntity>,
+    ...ApiResponseConstant.RESPONSE_CODE_200,
   })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post()
   async addSource(
     @Body()
     createSourceDto: CreateSourceDto
-  ): Promise<BaseResult> {
+  ): Promise<BaseResult<SourceEntity>> {
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
     const project = await this.projectEntity.findOne({
       where: {
@@ -119,14 +124,13 @@ export class UpushySourceController {
   }
 
   // 删除资源
-  @ApiOperation({ summary: 'Delete source' })
-  @ApiResponse({
-    status: 201,
-    description: 'The source has been successfully deleted.',
-  })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiOperation({ summary: '资源管理 - 删除资源' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Delete()
-  async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult> {
+  async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult<DeleteResult>> {
     const source = await this.upushySourceService.findOne({
       where: {
         id: deleteSourceDto.id,
@@ -158,14 +162,13 @@ export class UpushySourceController {
   }
 
   // 更新资源
-  @ApiOperation({ summary: 'Update source' })
-  @ApiResponse({
-    status: 200,
-    description: 'The source has been successfully Updated.',
-  })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiOperation({ summary: '资源管理 - 更新资源' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Put()
-  async update(@Body() updateSourceDto: UpdateSourceDto): Promise<BaseResult> {
+  async update(@Body() updateSourceDto: UpdateSourceDto): Promise<BaseResult<SourceEntity>> {
     const { id, versionCode } = updateSourceDto
     const source = await this.upushySourceService.findOne({
       where: {
@@ -230,14 +233,16 @@ export class UpushySourceController {
   }
 
   // 查询资源列表
-  @ApiOperation({ summary: 'Get project sources' })
+  @ApiOperation({ summary: '资源管理 - 获取项目下的资源' })
   @ApiResponse({
-    status: 200,
-    description: 'Successfully.',
+    type: PaginationResult<SourceEntity>,
+    ...ApiResponseConstant.RESPONSE_CODE_200,
   })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get()
-  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PagingResult<SourceEntity>> {
+  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PaginationResult<SourceEntity>> {
     const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
 
@@ -274,14 +279,18 @@ export class UpushySourceController {
   }
 
   // 查询最新的原生版本
-  @ApiOperation({ summary: 'Get latest native sources' })
+  @ApiOperation({ summary: '资源管理 - 查询最新的原生版本' })
   @ApiResponse({
+    type: LatestNativeSourceVO,
     status: 200,
-    description: 'Successfully.',
+    description: '操作成功222',
+    // ...ApiResponseConstant.RESPONSE_CODE_200,
   })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('native/latest')
-  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<BaseResult> {
+  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<LatestNativeSourceVO> {
     const { projectId } = queryObj
 
     const latestAndroid = await this.upushySourceService.queryMaxSource({

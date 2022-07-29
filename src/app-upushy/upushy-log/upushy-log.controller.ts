@@ -16,14 +16,14 @@ import { QueryLoginLogDto } from './dto/index'
 import { BaseResult } from 'src/app-shared/interface'
 
 @ApiBearerAuth()
-@ApiTags('Log')
+@ApiTags('业务模块 - 日志管理')
 @Controller('log')
 export class UpushyLogController {
   constructor(private readonly upushyLogService: UpushyLogService) {}
 
   // 获取登录日志
   @ApiOperation({ summary: '获取登录日志' })
-  @ApiResponse({ status: 200, description: '获取成功.' })
+  @ApiResponse({ status: 200, description: '获取成功' })
   @Get('login')
   async getLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto): Promise<BaseResult> {
     const count = await this.upushyLogService.getLoginLogCount()

@@ -24,13 +24,13 @@ import { getEnv } from 'src/app-shared/config'
 import { AppCacheService } from 'src/app-system/app-cache/app-cache.service'
 
 @ApiBearerAuth()
-@ApiTags('users')
+@ApiTags('系统模块 - 用户管理')
 @Controller('user')
 export class AppUserController {
   constructor(private readonly cacheManager: AppCacheService, private readonly appUserService: AppUserService) {}
 
   // 注册图片验证码
-  @ApiOperation({ summary: '注册图片验证码' })
+  @ApiOperation({ summary: '获取注册图片验证码' })
   @Get('/register/captcha')
   async registerCodeImg(): Promise<BaseResult> {
     const captcha = svgCaptcha.create({

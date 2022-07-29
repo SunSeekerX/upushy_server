@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert } from 'typeorm'
+import { ApiProperty } from '@nestjs/swagger';
 
 import { guid } from 'src/app-shared/utils'
 
@@ -9,6 +10,9 @@ export class SourceEntity {
     length: 36,
     nullable: false,
     comment: 'id',
+  })
+  @ApiProperty({
+    description: '资源 id'
   })
   id: string
 

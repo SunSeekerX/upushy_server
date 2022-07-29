@@ -21,6 +21,7 @@ import { UpdateAppDto } from './dto/index'
 import { UpushyProjectService } from 'src/app-upushy/upushy-project/upushy-project.service'
 import { UpushySourceService } from 'src/app-upushy/upushy-source/upushy-source.service'
 import { UpdateInterceptor } from 'src/app-shared/interceptor'
+import { ApiResponseConstant } from 'src/app-shared/constant'
 
 const sts = new OSS.STS({
   accessKeyId: getEnv('ALIYUN_RAM_ACCESS_KEY_ID'),
@@ -28,7 +29,7 @@ const sts = new OSS.STS({
 })
 
 @ApiBearerAuth()
-@ApiTags('Basic')
+@ApiTags('业务模块 - 基础接口')
 @Controller('basic')
 export class UpushyBasicController {
   constructor(
@@ -86,7 +87,7 @@ export class UpushyBasicController {
   }
 
   // 检查更新
-  @ApiOperation({ summary: '检查更新' })
+  @ApiOperation({ summary: 'App 检查更新' })
   @HttpCode(200)
   // @Post('update')
   @Post('/update')
