@@ -144,6 +144,7 @@ export class EnvConfig {
   @IsIP()
   @IsNotEmpty()
   @IsString()
+  @ValidateIf((el) => el.DB_HOST !== 'localhost')
   DB_HOST: string
 
   @Expose()
