@@ -4,14 +4,18 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { join } from 'path'
 
 import { getEnv } from 'src/app-shared/config'
-
 import { LogInterceptor } from 'src/app-shared/interceptor'
+import { UserEntity } from 'src/app-system/app-user/entities'
+import { DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity } from 'src/app-upushy/upushy-log/entities'
+import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
+import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
+
+import { AppController } from './app.controller'
 
 /**
  * 系统模块
  */
 import { AppCacheModule } from 'src/app-system/app-cache/app-cache.module'
-// import { AppController } from './app.controller'
 import { AppUserModule } from './app-system/app-user/app-user.module'
 import { UpushyProjectModule } from './app-upushy/upushy-project/upushy-project.module'
 import { UpushySourceModule } from './app-upushy/upushy-source/upushy-source.module'
@@ -30,7 +34,8 @@ import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module
       username: getEnv('DB_USER'),
       password: getEnv('DB_PASSWORD'),
       database: getEnv('DB_DATABASE'),
-      entities: ['dist/**/*.entity.js'],
+      // entities: ['dist/**/*.entity.js'],
+      entities: [UserEntity, DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity, ProjectEntity, SourceEntity],
       synchronize: getEnv('DB_TABLE_SYNC'),
       logging: false,
       extra: {
@@ -52,9 +57,11 @@ import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module
       useClass: LogInterceptor,
     },
   ],
-  // controllers: [AppController],
+  controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {}
+}
 // export class AppModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer): void {
 //     consumer.apply(ApiSignMiddleware).exclude({ path: `/${getEnv<string>('API_GLOBAL_PREFIX')}/basic/update`, method: RequestMethod.POST }).forRoutes('*')

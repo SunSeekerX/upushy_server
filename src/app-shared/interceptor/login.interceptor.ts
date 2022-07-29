@@ -35,7 +35,7 @@ export class LoginInterceptor implements NestInterceptor {
               loginLocation,
               browser: `${req.useragent.browser}:${req.useragent.version}`,
               os: req.useragent.os,
-              status: data.success ? '1' : '0',
+              status: data.statusCode === 200 ? '1' : '0',
               msg: data.message,
               loginTime: new Date(),
             })

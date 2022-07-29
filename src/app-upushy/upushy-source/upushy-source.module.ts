@@ -9,10 +9,11 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { UpushySourceController } from './upushy-source.controller'
-import { UpushySourceService } from './upushy-source.service'
 import { SourceEntity } from './entities'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
+// import { sourceProviders } from './providers'
+import { UpushySourceController } from './upushy-source.controller'
+import { UpushySourceService } from './upushy-source.service'
 
 import { TokenAuthMiddleware } from 'src/app-shared/middleware'
 

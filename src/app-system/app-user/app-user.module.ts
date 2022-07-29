@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, Global } from '@nestjs/common'
+import { Module, Global } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { AppUserService } from './app-user.service'

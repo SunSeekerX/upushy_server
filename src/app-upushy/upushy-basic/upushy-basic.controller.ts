@@ -13,7 +13,7 @@ import * as publicIp from 'public-ip'
 import * as internalIp from 'internal-ip'
 import * as OSS from 'ali-oss'
 import * as nodeDiskInfo from 'node-disk-info'
-import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiOperation, ApiTags, ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 
 import { getEnv } from 'src/app-shared/config'
 import { BaseResult } from 'src/app-shared/interface'
@@ -36,13 +36,16 @@ export class UpushyBasicController {
     private readonly upushyProjectService: UpushyProjectService,
     private readonly upushySourceService: UpushySourceService
   ) {}
-
   /**
    * @description OSS授权临时访问
    * 接口调用有限制，每1S最多100QPS
    * https://help.aliyun.com/document_detail/32077.htm?spm=a2c4g.11186623.2.25.5a1c606c8MMGGB#title-sdv-594-iub
    */
   @ApiOperation({ summary: 'OSS授权临时访问' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('oss-sts')
   async assumeRole(): Promise<BaseResult> {
     if (!getEnv('WEB_OSS')) {
@@ -88,8 +91,10 @@ export class UpushyBasicController {
 
   // 检查更新
   @ApiOperation({ summary: 'App 检查更新' })
-  @HttpCode(200)
-  // @Post('update')
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('/update')
   @UseInterceptors(UpdateInterceptor)
   async update(
@@ -142,7 +147,10 @@ export class UpushyBasicController {
 
   // 系统配置
   @ApiOperation({ summary: '获取系统配置' })
-  @HttpCode(200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('config')
   async getConfig(): Promise<BaseResult> {
     return {
@@ -156,7 +164,10 @@ export class UpushyBasicController {
 
   // 系统信息
   @ApiOperation({ summary: '获取系统信息' })
-  @HttpCode(200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('config/system')
   async getSystemConfig(): Promise<BaseResult> {
     try {

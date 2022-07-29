@@ -9,9 +9,10 @@
 import { Module, Global, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
+// import { logProviders } from './providers'
 import { UpushyLogController } from './upushy-log.controller'
 import { UpushyLogService } from './upushy-log.service'
-import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entity/index'
+import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entities'
 import { TokenAuthMiddleware } from 'src/app-shared/middleware'
 
 @Global()

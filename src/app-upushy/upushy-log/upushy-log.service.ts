@@ -6,22 +6,30 @@
  * @LastEditTime: 2021-09-14 22:20:58
  */
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm'
 
-import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entity/index'
-import { CreateLoginLogDto, QueryLoginLogDto, CreateDeviceInfoLogDto, CreateUpdateLogDto } from './dto/index'
+import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entities'
+import { DEVICE_INFO_LOG_REPOSITORY, LOGIN_LOG_REPOSITORY, UPDATE_LOG_REPOSITORY } from 'src/app-shared/constant'
+import { CreateLoginLogDto, QueryLoginLogDto, CreateDeviceInfoLogDto, CreateUpdateLogDto } from './dto'
 
 @Injectable()
 export class UpushyLogService {
   constructor(
+    // @Inject(LOGIN_LOG_REPOSITORY)
+    // private loginLogRepo: Repository<LoginLogEntity>,
+    // @Inject(DEVICE_INFO_LOG_REPOSITORY)
+    // private deviceInfoLogRepo: Repository<DeviceInfoLogEntity>,
+    // @Inject(UPDATE_LOG_REPOSITORY)
+    // private updateLogRepo: Repository<UpdateLogEntity>,
+
     @InjectRepository(LoginLogEntity)
-    private readonly loginLogRepository: Repository<LoginLogEntity>,
+    private readonly loginLogRepo: Repository<LoginLogEntity>,
     @InjectRepository(DeviceInfoLogEntity)
-    private readonly deviceInfoLogRepository: Repository<DeviceInfoLogEntity>,
+    private readonly deviceInfoLogRepo: Repository<DeviceInfoLogEntity>,
     @InjectRepository(UpdateLogEntity)
-    private readonly updateLogRepository: Repository<UpdateLogEntity>
+    private readonly updateLogRepo: Repository<UpdateLogEntity>
   ) {}
 
   /**
@@ -31,7 +39,7 @@ export class UpushyLogService {
   async createLoginLog(createLogLoginDto: CreateLoginLogDto): Promise<LoginLogEntity> {
     const loginLog = new LoginLogEntity()
     Object.assign(loginLog, createLogLoginDto)
-    return await this.loginLogRepository.save(loginLog)
+    return await this.loginLogRepo.save(loginLog)
   }
 
   // 分页查询登录记录
@@ -45,7 +53,7 @@ export class UpushyLogService {
       {}
 
     id && (conditions.id = id)
-    return await this.loginLogRepository.find({
+    return await this.loginLogRepo.find({
       where: conditions,
       take: pageSize,
       skip: (pageNum - 1) * pageSize,
@@ -55,12 +63,12 @@ export class UpushyLogService {
 
   // 查询所有登录记录
   async findAllLoginLog(): Promise<LoginLogEntity[]> {
-    return await this.loginLogRepository.find()
+    return await this.loginLogRepo.find()
   }
 
   // 获取登录记录总数
   async getLoginLogCount(): Promise<number> {
-    return await this.loginLogRepository.count()
+    return await this.loginLogRepo.count()
   }
 
   /**
@@ -70,7 +78,7 @@ export class UpushyLogService {
   async createDeviceInfoLog(createLogDeviceInfoDto: CreateDeviceInfoLogDto): Promise<DeviceInfoLogEntity> {
     const deviceInfoLog = new DeviceInfoLogEntity()
     Object.assign(deviceInfoLog, createLogDeviceInfoDto)
-    return await this.deviceInfoLogRepository.save(deviceInfoLog)
+    return await this.deviceInfoLogRepo.save(deviceInfoLog)
   }
 
   // 查询单个设备记录
@@ -78,7 +86,7 @@ export class UpushyLogService {
     // where: FindOneOptions<DeviceInfoLogEntity>,
     where: FindOptionsWhere<DeviceInfoLogEntity>
   ): Promise<DeviceInfoLogEntity | null> {
-    return await this.deviceInfoLogRepository.findOne({
+    return await this.deviceInfoLogRepo.findOne({
       where,
     })
   }
@@ -87,6 +95,6 @@ export class UpushyLogService {
   async createUpdateLog(createLogUpdateDto: CreateUpdateLogDto): Promise<UpdateLogEntity> {
     const updateLog = new UpdateLogEntity()
     Object.assign(updateLog, createLogUpdateDto)
-    return await this.updateLogRepository.save(updateLog)
+    return await this.updateLogRepo.save(updateLog)
   }
 }

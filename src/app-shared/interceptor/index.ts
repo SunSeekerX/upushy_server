@@ -6,8 +6,6 @@
  * @LastEditTime: 2021-09-14 20:01:47
  */
 
-import { LogInterceptor } from './log.interceptor'
-import { LoginInterceptor } from './login.interceptor'
-import { UpdateInterceptor } from './update.interceptor'
-
-export { LogInterceptor, LoginInterceptor, UpdateInterceptor }
+export * from './log.interceptor'
+export * from './login.interceptor'
+export * from './update.interceptor'

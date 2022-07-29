@@ -6,7 +6,7 @@
  * @LastEditTime: 2021-09-14 17:50:38
  */
 
-import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
+import { Injectable, Inject, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, DeleteResult } from 'typeorm'
 import { validate } from 'class-validator'
@@ -16,29 +16,34 @@ import { UserRO } from './interface'
 import { UserEntity } from './entities'
 import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
 import { getEnv } from 'src/app-shared/config'
+// import { USER_REPOSITORY } from 'src/app-shared/constant'
 
 @Injectable()
 export class AppUserService {
   constructor(
+    // @InjectRepository(UserEntity)
+    // private readonly userRepo: Repository<UserEntity>
+    // @Inject(USER_REPOSITORY)
+    // private userRepo: Repository<UserEntity>,
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepo: Repository<UserEntity>
   ) {}
 
   // 查找全部
   async findAll(): Promise<UserEntity[]> {
-    return await this.userRepository.find()
+    return await this.userRepo.find()
   }
 
   // 查找单个用户
   async findOne({ username }: LoginUserDto): Promise<UserEntity> {
-    return await this.userRepository.findOne({
+    return await this.userRepo.findOne({
       where: { username },
     })
   }
 
   // 创建用户
   async create({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepo.findOne({
       where: { username },
     })
     if (user) {
@@ -59,29 +64,29 @@ export class AppUserService {
       const _errors = { username: 'User input is not valid.' }
       throw new HttpException({ message: 'Input data validation failed', _errors }, HttpStatus.BAD_REQUEST)
     } else {
-      const savedUser = await this.userRepository.save(newUser)
+      const savedUser = await this.userRepo.save(newUser)
       return this.buildUserRO(savedUser)
     }
   }
 
   // 更新用户
   async update(id: string, dto: UpdateUserDto): Promise<UserEntity> {
-    const toUpdate = await this.userRepository.findOne({
+    const toUpdate = await this.userRepo.findOne({
       where: { id },
     })
     delete toUpdate.password
 
     const updated = Object.assign(toUpdate, dto)
-    return await this.userRepository.save(updated)
+    return await this.userRepo.save(updated)
   }
 
   // 删除用户
   async delete(username: string): Promise<DeleteResult> {
-    return await this.userRepository.delete({ username: username })
+    return await this.userRepo.delete({ username: username })
   }
 
   async findById(id: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepo.findOne({
       where: {
         id,
       },

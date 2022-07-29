@@ -7,11 +7,8 @@
  */
 
 import { Controller, Post, Body, HttpCode, Get, Logger, UseInterceptors, HttpStatus } from '@nestjs/common'
-import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
-import { Cache } from 'cache-manager'
-// import { RedisService } from 'nestjs-redis'
-// import * as Redis from 'ioredis'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 
@@ -22,6 +19,7 @@ import { AppUserService } from './app-user.service'
 import { guid } from 'src/app-shared/utils/index'
 import { getEnv } from 'src/app-shared/config'
 import { AppCacheService } from 'src/app-system/app-cache/app-cache.service'
+import { ApiResponseConstant } from 'src/app-shared/constant'
 
 @ApiBearerAuth()
 @ApiTags('系统模块 - 用户管理')
@@ -31,6 +29,10 @@ export class AppUserController {
 
   // 注册图片验证码
   @ApiOperation({ summary: '获取注册图片验证码' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('/register/captcha')
   async registerCodeImg(): Promise<BaseResult> {
     const captcha = svgCaptcha.create({
@@ -66,6 +68,10 @@ export class AppUserController {
 
   // 注册
   @ApiOperation({ summary: '用户注册' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_201)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<BaseResult> {
     if (!createUserDto.imgCaptcha) {
@@ -103,7 +109,10 @@ export class AppUserController {
 
   // 登录
   @ApiOperation({ summary: '用户登录' })
-  @HttpCode(200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('/login')
   @UseInterceptors(LoginInterceptor)
   async login(@Body() loginUserDto: LoginUserDto): Promise<BaseResult> {
@@ -174,6 +183,10 @@ export class AppUserController {
 
   // 登录图片验证码
   @ApiOperation({ summary: '登录验证码' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('/login/captcha')
   async loginCodeImg(): Promise<BaseResult> {
     const captcha = svgCaptcha.create({
@@ -207,7 +220,10 @@ export class AppUserController {
 
   // 用 refreshToken 获取新的 Token
   @ApiOperation({ summary: '刷新token' })
-  @HttpCode(200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('/token')
   async refreshToken(@Body() { refreshToken }: RefreshTokenDto): Promise<BaseResult> {
     try {

@@ -7,16 +7,14 @@
  */
 
 import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
+import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { UpushyProjectService } from './upushy-project.service'
 import { UpushySourceService } from 'src/app-upushy/upushy-source/upushy-source.service'
 import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
-
 import { BaseResult } from 'src/app-shared/interface'
-
 import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/index'
-
-import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiResponseConstant } from 'src/app-shared/constant'
 
 @ApiBearerAuth()
 @ApiTags('业务模块 - 项目管理')
@@ -26,11 +24,10 @@ export class UpushyProjectController {
 
   // 创建项目
   @ApiOperation({ summary: '项目管理 - 创建项目' })
-  @ApiResponse({
-    status: 201,
-    description: '创建成功',
-  })
-  @ApiResponse({ status: 403, description: ' Api 签名验证失败' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_201)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('project')
   async create(@Body() createProjectDto: CreateProjectDto, @RequestUser() user): Promise<BaseResult> {
     createProjectDto.userId = user.id
@@ -47,11 +44,10 @@ export class UpushyProjectController {
 
   // 删除项目
   @ApiOperation({ summary: '项目管理 - 删除项目' })
-  @ApiResponse({
-    status: 201,
-    description: 'The project has been successfully deleted.',
-  })
-  @ApiResponse({ status: 403, description: ' Api 签名验证失败' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Delete('project')
   async delete(@Body() deleteProjectDto: DeleteProjectDto): Promise<BaseResult> {
     const sourceCount = await this.upushySourceService.querySourceCount({
@@ -81,6 +77,10 @@ export class UpushyProjectController {
 
   // 更新项目信息
   @ApiOperation({ summary: '项目管理 - 更新项目' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Put('project')
   async update(@Body() updateProjectDto: UpdateProjectDto): Promise<BaseResult> {
     const project = await this.upushyProjectService.findOne(updateProjectDto.id)
@@ -98,7 +98,10 @@ export class UpushyProjectController {
 
   // 获取项目列表
   @ApiOperation({ summary: '项目管理 - 根据用户 id 获取用户的项目' })
-  @ApiResponse({ status: 200, description: '成功' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('projects')
   async getProjects(@Query() queryProjectDto: QueryProjectDto, @RequestUser() user): Promise<BaseResult> {
     queryProjectDto.userId = user.id

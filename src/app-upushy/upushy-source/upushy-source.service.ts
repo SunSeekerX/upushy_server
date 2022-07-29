@@ -1,16 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, getRepository, DeleteResult, FindManyOptions, FindOptionsOrder } from 'typeorm'
+import { Repository, DeleteResult, FindManyOptions, FindOptionsOrder } from 'typeorm'
 
 import { SourceEntity } from './entities'
+// import { SOURCE_REPOSITORY } from 'src/app-shared/constant'
 
 import { CreateSourceDto, UpdateSourceDto, DeleteSourceDto, QuerySourceDto } from './dto/index'
 
 @Injectable()
 export class UpushySourceService {
   constructor(
+    // @Inject(SOURCE_REPOSITORY)
+    // private sourceRepo: Repository<SourceEntity>
     @InjectRepository(SourceEntity)
-    private readonly sourceEntity: Repository<SourceEntity>
+    private readonly sourceRepo: Repository<SourceEntity>
   ) {}
 
   // 添加资源
@@ -18,29 +21,29 @@ export class UpushySourceService {
     const source = new SourceEntity()
     Object.assign(source, createSourceDto)
 
-    return await this.sourceEntity.save(source)
+    return await this.sourceRepo.save(source)
   }
 
   // 删除资源
   async deleteSource({ id }: DeleteSourceDto): Promise<DeleteResult> {
-    return await this.sourceEntity.delete(id)
+    return await this.sourceRepo.delete(id)
   }
 
   // 更新资源
   async updateSource(updateSourceDto: UpdateSourceDto): Promise<SourceEntity> {
-    const toUpdate = await this.sourceEntity.findOne({
+    const toUpdate = await this.sourceRepo.findOne({
       where: {
         id: updateSourceDto.id,
       },
     })
     const updated = Object.assign(toUpdate, updateSourceDto)
 
-    return await this.sourceEntity.save(updated)
+    return await this.sourceRepo.save(updated)
   }
 
   // 根据项目projectId & type查找最大的versionCode资源
   async queryMaxSource({ projectId, type, status }): Promise<SourceEntity | null> {
-    const { max } = await getRepository(SourceEntity)
+    const { max } = await this.sourceRepo
       .createQueryBuilder('app_source')
       .select('MAX(app_source.versionCode)', 'max')
       .where('app_source.projectId = :projectId and app_source.type = :type and status = :status', {
@@ -50,7 +53,7 @@ export class UpushySourceService {
       })
       .getRawOne()
 
-    return await this.sourceEntity.findOne({
+    return await this.sourceRepo.findOne({
       where: {
         projectId,
         versionCode: max,
@@ -61,7 +64,7 @@ export class UpushySourceService {
 
   // 查找最大的版本号
   async queryMaxVersionCode({ projectId, type }): Promise<number> {
-    const { max } = await getRepository(SourceEntity)
+    const { max } = await this.sourceRepo
       .createQueryBuilder('app_source')
       .select('MAX(app_source.versionCode)', 'max')
       .where('app_source.projectId = :projectId and app_source.type = :type', {
@@ -75,12 +78,12 @@ export class UpushySourceService {
 
   // 条件查找资源数量
   async getSourceCount(options?: FindManyOptions<SourceEntity>): Promise<number> {
-    return await this.sourceEntity.count(options)
+    return await this.sourceRepo.count(options)
   }
 
   // 查找单个资源
   async findOne(where: FindManyOptions<SourceEntity>): Promise<SourceEntity> {
-    return await this.sourceEntity.findOne(where)
+    return await this.sourceRepo.findOne(where)
   }
 
   // 分页查找资源
@@ -88,7 +91,7 @@ export class UpushySourceService {
     { projectId, pageSize, pageNum, type }: QuerySourceDto,
     orderCondition: FindOptionsOrder<SourceEntity>
   ): Promise<SourceEntity[]> {
-    return await this.sourceEntity.find({
+    return await this.sourceRepo.find({
       take: pageSize,
       skip: (pageNum - 1) * pageSize,
       where: {
@@ -104,7 +107,7 @@ export class UpushySourceService {
     { projectId, type }: QuerySourceDto,
     orderCondition: FindOptionsOrder<SourceEntity>
   ): Promise<SourceEntity[]> {
-    return await this.sourceEntity.find({
+    return await this.sourceRepo.find({
       where: {
         type,
         projectId,
@@ -115,7 +118,7 @@ export class UpushySourceService {
 
   // 查找全部资源数量
   async querySourceCount({ projectId }: QuerySourceDto): Promise<number> {
-    return await this.sourceEntity.count({
+    return await this.sourceRepo.count({
       where: {
         projectId,
       },
@@ -124,7 +127,7 @@ export class UpushySourceService {
 
   // 查找单类型全部资源数量
   async querySourceTypeCount({ projectId, type }: QuerySourceDto): Promise<number> {
-    return await this.sourceEntity.count({
+    return await this.sourceRepo.count({
       where: {
         type,
         projectId,
