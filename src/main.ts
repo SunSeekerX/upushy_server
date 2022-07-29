@@ -49,8 +49,8 @@ async function bootstrap() {
   let docTips = ''
   let runningTips = `
     Server running at:
-      - Local:   ${chalk.green(`http://localhost:${port}/${globalPrefix}/`)}
-      - Network: ${chalk.green(`http://${ipv4}:${port}/${globalPrefix}/`)}
+      - Local:   ${chalk.green(`http://localhost:${port}${globalPrefix}/`)}
+      - Network: ${chalk.green(`http://${ipv4}:${port}${globalPrefix}/`)}
     Client running at:
       - Local:   ${chalk.green(`http://localhost:${port}/`)}
       - Network: ${chalk.green(`http://${ipv4}:${port}/`)}`

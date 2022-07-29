@@ -158,6 +158,7 @@ export class UpushyBasicController {
       message: '成功',
       data: {
         serviceTime: new Date().getTime(),
+        updateUrlSuffix: `${getEnv<string>('API_GLOBAL_PREFIX')}/basic/update`,
       },
     }
   }

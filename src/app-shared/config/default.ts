@@ -19,7 +19,7 @@ export const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 /**
  * Api 前缀
  */
-export const API_GLOBAL_PREFIX = 'api'
+export const API_GLOBAL_PREFIX = '/api'
 
 /**
  * 是否打开接口文档
