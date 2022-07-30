@@ -6,38 +6,18 @@
  * @LastEditTime: 2021-09-14 18:15:19
  */
 
-import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BeforeInsert,
-} from 'typeorm'
+import { Entity, Column } from 'typeorm'
 
-import { guid } from 'src/app-shared/utils'
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_project')
-export class ProjectEntity {
-  @PrimaryColumn({
-    type: 'varchar',
-    length: 36,
-    nullable: false,
-    comment: 'id',
-  })
-  id: string
-
-  @BeforeInsert()
-  updateId(): void {
-    this.id = guid()
-  }
-
+export class ProjectEntity extends BaseEntity {
   @Column({
-    type: 'varchar',
+    type: 'bigint',
     name: 'user_id',
-    length: 36,
     nullable: false,
-    comment: '用户id',
+    unsigned: true,
+    comment: 'ID',
   })
   userId: string
 
@@ -55,21 +35,4 @@ export class ProjectEntity {
     default: '',
   })
   describe: string
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
-  })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
 }

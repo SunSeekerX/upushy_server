@@ -12,15 +12,19 @@ import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagg
 import { UpushyProjectService } from './upushy-project.service'
 import { UpushySourceService } from 'src/app-upushy/upushy-source/upushy-source.service'
 import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
+import type { UserEntity } from 'src/app-system/app-user/entities'
 import { BaseResult } from 'src/app-shared/interface'
-import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/index'
+import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto'
 import { ApiResponseConstant } from 'src/app-shared/constant'
 
 @ApiBearerAuth()
 @ApiTags('业务模块 - 项目管理')
 @Controller()
 export class UpushyProjectController {
-  constructor(private readonly upushySourceService: UpushySourceService, private readonly upushyProjectService: UpushyProjectService) {}
+  constructor(
+    private readonly upushySourceService: UpushySourceService,
+    private readonly upushyProjectService: UpushyProjectService
+  ) {}
 
   // 创建项目
   @ApiOperation({ summary: '项目管理 - 创建项目' })
@@ -29,9 +33,12 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('project')
-  async create(@Body() createProjectDto: CreateProjectDto, @RequestUser() user): Promise<BaseResult> {
-    createProjectDto.userId = user.id
-    const res = await this.upushyProjectService.create(createProjectDto)
+  async onCreateProject(
+    @Body() createProjectDto: CreateProjectDto,
+    @RequestUser() requestUser: UserEntity
+  ): Promise<BaseResult> {
+    createProjectDto.userId = requestUser.id
+    const res = await this.upushyProjectService.onCreateProject(createProjectDto)
 
     if (res) {
       return {
@@ -49,8 +56,8 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Delete('project')
-  async delete(@Body() deleteProjectDto: DeleteProjectDto): Promise<BaseResult> {
-    const sourceCount = await this.upushySourceService.querySourceCount({
+  async onDeleteProject(@Body() deleteProjectDto: DeleteProjectDto): Promise<BaseResult> {
+    const sourceCount = await this.upushySourceService.onFindSourceCountAll({
       projectId: deleteProjectDto.id,
     })
     if (sourceCount > 0) {
@@ -59,10 +66,10 @@ export class UpushyProjectController {
         message: '下有子项无法删除',
       }
     } else {
-      const project = await this.upushyProjectService.findOne(deleteProjectDto.id)
+      const project = await this.upushyProjectService.onFindProjectOne(deleteProjectDto.id)
 
       if (project) {
-        const res = await this.upushyProjectService.delete(deleteProjectDto)
+        const res = await this.upushyProjectService.onDeleteProject(deleteProjectDto)
 
         return {
           statusCode: 200,
@@ -82,13 +89,18 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Put('project')
-  async update(@Body() updateProjectDto: UpdateProjectDto): Promise<BaseResult> {
-    const project = await this.upushyProjectService.findOne(updateProjectDto.id)
+  async onUpdateProject(
+    @Body() updateProjectDto: UpdateProjectDto,
+    @RequestUser() requestUser: UserEntity
+  ): Promise<BaseResult> {
+    const project = await this.upushyProjectService.onFindProjectOne(updateProjectDto.id)
     if (!project) {
       return { statusCode: 200, message: '项目不存在' }
     }
 
-    const res = await this.upushyProjectService.update(updateProjectDto)
+    updateProjectDto.userId = requestUser.id
+
+    const res = await this.upushyProjectService.onUpdateProject(updateProjectDto)
     return {
       statusCode: 200,
       message: '更新成功',
@@ -103,19 +115,22 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('projects')
-  async getProjects(@Query() queryProjectDto: QueryProjectDto, @RequestUser() user): Promise<BaseResult> {
-    queryProjectDto.userId = user.id
+  async onFindUserProjects(
+    @Query() queryProjectDto: QueryProjectDto,
+    @RequestUser() requestUser: UserEntity
+  ): Promise<BaseResult> {
+    queryProjectDto.userId = requestUser.id
 
-    const count = await this.upushyProjectService.getProjectCount({
+    const count = await this.upushyProjectService.onFindProjectAllCount({
       where: {
         userId: queryProjectDto.userId,
       },
     })
     let res = []
     if (queryProjectDto.pageNum && queryProjectDto.pageSize) {
-      res = await this.upushyProjectService.queryProject(queryProjectDto)
+      res = await this.upushyProjectService.onFindProjectPaging(queryProjectDto)
     } else {
-      res = await this.upushyProjectService.findAll()
+      res = await this.upushyProjectService.onFindUserProjects(requestUser.id)
     }
 
     return {

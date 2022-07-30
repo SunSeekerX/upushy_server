@@ -12,7 +12,7 @@ import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
 import { UpushyLogService } from 'src/app-upushy/upushy-log/upushy-log.service'
-import { getIPLocation } from 'src/app-shared/utils/index'
+import { getIPLocation } from 'src/app-shared/utils'
 import { getClientIp } from 'src/app-shared/utils/request-ip'
 
 @Injectable()
@@ -29,7 +29,7 @@ export class LoginInterceptor implements NestInterceptor {
         getIPLocation(ip)
           .then((loginLocation) => {
             // 这里插入数据库有可能抛错误
-            this.upushyLogService.createLoginLog({
+            this.upushyLogService.onCreateLoginLog({
               username: req.body.username,
               ipaddr: ip,
               loginLocation,
@@ -37,7 +37,7 @@ export class LoginInterceptor implements NestInterceptor {
               os: req.useragent.os,
               status: data.statusCode === 200 ? '1' : '0',
               msg: data.message,
-              loginTime: new Date(),
+              createdTime: new Date(),
             })
           })
           .catch((err) => {

@@ -29,14 +29,16 @@ export class TokenAuthMiddleware implements NestMiddleware {
       )
       throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED)
     }
-    const token = authorization.split(' ')[1]
-
     try {
+      const token = authorization.split(' ')[1]
       const decoded: any = verify(token, getEnv<string>('JWT_SECRET'))
-      const user = await this.appUserService.findById(decoded.id)
-      // if (!user) {
-      //   throw new HttpException('User not found.', HttpStatus.UNAUTHORIZED)
-      // }
+
+      const user = await this.appUserService.onFindUserOneById(decoded.id, false)
+      // 校验 token 是否有效
+      console.log(new Date(user.updatedPwdTime).getTime(), new Date(decoded.updatedPwdTime).getTime());
+      if (new Date(user.updatedPwdTime).getTime() !== new Date(decoded.updatedPwdTime).getTime()) {
+        throw new HttpException('登录信息已失效', HttpStatus.UNAUTHORIZED)
+      }
       req.user = user
       next()
     } catch (error) {

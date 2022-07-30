@@ -14,7 +14,7 @@ export class DeleteSourceDto {
     description: '资源ID',
     type: String,
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly id: string
 }

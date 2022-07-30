@@ -110,34 +110,40 @@ export class EnvConfig {
   /**
    * 阿里云账号
    */
-   @Expose()
-   @ValidateIf((el) => !el.WEB_OSS)
-   @IsNotEmpty()
-   readonly ALIYUN_ACCOUNT_ID: string
- 
-   @Expose()
-   @ValidateIf((el) => !el.WEB_OSS)
-   @IsNotEmpty()
-   readonly ALIYUN_ACCOUNT_RAM_ROLE: string
- 
-   @Expose()
-   @ValidateIf((el) => !el.WEB_OSS)
-   @IsNotEmpty()
-   readonly ALIYUN_RAM_ACCESS_KEY_ID: string
- 
-   @Expose()
-   @ValidateIf((el) => !el.WEB_OSS)
-   @IsNotEmpty()
-   readonly ALIYUN_RAM_ACCESS_KEY_SECRET: string
- 
-   @Expose()
-   @ValidateIf((el) => !el.WEB_OSS && !isNil(el.ALIYUN_RAM_TEMPORARY_EXPIRE))
-   @Min(15)
-   @IsNotEmpty()
-   @IsNumber()
-   readonly ALIYUN_RAM_TEMPORARY_EXPIRE: number
+  @Expose()
+  @ValidateIf((el) => !el.WEB_OSS)
+  @IsNotEmpty()
+  readonly ALIYUN_ACCOUNT_ID: string
 
-   /**
+  @Expose()
+  @ValidateIf((el) => !el.WEB_OSS)
+  @IsNotEmpty()
+  readonly ALIYUN_ACCOUNT_RAM_ROLE: string
+
+  @Expose()
+  @ValidateIf((el) => !el.WEB_OSS)
+  @IsNotEmpty()
+  readonly ALIYUN_RAM_ACCESS_KEY_ID: string
+
+  @Expose()
+  @ValidateIf((el) => !el.WEB_OSS)
+  @IsNotEmpty()
+  readonly ALIYUN_RAM_ACCESS_KEY_SECRET: string
+
+  @Expose()
+  @ValidateIf((el) => !el.WEB_OSS && !isNil(el.ALIYUN_RAM_TEMPORARY_EXPIRE))
+  @Min(15)
+  @IsNotEmpty()
+  @IsNumber()
+  readonly ALIYUN_RAM_TEMPORARY_EXPIRE: number
+
+  @Expose()
+  @Transform((v) => setDefault(v, defaultEnvConfig.DB_TABLE_SYNC), { toClassOnly: true })
+  @ValidateIf((el) => !isNil(el.DB_TABLE_SYNC))
+  @IsBoolean()
+  readonly DB_TABLE_SYNC: boolean
+
+  /**
    * 数据库
    */
   @Expose()

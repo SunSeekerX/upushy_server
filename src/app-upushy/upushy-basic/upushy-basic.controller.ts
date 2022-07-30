@@ -6,7 +6,7 @@
  * @LastEditTime: 2021-09-14 22:24:43
  */
 
-import { Body, Controller, Get, HttpCode, Post, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common'
+import { Body, Controller, Get, Post, UseInterceptors, HttpException, HttpStatus } from '@nestjs/common'
 import * as os from 'os'
 import * as v8 from 'v8'
 import * as publicIp from 'public-ip'
@@ -17,7 +17,7 @@ import { ApiOperation, ApiTags, ApiBearerAuth, ApiResponse } from '@nestjs/swagg
 
 import { getEnv } from 'src/app-shared/config'
 import { BaseResult } from 'src/app-shared/interface'
-import { UpdateAppDto } from './dto/index'
+import { UpdateAppDto } from './dto'
 import { UpushyProjectService } from 'src/app-upushy/upushy-project/upushy-project.service'
 import { UpushySourceService } from 'src/app-upushy/upushy-source/upushy-source.service'
 import { UpdateInterceptor } from 'src/app-shared/interceptor'
@@ -102,7 +102,7 @@ export class UpushyBasicController {
     { projectId, platform }: UpdateAppDto
   ): Promise<BaseResult> {
     // 根据appid检查项目是否存在
-    const project = await this.upushyProjectService.findOne(projectId)
+    const project = await this.upushyProjectService.onFindProjectOne(projectId)
     if (!project) {
       return {
         statusCode: 200,
@@ -119,17 +119,17 @@ export class UpushyBasicController {
     }
 
     // 检查原生 Android 更新
-    const wgt = await this.upushySourceService.queryMaxSource({
+    const wgt = await this.upushySourceService.onFindMaxSource({
       projectId: projectId,
       type,
-      status: 1,
+      status: 0,
     })
     wgt && Object.assign(wgt, { url: `${OSS_BASE_URL}/${wgt.url}` })
 
-    const native = await this.upushySourceService.queryMaxSource({
+    const native = await this.upushySourceService.onFindMaxSource({
       projectId: projectId,
       type: type + 2,
-      status: 1,
+      status: 0,
     })
     native && native.type !== 4 && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
 

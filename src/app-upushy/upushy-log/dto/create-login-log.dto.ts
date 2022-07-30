@@ -65,5 +65,5 @@ export class CreateLoginLogDto {
     description: '访问时间',
   })
   @IsNotEmpty()
-  readonly loginTime: Date
+  readonly createdTime: Date
 }

@@ -1,31 +1,14 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Column } from 'typeorm'
 
-import { guid } from 'src/app-shared/utils'
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_source')
-export class SourceEntity {
-  @PrimaryColumn({
-    type: 'varchar',
-    length: 36,
-    nullable: false,
-    comment: 'id',
-  })
-  @ApiProperty({
-    description: '资源 id'
-  })
-  id: string
-
-  @BeforeInsert()
-  updateId(): void {
-    this.id = guid()
-  }
-
+export class SourceEntity extends BaseEntity {
   @Column({
-    type: 'varchar',
+    type: 'bigint',
     name: 'project_id',
-    length: 36,
     nullable: false,
+    unsigned: true,
     comment: '项目id',
   })
   projectId: string
@@ -61,39 +44,22 @@ export class SourceEntity {
   })
   url: string
 
-  // @Column({
-  //   type: 'int',
-  //   name: 'is_force_update',
-  //   unsigned: true,
-  //   nullable: false,
-  //   comment: '是否强制更新（0：否 1：是）',
-  // })
-  // isForceUpdate: number
-
   @Column({
     type: 'int',
     name: 'update_type',
     unsigned: true,
     nullable: false,
     default: 1,
-    comment: '更新类型（1：用户同意更新，2：强制更新，3：静默更新）',
+    comment: '更新类型 1 用户同意更新 2 强制更新 3 静默更新',
   })
   updateType: number
 
   @Column({
     type: 'int',
     unsigned: true,
-    comment: '资源类型（1：wgt-android 2：wgt-ios  3：android，4：ios）',
+    comment: '资源类型 1 wgt-android 2 wgt-ios  3 android 4 ios',
   })
   type: number
-
-  @Column({
-    type: 'int',
-    unsigned: true,
-    default: 1,
-    comment: '资源状态（0：禁用 1：启用）',
-  })
-  status: number
 
   @Column({
     type: 'varchar',
@@ -102,28 +68,4 @@ export class SourceEntity {
     default: '',
   })
   changelog: string
-
-  @Column({
-    type: 'varchar',
-    comment: '备注',
-    default: '',
-  })
-  remark: string
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
-  })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
 }

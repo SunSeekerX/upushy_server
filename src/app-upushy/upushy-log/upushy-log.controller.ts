@@ -12,7 +12,7 @@ import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagg
 
 import { UpushyLogService } from './upushy-log.service'
 
-import { QueryLoginLogDto } from './dto/index'
+import { QueryLoginLogDto } from './dto'
 import { BaseResult } from 'src/app-shared/interface'
 
 @ApiBearerAuth()
@@ -25,16 +25,16 @@ export class UpushyLogController {
   @ApiOperation({ summary: '获取登录日志' })
   @ApiResponse({ status: 200, description: '获取成功' })
   @Get('login')
-  async getLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto): Promise<BaseResult> {
-    const count = await this.upushyLogService.getLoginLogCount()
+  async onFindLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto): Promise<BaseResult> {
+    const count = await this.upushyLogService.onFindLoginLogCount()
     let res = []
     const orderCondition = {}
     queryLoginLogDto.sortKey && (orderCondition[queryLoginLogDto.sortKey] = queryLoginLogDto.order)
 
     if (queryLoginLogDto.pageNum && queryLoginLogDto.pageSize) {
-      res = await this.upushyLogService.queryLoginLog(queryLoginLogDto, orderCondition)
+      res = await this.upushyLogService.onFindLoginLogPaging(queryLoginLogDto, orderCondition)
     } else {
-      res = await this.upushyLogService.findAllLoginLog()
+      res = await this.upushyLogService.onFindLoginLogAll()
     }
 
     return {

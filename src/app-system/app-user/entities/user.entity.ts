@@ -6,25 +6,12 @@
  * @LastEditTime: 2021-09-14 17:47:26
  */
 
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert } from 'typeorm'
-import * as argon2 from 'argon2'
-import { guid } from 'src/app-shared/utils'
+import { Entity, Column } from 'typeorm'
+
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_user')
-export class UserEntity {
-  @PrimaryColumn({
-    type: 'varchar',
-    length: 36,
-    nullable: false,
-    comment: 'id',
-  })
-  id: string
-
-  @BeforeInsert()
-  updateId(): void {
-    this.id = guid()
-  }
-
+export class UserEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 50,
@@ -40,11 +27,6 @@ export class UserEntity {
   })
   password: string
 
-  @BeforeInsert()
-  async hashPassword(): Promise<void | Error> {
-    this.password = await argon2.hash(this.password)
-  }
-
   @Column({
     type: 'varchar',
     length: 320,
@@ -59,20 +41,12 @@ export class UserEntity {
   })
   nickname?: string
 
-  @CreateDateColumn({
+  @Column({
     type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
+    name: 'updated_pwd_time',
+    default: null,
+    nullable: true,
+    comment: '修改密码时间',
   })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
+  updatedPwdTime: Date
 }

@@ -14,7 +14,7 @@ export class QuerySourceDto {
     description: '项目ID',
     type: String,
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly projectId: string
 }

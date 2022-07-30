@@ -6,24 +6,17 @@
  * @LastEditTime: 2021-09-14 22:20:58
  */
 
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm'
 
+import { genSnowFlakeId } from 'src/app-shared/utils'
 import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entities'
-import { DEVICE_INFO_LOG_REPOSITORY, LOGIN_LOG_REPOSITORY, UPDATE_LOG_REPOSITORY } from 'src/app-shared/constant'
 import { CreateLoginLogDto, QueryLoginLogDto, CreateDeviceInfoLogDto, CreateUpdateLogDto } from './dto'
 
 @Injectable()
 export class UpushyLogService {
   constructor(
-    // @Inject(LOGIN_LOG_REPOSITORY)
-    // private loginLogRepo: Repository<LoginLogEntity>,
-    // @Inject(DEVICE_INFO_LOG_REPOSITORY)
-    // private deviceInfoLogRepo: Repository<DeviceInfoLogEntity>,
-    // @Inject(UPDATE_LOG_REPOSITORY)
-    // private updateLogRepo: Repository<UpdateLogEntity>,
-
     @InjectRepository(LoginLogEntity)
     private readonly loginLogRepo: Repository<LoginLogEntity>,
     @InjectRepository(DeviceInfoLogEntity)
@@ -36,14 +29,15 @@ export class UpushyLogService {
    * @name login
    */
   // 创建登录记录
-  async createLoginLog(createLogLoginDto: CreateLoginLogDto): Promise<LoginLogEntity> {
+  async onCreateLoginLog(createLogLoginDto: CreateLoginLogDto): Promise<LoginLogEntity> {
     const loginLog = new LoginLogEntity()
     Object.assign(loginLog, createLogLoginDto)
+    loginLog.id = genSnowFlakeId()
     return await this.loginLogRepo.save(loginLog)
   }
 
   // 分页查询登录记录
-  async queryLoginLog(
+  async onFindLoginLogPaging(
     { id, pageNum, pageSize }: QueryLoginLogDto,
     orderCondition: {
       [P in keyof LoginLogEntity]?: 'ASC' | 'DESC' | 1 | -1
@@ -62,27 +56,26 @@ export class UpushyLogService {
   }
 
   // 查询所有登录记录
-  async findAllLoginLog(): Promise<LoginLogEntity[]> {
+  async onFindLoginLogAll(): Promise<LoginLogEntity[]> {
     return await this.loginLogRepo.find()
   }
 
   // 获取登录记录总数
-  async getLoginLogCount(): Promise<number> {
+  async onFindLoginLogCount(): Promise<number> {
     return await this.loginLogRepo.count()
   }
 
-  /**
-   * @name update
-   */
   // 创建设备记录
-  async createDeviceInfoLog(createLogDeviceInfoDto: CreateDeviceInfoLogDto): Promise<DeviceInfoLogEntity> {
+  async onCreateDeviceInfoLog(createLogDeviceInfoDto: CreateDeviceInfoLogDto): Promise<DeviceInfoLogEntity> {
     const deviceInfoLog = new DeviceInfoLogEntity()
     Object.assign(deviceInfoLog, createLogDeviceInfoDto)
+    deviceInfoLog.id = genSnowFlakeId()
+    deviceInfoLog.createdTime = new Date()
     return await this.deviceInfoLogRepo.save(deviceInfoLog)
   }
 
   // 查询单个设备记录
-  async querySingleDeviceInfo(
+  async onFindDeviceInfoOne(
     // where: FindOneOptions<DeviceInfoLogEntity>,
     where: FindOptionsWhere<DeviceInfoLogEntity>
   ): Promise<DeviceInfoLogEntity | null> {
@@ -92,9 +85,11 @@ export class UpushyLogService {
   }
 
   // 创建检查更新记录
-  async createUpdateLog(createLogUpdateDto: CreateUpdateLogDto): Promise<UpdateLogEntity> {
+  async onCreateUpdateLog(createLogUpdateDto: CreateUpdateLogDto): Promise<UpdateLogEntity> {
     const updateLog = new UpdateLogEntity()
     Object.assign(updateLog, createLogUpdateDto)
+    updateLog.id = genSnowFlakeId()
+    updateLog.createdTime = new Date()
     return await this.updateLogRepo.save(updateLog)
   }
 }

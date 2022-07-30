@@ -26,7 +26,7 @@ export class UpushyBasicModule implements NestModule {
     consumer
       .apply(TokenAuthMiddleware)
       .exclude({
-        path: `/${getEnv('API_GLOBAL_PREFIX')}/basic/config`,
+        path: `${getEnv('API_GLOBAL_PREFIX')}/basic/config`,
         method: RequestMethod.GET,
       })
       .forRoutes(UpushyBasicController)

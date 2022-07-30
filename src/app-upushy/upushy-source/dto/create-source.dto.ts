@@ -15,7 +15,7 @@ export class CreateSourceDto {
     type: String,
     description: '项目ID',
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly projectId: string
 
@@ -51,18 +51,9 @@ export class CreateSourceDto {
   @IsNotEmpty()
   readonly url: string
 
-  // @ApiProperty({
-  //   type: Number,
-  //   description: '是否强制更新（0：否 1：是）',
-  // })
-  // @Type(() => Number)
-  // @IsNotEmpty()
-  // @IsInt()
-  // readonly isForceUpdate: number
-
   @ApiProperty({
     type: Number,
-    description: '更新类型（1：用户同意更新，2：强制更新，3：静默更新）',
+    description: '更新类型 1 用户同意更新 2 强制更新 3 静默更新',
   })
   @Type(() => Number)
   @IsNotEmpty()
@@ -71,7 +62,7 @@ export class CreateSourceDto {
 
   @ApiProperty({
     type: Number,
-    description: '资源类型（1：wgt-android 2：wgt-ios  3：android，4：ios）',
+    description: '资源类型 1 wgt-android 2 wgt-ios  3 android 4 ios',
   })
   @Type(() => Number)
   @IsNotEmpty()
@@ -80,7 +71,7 @@ export class CreateSourceDto {
 
   @ApiProperty({
     type: Number,
-    description: '资源状态（0：禁用 1：启用）',
+    description: '资源状态 0 启用 1 禁用',
   })
   @Type(() => Number)
   @IsInt()

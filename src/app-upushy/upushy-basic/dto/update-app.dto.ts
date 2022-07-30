@@ -18,7 +18,7 @@ export class UpdateAppDto {
     type: String,
     description: 'projectId',
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly projectId: string
 

@@ -6,43 +6,36 @@
  * @LastEditTime: 2021-09-14 17:50:38
  */
 
-import { Injectable, Inject, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, DeleteResult } from 'typeorm'
+import { Repository, DeleteResult, UpdateResult } from 'typeorm'
 import { validate } from 'class-validator'
 import * as jwt from 'jsonwebtoken'
+import * as argon2 from 'argon2'
 
+import { genSnowFlakeId } from 'src/app-shared/utils'
 import { UserRO } from './interface'
 import { UserEntity } from './entities'
-import { LoginUserDto, CreateUserDto, UpdateUserDto } from './dto/index'
+import { CreateUserDto, UpdateUserDto } from './dto'
+import { LoginUserDto } from 'src/app-system/app-auth/dto'
 import { getEnv } from 'src/app-shared/config'
-// import { USER_REPOSITORY } from 'src/app-shared/constant'
 
 @Injectable()
 export class AppUserService {
   constructor(
-    // @InjectRepository(UserEntity)
-    // private readonly userRepo: Repository<UserEntity>
-    // @Inject(USER_REPOSITORY)
-    // private userRepo: Repository<UserEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>
   ) {}
 
-  // 查找全部
-  async findAll(): Promise<UserEntity[]> {
-    return await this.userRepo.find()
-  }
-
   // 查找单个用户
-  async findOne({ username }: LoginUserDto): Promise<UserEntity> {
+  async onFindUserOne({ username }: LoginUserDto): Promise<UserEntity> {
     return await this.userRepo.findOne({
       where: { username },
     })
   }
 
   // 创建用户
-  async create({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
+  async onCreateUser({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
     const user = await this.userRepo.findOne({
       where: { username },
     })
@@ -53,11 +46,15 @@ export class AppUserService {
       })
     }
     // create new user
+    const hashPassword = await argon2.hash(password)
     const newUser = new UserEntity()
+    newUser.id = genSnowFlakeId()
     newUser.username = username
     newUser.nickname = nickname
-    newUser.password = password
+    newUser.password = hashPassword
     newUser.email = email
+    newUser.createdBy = newUser.id
+    newUser.createdTime = new Date()
 
     const errors = await validate(newUser)
     if (errors.length > 0) {
@@ -70,50 +67,52 @@ export class AppUserService {
   }
 
   // 更新用户
-  async update(id: string, dto: UpdateUserDto): Promise<UserEntity> {
-    const toUpdate = await this.userRepo.findOne({
-      where: { id },
-    })
-    delete toUpdate.password
-
-    const updated = Object.assign(toUpdate, dto)
-    return await this.userRepo.save(updated)
+  async onUpdateUser(id: string, updateUserDto: Partial<UserEntity>): Promise<UpdateResult> {
+    // const toUpdate = await this.userRepo.findOne({
+    //   where: { id },
+    // })
+    // delete toUpdate.password
+    // const updatedUser = Object.assign(toUpdate, updateUserDto)
+    return await this.userRepo.update(
+      {
+        id,
+      },
+      {
+        ...updateUserDto,
+        updatedTime: new Date(),
+        updatedBy: id,
+      }
+    )
   }
 
   // 删除用户
-  async delete(username: string): Promise<DeleteResult> {
+  async onDeleteUser(username: string): Promise<DeleteResult> {
     return await this.userRepo.delete({ username: username })
   }
 
-  async findById(id: string): Promise<UserEntity> {
-    const user = await this.userRepo.findOne({
+  async onFindUserOneById(id: string, masking = true): Promise<UserEntity | null> {
+    const findUser = await this.userRepo.findOne({
       where: {
         id,
       },
     })
-    if (!user) {
-      throw new HttpException({ errors: { User: ' not found' } }, 401)
+    if (masking) {
+      delete findUser.password
+      delete findUser.status
     }
-    return user
-    // return this.buildUserRO(user)
+    return findUser
   }
 
-  public generateJWT({ id, username }: UserEntity): string {
-    // const today = new Date()
-    // const exp = new Date(today)
-    // exp.setDate(today.getDate() + 60)
-
+  public onGenerateJWT({ id, username, updatedPwdTime }: UserEntity): string {
     return jwt.sign(
       {
         id,
         username,
-        // 过期时间
-        // exp: Math.floor(Date.now() / 1000) + 1 * 24 * 60 * 60,
-        // exp: Math.floor(Date.now() / 1000) + 5,
+        updatedPwdTime: new Date(updatedPwdTime).getTime(),
       },
       getEnv<string>('JWT_SECRET'),
       {
-        // 过期时间/seconds
+        // 过期时间 seconds
         expiresIn: 1 * 24 * 60 * 60,
         // expiresIn: 5,
       }
@@ -121,15 +120,16 @@ export class AppUserService {
   }
 
   // 生成 refreshToken
-  public generateRefreshToken(user: UserEntity): string {
+  public onGenerateRefreshToken(user: UserEntity): string {
     return jwt.sign(
       {
         id: user.id,
         username: user.username,
+        updatedPwdTime: new Date(user.updatedPwdTime).getTime(),
       },
       getEnv<string>('JWT_SECRET'),
       {
-        // 过期时间/seconds
+        // 过期时间 seconds
         expiresIn: 30 * 24 * 60 * 60,
         // expiresIn: 20,
       }
@@ -141,7 +141,7 @@ export class AppUserService {
       id: user.id,
       username: user.username,
       nickname: user.nickname,
-      token: this.generateJWT(user),
+      token: this.onGenerateJWT(user),
     }
     return { user: userRO }
   }

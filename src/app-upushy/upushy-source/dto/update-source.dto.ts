@@ -7,7 +7,7 @@ export class UpdateSourceDto {
     type: String,
     description: '资源ID',
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly id: string
 

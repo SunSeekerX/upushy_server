@@ -10,11 +10,14 @@ import { ApiProperty } from '@nestjs/swagger'
 import { ValidateIf, IsNotEmpty, Length } from 'class-validator'
 
 export class UpdateProjectDto {
+  // 用户id
+  userId?: string
+  
   @ApiProperty({
     type: String,
     description: '项目id',
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly id: string
 

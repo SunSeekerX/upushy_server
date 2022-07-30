@@ -13,7 +13,8 @@ import type { DeleteResult } from 'typeorm'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { getEnv } from 'src/app-shared/config'
-
+import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
+import type { UserEntity } from 'src/app-system/app-user/entities'
 import { BaseResult, PaginationResult } from 'src/app-shared/base'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
@@ -23,7 +24,7 @@ import {
   UpdateSourceDto,
   QuerySourceDto,
   QueryLatestNativeVersionDto,
-} from './dto/index'
+} from './dto'
 import { UpushySourceService } from './upushy-source.service'
 import { ApiResponseConstant } from 'src/app-shared/constant'
 import { LatestNativeSourceVO } from './vo'
@@ -49,9 +50,10 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post()
-  async addSource(
+  async onCreateSource(
     @Body()
-    createSourceDto: CreateSourceDto
+    createSourceDto: CreateSourceDto,
+    @RequestUser() requestUser: UserEntity
   ): Promise<BaseResult<SourceEntity>> {
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
     const project = await this.projectEntity.findOne({
@@ -65,7 +67,7 @@ export class UpushySourceController {
     }
 
     // 相同类型的资源版本号必须递增
-    const maxVersionCode = await this.upushySourceService.queryMaxVersionCode({
+    const maxVersionCode = await this.upushySourceService.onFindMaxVersionCode({
       projectId: createSourceDto.projectId,
       type: createSourceDto.type,
     })
@@ -79,7 +81,7 @@ export class UpushySourceController {
 
     // 检查wgt类型的原生类型是否存在
     if ([1, 2].includes(createSourceDto.type)) {
-      const nativeSource = await this.upushySourceService.findOne({
+      const nativeSource = await this.upushySourceService.onFindSourceOne({
         where: {
           type: createSourceDto.type + 2,
           versionCode: createSourceDto.nativeVersionCode,
@@ -87,7 +89,7 @@ export class UpushySourceController {
       })
 
       if (nativeSource) {
-        const res = await this.upushySourceService.createSource(createSourceDto)
+        const res = await this.upushySourceService.onCreateSource(createSourceDto, requestUser.id)
         res.type !== 4 &&
           Object.assign(res, {
             url: `${OSS_BASE_URL}/${res.url}`,
@@ -110,7 +112,7 @@ export class UpushySourceController {
           message: '原生资源无原生版本号',
         }
       }
-      const res = await this.upushySourceService.createSource(createSourceDto)
+      const res = await this.upushySourceService.onCreateSource(createSourceDto, requestUser.id)
       res.type !== 4 &&
         Object.assign(res, {
           url: `${OSS_BASE_URL}/${res.url}`,
@@ -130,15 +132,15 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Delete()
-  async delete(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult<DeleteResult>> {
-    const source = await this.upushySourceService.findOne({
+  async onDeleteSource(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult<DeleteResult>> {
+    const source = await this.upushySourceService.onFindSourceOne({
       where: {
         id: deleteSourceDto.id,
       },
     })
 
     if ([3, 4].includes(source.type)) {
-      const count: number = await this.upushySourceService.getSourceCount({
+      const count: number = await this.upushySourceService.onFindSourceCount({
         where: {
           nativeVersionCode: source.versionCode,
           type: source.type - 2,
@@ -154,7 +156,7 @@ export class UpushySourceController {
     }
 
     if (source) {
-      const res = await this.upushySourceService.deleteSource(deleteSourceDto)
+      const res = await this.upushySourceService.onDeleteSource(deleteSourceDto)
       return { statusCode: 200, message: '操作成功', data: res }
     } else {
       return { statusCode: 200, message: '资源不存在' }
@@ -168,9 +170,12 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Put()
-  async update(@Body() updateSourceDto: UpdateSourceDto): Promise<BaseResult<SourceEntity>> {
+  async onUpdateSource(
+    @Body() updateSourceDto: UpdateSourceDto,
+    @RequestUser() requestUser: UserEntity
+  ): Promise<BaseResult<SourceEntity>> {
     const { id, versionCode } = updateSourceDto
-    const source = await this.upushySourceService.findOne({
+    const source = await this.upushySourceService.onFindSourceOne({
       where: {
         id,
       },
@@ -182,7 +187,7 @@ export class UpushySourceController {
     }
 
     // 相同类型的资源版本号必须递增
-    const maxVersionCode = await this.upushySourceService.queryMaxVersionCode({
+    const maxVersionCode = await this.upushySourceService.onFindMaxVersionCode({
       projectId: source.projectId,
       type: source.type,
     })
@@ -196,14 +201,14 @@ export class UpushySourceController {
 
     // 检查wgt类型的原生类型是否存在
     if ([1, 2].includes(source.type)) {
-      const nativeSource = await this.upushySourceService.findOne({
+      const nativeSource = await this.upushySourceService.onFindSourceOne({
         where: {
           type: source.type + 2,
           versionCode: nativeVersionCode,
         },
       })
       if (nativeSource) {
-        const res = await this.upushySourceService.updateSource(updateSourceDto)
+        const res = await this.upushySourceService.onUpdateSource(updateSourceDto, requestUser.id)
         return {
           statusCode: 200,
           message: '更新成功',
@@ -223,7 +228,7 @@ export class UpushySourceController {
         }
       }
 
-      const res = await this.upushySourceService.updateSource(updateSourceDto)
+      const res = await this.upushySourceService.onUpdateSource(updateSourceDto, requestUser.id)
       return {
         statusCode: 200,
         message: '更新成功',
@@ -242,11 +247,11 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get()
-  async getSource(@Query() querySourceDto: QuerySourceDto): Promise<PaginationResult<SourceEntity>> {
+  async onFindSourcePaging(@Query() querySourceDto: QuerySourceDto): Promise<PaginationResult<SourceEntity>> {
     const { projectId, sortKey, order, type, pageNum, pageSize } = querySourceDto
     const OSS_BASE_URL = `https://${getEnv('ALIYUN_OSS_BUCKET')}.${getEnv('ALIYUN_OSS_ENDPOINT')}.aliyuncs.com`
 
-    const total = await this.upushySourceService.getSourceCount({
+    const total = await this.upushySourceService.onFindSourceCount({
       where: {
         projectId,
         type,
@@ -259,9 +264,9 @@ export class UpushySourceController {
     sortKey && (orderCondition[sortKey] = order)
 
     if (pageNum && pageSize) {
-      res = await this.upushySourceService.querySource(querySourceDto, orderCondition)
+      res = await this.upushySourceService.onFindSourcePaging(querySourceDto, orderCondition)
     } else {
-      res = await this.upushySourceService.querySourceAll(querySourceDto, orderCondition)
+      res = await this.upushySourceService.onFindSourceAll(querySourceDto, orderCondition)
     }
 
     for (const item of res) {
@@ -290,18 +295,18 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('native/latest')
-  async getLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<LatestNativeSourceVO> {
+  async onGetLatestNativeSource(@Query() queryObj: QueryLatestNativeVersionDto): Promise<LatestNativeSourceVO> {
     const { projectId } = queryObj
 
-    const latestAndroid = await this.upushySourceService.queryMaxSource({
+    const latestAndroid = await this.upushySourceService.onFindMaxSource({
       projectId,
       type: 3,
-      status: 1,
+      status: 0,
     })
-    const latestIos = await this.upushySourceService.queryMaxSource({
+    const latestIos = await this.upushySourceService.onFindMaxSource({
       projectId,
       type: 4,
-      status: 1,
+      status: 0,
     })
 
     return {

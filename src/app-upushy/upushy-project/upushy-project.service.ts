@@ -11,27 +11,25 @@ import { Repository, DeleteResult } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import type { FindManyOptions } from 'typeorm'
 
+import { genSnowFlakeId } from 'src/app-shared/utils'
 import { ProjectEntity } from './entities/project.entity'
-import { PROJECT_REPOSITORY } from 'src/app-shared/constant'
 
-import { CreateProjectDto, UpdateProjectDto, DeleteProjectDto, QueryProjectDto, QuerySourceDto } from './dto/index'
+import { CreateProjectDto, UpdateProjectDto, DeleteProjectDto, QueryProjectDto, QuerySourceDto } from './dto'
 
 @Injectable()
 export class UpushyProjectService {
   constructor(
-    // @Inject(PROJECT_REPOSITORY)
-    // private projectRepo: Repository<ProjectEntity>,
     @InjectRepository(ProjectEntity)
     private readonly projectRepo: Repository<ProjectEntity>
   ) {}
 
   // 获取项目总数
-  async getProjectCount(options?: FindManyOptions<ProjectEntity>): Promise<number> {
+  async onFindProjectAllCount(options?: FindManyOptions<ProjectEntity>): Promise<number> {
     return await this.projectRepo.count(options)
   }
 
   // 查找单个项目
-  async findOne(id: string): Promise<ProjectEntity> {
+  async onFindProjectOne(id: string): Promise<ProjectEntity> {
     return await this.projectRepo.findOne({
       where: {
         id,
@@ -39,7 +37,8 @@ export class UpushyProjectService {
     })
   }
 
-  async findSource({ projectId }: QuerySourceDto) {
+  // 根据项目 id 获取资源
+  async onFindProjectSource({ projectId }: QuerySourceDto) {
     return await this.projectRepo.find({
       where: {
         id: projectId,
@@ -49,12 +48,16 @@ export class UpushyProjectService {
   }
 
   // 查找所有项目列表
-  async findAll(): Promise<ProjectEntity[]> {
-    return await this.projectRepo.find()
+  async onFindUserProjects(userId: string): Promise<ProjectEntity[]> {
+    return await this.projectRepo.find({
+      where: {
+        userId,
+      },
+    })
   }
 
   // 分页查询项目
-  async queryProject({ userId, pageNum, pageSize }: QueryProjectDto): Promise<Array<ProjectEntity>> {
+  async onFindProjectPaging({ userId, pageNum, pageSize }: QueryProjectDto): Promise<Array<ProjectEntity>> {
     return await this.projectRepo.find({
       where: {
         userId,
@@ -65,8 +68,11 @@ export class UpushyProjectService {
   }
 
   // 创建项目
-  async create({ userId, name, describe }: CreateProjectDto): Promise<ProjectEntity> {
+  async onCreateProject({ userId, name, describe }: CreateProjectDto): Promise<ProjectEntity> {
     const project = new ProjectEntity()
+    project.id = genSnowFlakeId()
+    project.createdTime = new Date()
+    project.createdBy = userId
     project.userId = userId
     project.name = name
     project.describe = describe
@@ -75,23 +81,17 @@ export class UpushyProjectService {
   }
 
   // 更新项目
-  async update({ id, name, describe }: UpdateProjectDto) {
-    // const toUpdate = await this.projectRepo.findOne({ id })
-
-    // const updated = Object.assign(toUpdate, {
-    //   name,
-    //   describe,
-    // })
-
-    // const updatedProject = await this.projectRepo.save(updated)
+  async onUpdateProject({ userId, id, name, describe }: UpdateProjectDto) {
     return await this.projectRepo.update(id, {
       name,
       describe,
+      updatedBy: userId,
+      updatedTime: new Date(),
     })
   }
 
   // 删除项目
-  async delete({ id }: DeleteProjectDto): Promise<DeleteResult> {
+  async onDeleteProject({ id }: DeleteProjectDto): Promise<DeleteResult> {
     return await this.projectRepo.delete(id)
   }
 }

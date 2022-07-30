@@ -56,8 +56,8 @@ export class SnowFlake {
    * @param {bigint} sequence 毫秒内序列 (0~4095)
    */
   constructor(workerId: bigint, dataCenterId: bigint) {
-    // 开始时间截 (2018-02-01)，这个可以设置开始使用该系统的时间，可往后使用69年
-    this.twepoch = 1548988646430n
+    // 开始时间截 (2022-07-30)，这个可以设置开始使用该系统的时间，可往后使用69年
+    this.twepoch = 1659151940881n
 
     // 位数划分 [数据标识id(5bit 31)、机器id(5bit 31)](合计共支持1024个节点)、序列id(12bit 4095)
     this.workerIdBits = 5n

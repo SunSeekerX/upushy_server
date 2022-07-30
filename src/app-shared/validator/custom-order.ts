@@ -6,11 +6,7 @@
  * @LastEditTime: 2020-10-28 22:58:08
  */
 
-import {
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-} from 'class-validator'
+import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from 'class-validator'
 
 @ValidatorConstraint({ name: 'customPlatform', async: false })
 export class CustomOrder implements ValidatorConstraintInterface {

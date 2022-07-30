@@ -6,16 +6,12 @@
  * @LastEditTime: 2021-09-14 22:21:39
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, Column } from 'typeorm'
+
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_log_device_info')
-export class DeviceInfoLogEntity {
-  @PrimaryGeneratedColumn({
-    comment: 'id',
-    unsigned: true,
-  })
-  id: number
-
+export class DeviceInfoLogEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 36,
@@ -24,14 +20,6 @@ export class DeviceInfoLogEntity {
     comment: '设备唯一标识',
   })
   uuid: string
-
-  // @Column({
-  //   type: 'varchar',
-  //   name: 'native_version',
-  //   length: 50,
-  //   comment: '原生版本名',
-  // })
-  // nativeVersion: string
 
   @Column({
     type: 'varchar',
@@ -169,21 +157,4 @@ export class DeviceInfoLogEntity {
     comment: 'windowBottom',
   })
   windowBottom: number
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
-  })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
 }

@@ -7,12 +7,12 @@ export * from './base64-encode'
 
 import { SnowFlake } from './snowflake'
 
-const idWorker = new SnowFlake(1n, 1n)
+const idWorker = new SnowFlake(2n, 2n)
 
 /**
  * 获取雪花id
  */
-export function genId(): string {
+export function genSnowFlakeId(): string {
   return idWorker.nextId().toString()
 }
 

@@ -6,16 +6,12 @@
  * @LastEditTime: 2021-09-14 22:21:20
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, Column } from 'typeorm'
+
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_log_update')
-export class UpdateLogEntity {
-  @PrimaryGeneratedColumn({
-    comment: 'id',
-    unsigned: true,
-  })
-  id: number
-
+export class UpdateLogEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 36,
@@ -75,21 +71,4 @@ export class UpdateLogEntity {
     comment: '接口提示状态码',
   })
   statusCode: number
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
-  })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
 }

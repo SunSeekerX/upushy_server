@@ -38,13 +38,13 @@ export class UpdateInterceptor implements NestInterceptor {
         )
 
         const deviceInfoLogDto: CreateDeviceInfoLogDto = plainToClass(CreateDeviceInfoLogDto, updateAppDto.systemInfo)
-        const deviceInfo = await this.upushyUserService.querySingleDeviceInfo({
+        const deviceInfo = await this.upushyUserService.onFindDeviceInfoOne({
           uuid: updateAppDto.systemInfo.uuid,
         })
         if (!deviceInfo) {
-          await this.upushyUserService.createDeviceInfoLog(deviceInfoLogDto)
+          await this.upushyUserService.onCreateDeviceInfoLog(deviceInfoLogDto)
         }
-        await this.upushyUserService.createUpdateLog(updateLogDto)
+        await this.upushyUserService.onCreateUpdateLog(updateLogDto)
       })
     )
   }

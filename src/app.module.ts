@@ -5,7 +5,7 @@ import { join } from 'path'
 
 import { getEnv } from 'src/app-shared/config'
 import { LogInterceptor } from 'src/app-shared/interceptor'
-import { UserEntity } from 'src/app-system/app-user/entities'
+import { UserEntity, UserPermissionEntity } from 'src/app-system/app-user/entities'
 import { DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity } from 'src/app-upushy/upushy-log/entities'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
@@ -22,7 +22,7 @@ import { UpushySourceModule } from './app-upushy/upushy-source/upushy-source.mod
 import { UpushyLogModule } from './app-upushy/upushy-log/upushy-log.module'
 import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module'
 // import { ApiSignMiddleware } from 'src/app-shared/middleware'
-
+import { AppAuthModule } from './app-system/app-auth/app-auth.module'
 @Module({
   imports: [
     // 基础模块
@@ -35,9 +35,17 @@ import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module
       password: getEnv('DB_PASSWORD'),
       database: getEnv('DB_DATABASE'),
       // entities: ['dist/**/*.entity.js'],
-      entities: [UserEntity, DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity, ProjectEntity, SourceEntity],
+      entities: [
+        UserEntity,
+        UserPermissionEntity,
+        DeviceInfoLogEntity,
+        LoginLogEntity,
+        UpdateLogEntity,
+        ProjectEntity,
+        SourceEntity,
+      ],
       synchronize: getEnv('DB_TABLE_SYNC'),
-      logging: false,
+      logging: true,
       extra: {
         // 不配置这个 emoji 无法保存
         charset: 'utf8mb4_general_ci',
@@ -45,6 +53,8 @@ import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module
     }),
     // 系统模块
     AppUserModule,
+    // 系统认证模块
+    AppAuthModule,
     // 业务模块
     UpushyProjectModule,
     UpushySourceModule,

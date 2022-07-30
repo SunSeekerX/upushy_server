@@ -44,7 +44,7 @@ export class QueryLoginLogDto {
   @ApiProperty({
     type: String,
     description: '排序的key',
-    example: 'loginTime',
+    example: 'createdTime',
   })
   @ValidateIf((o) => o.sortKey)
   readonly sortKey?: string

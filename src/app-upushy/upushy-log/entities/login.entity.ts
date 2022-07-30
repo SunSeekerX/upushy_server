@@ -6,16 +6,12 @@
  * @LastEditTime: 2021-09-14 22:21:30
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, Column } from 'typeorm'
+
+import { BaseEntity } from 'src/app-shared/base'
 
 @Entity('app_log_login')
-export class LoginLogEntity {
-  @PrimaryGeneratedColumn({
-    comment: 'id',
-    unsigned: true,
-  })
-  id: number
-
+export class LoginLogEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 50,
@@ -57,42 +53,10 @@ export class LoginLogEntity {
   os: string
 
   @Column({
-    type: 'char',
-    length: 1,
-    default: 1,
-    comment: '登录状态（0失败 1成功）',
-  })
-  status: string
-
-  @Column({
     type: 'varchar',
     length: 255,
     default: '',
     comment: '提示消息',
   })
   msg: string
-
-  @Column({
-    type: 'timestamp',
-    name: 'login_time',
-    comment: '登录日期',
-  })
-  loginTime: Date
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    name: 'created_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    comment: '创建时间',
-  })
-  createdTime: Date
-
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name: 'updated_time',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    comment: '更新时间',
-  })
-  updatedTime: Date
 }

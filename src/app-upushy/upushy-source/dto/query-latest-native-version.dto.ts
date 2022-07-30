@@ -6,7 +6,7 @@ export class QueryLatestNativeVersionDto {
     type: String,
     description: '项目ID',
   })
-  @Length(32, 36)
+  @Length(10, 32)
   @IsNotEmpty()
   readonly projectId: string
 }
