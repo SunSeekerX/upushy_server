@@ -6,7 +6,5 @@
  * @LastEditTime: 2021-09-14 17:33:24
  */
 
-import { TokenAuthMiddleware } from './token-auth.middleware'
-import { ApiSignMiddleware } from './api-sign.middleware'
-
-export { TokenAuthMiddleware, ApiSignMiddleware }
+export * from './token-auth.middleware'
+export * from './api-sign.middleware'

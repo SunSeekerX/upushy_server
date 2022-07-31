@@ -20,12 +20,13 @@ export class UserPermissionEntity extends BaseEntity {
     name: 'user_id',
     nullable: false,
     unsigned: true,
+    unique: true,
     comment: '用户 id',
   })
   userId: string
 
   @Column({
-    type: 'varchar',
+    type: 'char',
     length: 1,
     comment: '权限字符',
   })

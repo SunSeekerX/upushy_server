@@ -6,4 +6,4 @@
  * @LastEditTime: 2021-09-14 17:48:07
  */
 
-export * from './user.entity'
+export * from './permission.entity'

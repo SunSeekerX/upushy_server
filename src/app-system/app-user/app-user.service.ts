@@ -27,6 +27,11 @@ export class AppUserService {
     private readonly userRepo: Repository<UserEntity>
   ) {}
 
+  // 统计用户个数
+  async onFindUserAllCount(): Promise<number> {
+    return await this.userRepo.count()
+  }
+
   // 查找单个用户
   async onFindUserOne({ username }: LoginUserDto): Promise<UserEntity> {
     return await this.userRepo.findOne({
@@ -35,7 +40,7 @@ export class AppUserService {
   }
 
   // 创建用户
-  async onCreateUser({ username, password, nickname, email }: CreateUserDto): Promise<UserRO> {
+  async onCreateUser({ username, password, nickname, email }: CreateUserDto): Promise<UserEntity> {
     const user = await this.userRepo.findOne({
       where: { username },
     })
@@ -61,8 +66,7 @@ export class AppUserService {
       const _errors = { username: 'User input is not valid.' }
       throw new HttpException({ message: 'Input data validation failed', _errors }, HttpStatus.BAD_REQUEST)
     } else {
-      const savedUser = await this.userRepo.save(newUser)
-      return this.buildUserRO(savedUser)
+      return await this.userRepo.save(newUser)
     }
   }
 
@@ -90,6 +94,7 @@ export class AppUserService {
     return await this.userRepo.delete({ username: username })
   }
 
+  // 通过用户 id 查找
   async onFindUserOneById(id: string, masking = true): Promise<UserEntity | null> {
     const findUser = await this.userRepo.findOne({
       where: {
@@ -103,6 +108,7 @@ export class AppUserService {
     return findUser
   }
 
+  // 生成 token
   public onGenerateJWT({ id, username, updatedPwdTime }: UserEntity): string {
     return jwt.sign(
       {

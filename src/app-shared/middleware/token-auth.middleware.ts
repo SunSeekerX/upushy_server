@@ -22,7 +22,7 @@ export class TokenAuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void | Error> {
     const { method, originalUrl, ip } = req
-    const authorization: string = req.headers.authorization
+    const authorization: string = req?.headers?.authorization
     if (!authorization) {
       this.logger.warn(
         `code: ${HttpStatus.UNAUTHORIZED} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 未登录！`
@@ -33,10 +33,9 @@ export class TokenAuthMiddleware implements NestMiddleware {
       const token = authorization.split(' ')[1]
       const decoded: any = verify(token, getEnv<string>('JWT_SECRET'))
 
-      const user = await this.appUserService.onFindUserOneById(decoded.id, false)
+      const user = await this.appUserService.onFindUserOneById(decoded?.id, false)
       // 校验 token 是否有效
-      console.log(new Date(user.updatedPwdTime).getTime(), new Date(decoded.updatedPwdTime).getTime());
-      if (new Date(user.updatedPwdTime).getTime() !== new Date(decoded.updatedPwdTime).getTime()) {
+      if (new Date(user?.updatedPwdTime)?.getTime() !== new Date(decoded?.updatedPwdTime)?.getTime()) {
         throw new HttpException('登录信息已失效', HttpStatus.UNAUTHORIZED)
       }
       req.user = user

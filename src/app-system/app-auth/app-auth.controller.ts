@@ -6,9 +6,10 @@ import * as svgCaptcha from 'svg-captcha'
 import * as svg64 from 'svg64'
 
 import { LoginUserDto, RefreshTokenDto } from './dto'
+import { AppAuthService } from './app-auth.service'
+import { UserPermission } from 'src/app-shared/enums'
 import { CreateUserDto, UpdateUserDto } from 'src/app-system/app-user/dto'
 import { genSnowFlakeId } from 'src/app-shared/utils'
-import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
 import { BaseResult } from 'src/app-shared/interface'
 import { LoginInterceptor } from 'src/app-shared/interceptor'
 import type { UserEntity } from 'src/app-system/app-user/entities'
@@ -16,12 +17,17 @@ import { AppUserService } from 'src/app-system/app-user/app-user.service'
 import { getEnv } from 'src/app-shared/config'
 import { AppCacheService } from 'src/app-system/app-cache/app-cache.service'
 import { ApiResponseConstant } from 'src/app-shared/constant'
+import { CreateUserPermissionDto } from './dto/create-user-permission.dto'
 
 @ApiBearerAuth()
 @ApiTags('系统模块 - 认证管理')
 @Controller('app-system/app-auth')
 export class AppAuthController {
-  constructor(private readonly cacheManager: AppCacheService, private readonly appUserService: AppUserService) {}
+  constructor(
+    private readonly cacheManager: AppCacheService,
+    private readonly appUserService: AppUserService,
+    private readonly appAuthService: AppAuthService
+  ) {}
 
   // 注册图片验证码
   @ApiOperation({ summary: '获取注册图片验证码' })
@@ -77,19 +83,32 @@ export class AppAuthController {
       const captchaText = await this.cacheManager.INSTANCE.get<string>(
         `imgCaptcha:register:${createUserDto.imgCaptchaKey}`
       )
-      console.log(captchaText, createUserDto.imgCaptcha)
       if (captchaText !== createUserDto.imgCaptcha) {
         return {
           statusCode: HttpStatus.FORBIDDEN,
           message: '验证码错误',
         }
       }
-      const user = await this.appUserService.onCreateUser(createUserDto)
-      if (user) {
+
+      const savedUser = await this.appUserService.onCreateUser(createUserDto)
+      // 获取用户数量，如果是第一个注册的用户自动成为管理员
+      const usersAmount = await this.appUserService.onFindUserAllCount()
+      console.log('usersAmount>>>', usersAmount)
+      if (usersAmount !== 1) {
         return {
           statusCode: 200,
           message: '注册成功，请登录',
         }
+      }
+      // 写入管理员权限
+      const createUserPermissionDto = new CreateUserPermissionDto()
+      createUserPermissionDto.permission = UserPermission.Admin
+      createUserPermissionDto.userId = savedUser.id
+      const createUserPermissionRes = await this.appAuthService.onCreateUserPermission(createUserPermissionDto)
+      console.log(createUserPermissionRes)
+      return {
+        statusCode: 200,
+        message: '注册成功，请登录',
       }
     } catch (error) {
       Logger.error(error.message)
@@ -177,25 +196,28 @@ export class AppAuthController {
         }
       }
       // 检查密码
-      if (await argon2.verify(_user.password, loginUserDto.password)) {
-        const token = this.appUserService.onGenerateJWT(_user)
-        const refreshToken = this.appUserService.onGenerateRefreshToken(_user)
-        const { username, nickname } = _user
-
-        return {
-          statusCode: 200,
-          message: '登录成功',
-          data: {
-            token,
-            refreshToken,
-            userInfo: {
-              username,
-              nickname,
-            },
-          },
-        }
-      } else {
+      const flag = await argon2.verify(_user.password, loginUserDto.password)
+      if (!flag) {
         return { statusCode: HttpStatus.FORBIDDEN, message: '密码错误' }
+      }
+
+      const token = this.appUserService.onGenerateJWT(_user)
+      const refreshToken = this.appUserService.onGenerateRefreshToken(_user)
+      const { id, username, nickname } = _user
+      const userPermission = await this.appAuthService.onFindUserPermissionByUserId(id)
+
+      return {
+        statusCode: 200,
+        message: '登录成功',
+        data: {
+          token,
+          refreshToken,
+          userInfo: {
+            username,
+            nickname,
+            permission: userPermission.permission,
+          },
+        },
       }
     } catch (error) {
       Logger.error(error.message)

@@ -15,6 +15,7 @@ import * as svg64 from 'svg64'
 
 import { BaseResult } from 'src/app-shared/interface'
 import { UpdateUserDto, UpdateUserPasswordDto } from './dto'
+import { AppAuthService } from 'src/app-system/app-auth/app-auth.service'
 import { AppUserService } from './app-user.service'
 import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
 import type { UserEntity } from 'src/app-system/app-user/entities'
@@ -25,7 +26,7 @@ import { ApiResponseConstant } from 'src/app-shared/constant'
 @ApiTags('系统模块 - 用户管理')
 @Controller('app-system/app-user')
 export class AppUserController {
-  constructor(private readonly appUserService: AppUserService) {}
+  constructor(private readonly appUserService: AppUserService, private readonly appAuthService: AppAuthService) {}
   // 更新用户信息
   @ApiOperation({ summary: '更新用户信息' })
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
@@ -37,7 +38,6 @@ export class AppUserController {
     @Body() updateUserDto: UpdateUserDto,
     @RequestUser() requestUser: UserEntity
   ): Promise<BaseResult> {
-    console.log(requestUser)
     const res = await this.appUserService.onUpdateUser(requestUser.id, updateUserDto)
     if (res.affected === 1) {
       const newUser = await this.appUserService.onFindUserOneById(requestUser.id)
@@ -96,6 +96,27 @@ export class AppUserController {
         statusCode: 400,
         message: '密码错误',
       }
+    }
+  }
+
+  // 获取用户信息
+  @ApiOperation({ summary: '获取用户信息' })
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_200)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
+  @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
+  @Get('/userinfo')
+  async onGetUserInfo(@RequestUser() requestUser: UserEntity): Promise<BaseResult> {
+    const findUser = await this.appUserService.onFindUserOneById(requestUser.id)
+    const findUserPermission = await this.appAuthService.onFindUserPermissionByUserId(requestUser.id)
+    return {
+      statusCode: 200,
+      message: '成功',
+      data: {
+        username: findUser.username,
+        nickname: findUser.nickname,
+        permission: findUserPermission.permission,
+      },
     }
   }
 }

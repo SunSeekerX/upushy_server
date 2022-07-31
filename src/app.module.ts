@@ -5,12 +5,13 @@ import { join } from 'path'
 
 import { getEnv } from 'src/app-shared/config'
 import { LogInterceptor } from 'src/app-shared/interceptor'
-import { UserEntity, UserPermissionEntity } from 'src/app-system/app-user/entities'
+import { AppController } from './app.controller'
+
+import { UserPermissionEntity } from 'src/app-system/app-auth/entities'
+import { UserEntity } from 'src/app-system/app-user/entities'
 import { DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity } from 'src/app-upushy/upushy-log/entities'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
-
-import { AppController } from './app.controller'
 
 /**
  * 系统模块
@@ -23,6 +24,8 @@ import { UpushyLogModule } from './app-upushy/upushy-log/upushy-log.module'
 import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module'
 // import { ApiSignMiddleware } from 'src/app-shared/middleware'
 import { AppAuthModule } from './app-system/app-auth/app-auth.module'
+import { AppConfigController } from './app-system/app-config/app-config.controller'
+import { AppConfigModule } from './app-system/app-config/app-config.module'
 @Module({
   imports: [
     // 基础模块
@@ -55,6 +58,8 @@ import { AppAuthModule } from './app-system/app-auth/app-auth.module'
     AppUserModule,
     // 系统认证模块
     AppAuthModule,
+    // 系统配置模块
+    AppConfigModule,
     // 业务模块
     UpushyProjectModule,
     UpushySourceModule,
@@ -67,7 +72,7 @@ import { AppAuthModule } from './app-system/app-auth/app-auth.module'
       useClass: LogInterceptor,
     },
   ],
-  controllers: [AppController],
+  controllers: [AppController, AppConfigController],
 })
 export class AppModule {
   constructor() {}
