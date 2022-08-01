@@ -6,20 +6,21 @@
  * @LastEditTime: 2021-09-14 22:29:26
  */
 
-import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
+import { Get, Post, Body, Put, Delete, Query, Controller, Param, Patch } from '@nestjs/common'
 import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
 import { UpushyProjectService } from './upushy-project.service'
+import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto'
 import { UpushySourceService } from 'src/app-upushy/upushy-source/upushy-source.service'
 import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
 import type { UserEntity } from 'src/app-system/app-user/entities'
 import { BaseResult } from 'src/app-shared/interface'
-import { CreateProjectDto, DeleteProjectDto, UpdateProjectDto, QueryProjectDto } from './dto'
 import { ApiResponseConstant } from 'src/app-shared/constant'
+import { BaseIdDto } from 'src/app-shared/base'
 
 @ApiBearerAuth()
 @ApiTags('业务模块 - 项目管理')
-@Controller()
+@Controller('/upushy/projects')
 export class UpushyProjectController {
   constructor(
     private readonly upushySourceService: UpushySourceService,
@@ -32,7 +33,7 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Post('project')
+  @Post()
   async onCreateProject(
     @Body() createProjectDto: CreateProjectDto,
     @RequestUser() requestUser: UserEntity
@@ -55,10 +56,10 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Delete('project')
-  async onDeleteProject(@Body() deleteProjectDto: DeleteProjectDto): Promise<BaseResult> {
+  @Delete(':id')
+  async onDeleteProject(@Param() { id }: BaseIdDto): Promise<BaseResult> {
     const sourceCount = await this.upushySourceService.onFindSourceCountAll({
-      projectId: deleteProjectDto.id,
+      projectId: id,
     })
     if (sourceCount > 0) {
       return {
@@ -66,18 +67,17 @@ export class UpushyProjectController {
         message: '下有子项无法删除',
       }
     } else {
-      const project = await this.upushyProjectService.onFindProjectOne(deleteProjectDto.id)
+      const project = await this.upushyProjectService.onFindProjectOne(id)
 
-      if (project) {
-        const res = await this.upushyProjectService.onDeleteProject(deleteProjectDto)
-
-        return {
-          statusCode: 200,
-          message: '操作成功',
-          data: res,
-        }
-      } else {
+      if (!project) {
         return { statusCode: 200, message: '项目不存在' }
+      }
+      const res = await this.upushyProjectService.onDeleteProjectById(id)
+
+      return {
+        statusCode: 200,
+        message: '操作成功',
+        data: res,
       }
     }
   }
@@ -88,19 +88,18 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Put('project')
+  @Patch(':id')
   async onUpdateProject(
+    @Param() { id }: BaseIdDto,
     @Body() updateProjectDto: UpdateProjectDto,
     @RequestUser() requestUser: UserEntity
   ): Promise<BaseResult> {
-    const project = await this.upushyProjectService.onFindProjectOne(updateProjectDto.id)
+    const project = await this.upushyProjectService.onFindProjectOne(id)
     if (!project) {
       return { statusCode: 200, message: '项目不存在' }
     }
 
-    updateProjectDto.userId = requestUser.id
-
-    const res = await this.upushyProjectService.onUpdateProject(updateProjectDto)
+    const res = await this.upushyProjectService.onUpdateProject(id, requestUser, updateProjectDto)
     return {
       statusCode: 200,
       message: '更新成功',
@@ -114,7 +113,7 @@ export class UpushyProjectController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Get('projects')
+  @Get()
   async onFindUserProjects(
     @Query() queryProjectDto: QueryProjectDto,
     @RequestUser() requestUser: UserEntity

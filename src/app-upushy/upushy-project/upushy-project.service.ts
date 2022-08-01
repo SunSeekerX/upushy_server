@@ -13,6 +13,7 @@ import type { FindManyOptions } from 'typeorm'
 
 import { genSnowFlakeId } from 'src/app-shared/utils'
 import { ProjectEntity } from './entities/project.entity'
+import type { UserEntity } from 'src/app-system/app-user/entities'
 
 import { CreateProjectDto, UpdateProjectDto, DeleteProjectDto, QueryProjectDto, QuerySourceDto } from './dto'
 
@@ -84,17 +85,17 @@ export class UpushyProjectService {
   }
 
   // 更新项目
-  async onUpdateProject({ userId, id, name, describe }: UpdateProjectDto) {
+  async onUpdateProject(id: string, requestUser: UserEntity, { name, describe }: UpdateProjectDto) {
     return await this.projectRepo.update(id, {
       name,
       describe,
-      updatedBy: userId,
+      updatedBy: requestUser.id,
       updatedTime: new Date(),
     })
   }
 
   // 删除项目
-  async onDeleteProject({ id }: DeleteProjectDto): Promise<DeleteResult> {
+  async onDeleteProjectById(id: string): Promise<DeleteResult> {
     return await this.projectRepo.delete(id)
   }
 }

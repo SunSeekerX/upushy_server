@@ -24,7 +24,7 @@ import { ApiResponseConstant } from 'src/app-shared/constant'
 
 @ApiBearerAuth()
 @ApiTags('系统模块 - 用户管理')
-@Controller('app-system/app-user')
+@Controller('/system/user')
 export class AppUserController {
   constructor(private readonly appUserService: AppUserService, private readonly appAuthService: AppAuthService) {}
   // 更新用户信息
@@ -105,7 +105,7 @@ export class AppUserController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Get('/userinfo')
+  @Get()
   async onGetUserInfo(@RequestUser() requestUser: UserEntity): Promise<BaseResult> {
     const findUser = await this.appUserService.onFindUserOneById(requestUser.id)
     const findUserPermission = await this.appAuthService.onFindUserPermissionByUserId(requestUser.id)

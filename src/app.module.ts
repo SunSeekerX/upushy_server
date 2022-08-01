@@ -28,6 +28,7 @@ import { AppAuthModule } from './app-system/app-auth/app-auth.module'
 import { AppConfigController } from './app-system/app-config/app-config.controller'
 import { AppConfigModule } from './app-system/app-config/app-config.module'
 import { AppStatsModule } from './app-system/app-stats/app-stats.module'
+import { AppUploadModule } from './app-system/app-upload/app-upload.module'
 @Module({
   imports: [
     // 基础模块
@@ -65,6 +66,8 @@ import { AppStatsModule } from './app-system/app-stats/app-stats.module'
     AppConfigModule,
     // 系统统计数据
     AppStatsModule,
+    // 系统文件上传
+    AppUploadModule,
     // 业务模块
     UpushyProjectModule,
     UpushySourceModule,

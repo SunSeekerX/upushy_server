@@ -17,7 +17,7 @@ import { BaseResult } from 'src/app-shared/interface'
 
 @ApiBearerAuth()
 @ApiTags('业务模块 - 日志管理')
-@Controller('log')
+@Controller('/upushy/log')
 export class UpushyLogController {
   constructor(private readonly upushyLogService: UpushyLogService) {}
 

@@ -22,7 +22,7 @@ import { CreateUserPermissionDto } from './dto/create-user-permission.dto'
 
 @ApiBearerAuth()
 @ApiTags('系统模块 - 认证管理')
-@Controller('app-system/app-auth')
+@Controller('system/auth')
 export class AppAuthController {
   constructor(
     private readonly cacheManager: AppCacheService,
@@ -36,7 +36,7 @@ export class AppAuthController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Get('/register/captcha')
+  @Get('/captcha/register')
   async onGetRegisterCodeImg(): Promise<BaseResult> {
     const captcha = svgCaptcha.create({
       ignoreChars: '0o1i',
@@ -131,7 +131,7 @@ export class AppAuthController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Get('/login/captcha')
+  @Get('/captcha/login')
   async onGetLoginCodeImg(): Promise<BaseResult> {
     const captcha = svgCaptcha.create({
       ignoreChars: '0o1il',

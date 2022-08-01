@@ -5,14 +5,6 @@ import { IsNotEmpty, IsInt, Min, MaxLength, ValidateIf, Length } from 'class-val
 export class UpdateSourceDto {
   @ApiProperty({
     type: String,
-    description: '资源ID',
-  })
-  @Length(8, 32)
-  @IsNotEmpty()
-  readonly id: string
-
-  @ApiProperty({
-    type: String,
     description: '版本',
   })
   readonly version?: string

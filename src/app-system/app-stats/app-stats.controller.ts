@@ -9,8 +9,8 @@ import { BaseResult } from 'src/app-shared/interface'
 import { ApiResponseConstant } from 'src/app-shared/constant'
 
 @ApiBearerAuth()
-@ApiTags('系统模块 - 系统统计数据')
-@Controller('system/stats')
+@ApiTags('系统模块 - 统计数据')
+@Controller('/system/stats')
 export class AppStatsController {
   constructor(
     private readonly appStatsService: AppStatsService,

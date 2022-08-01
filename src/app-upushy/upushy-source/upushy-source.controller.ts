@@ -6,7 +6,7 @@
  * @LastEditTime: 2021-09-14 20:51:28
  */
 
-import { Get, Post, Body, Put, Delete, Query, Controller } from '@nestjs/common'
+import { Get, Post, Body, Patch, Delete, Query, Controller, Param } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import type { DeleteResult } from 'typeorm'
@@ -15,23 +15,17 @@ import { ApiResponse, ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagg
 import { getEnv } from 'src/app-shared/config'
 import { RequestUser } from 'src/app-shared/decorator/request-user.decorator'
 import type { UserEntity } from 'src/app-system/app-user/entities'
-import { BaseResult, PaginationResult } from 'src/app-shared/base'
+import { BaseResult, PaginationResult, BaseIdDto } from 'src/app-shared/base'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
-import {
-  CreateSourceDto,
-  DeleteSourceDto,
-  UpdateSourceDto,
-  QuerySourceDto,
-  QueryLatestNativeVersionDto,
-} from './dto'
+import { CreateSourceDto, UpdateSourceDto, QuerySourceDto, QueryLatestNativeVersionDto } from './dto'
 import { UpushySourceService } from './upushy-source.service'
 import { ApiResponseConstant } from 'src/app-shared/constant'
 import { LatestNativeSourceVO } from './vo'
 
 @ApiBearerAuth()
 @ApiTags('业务模块 - 资源管理')
-@Controller('source')
+@Controller('/upushy/sources')
 export class UpushySourceController {
   constructor(
     private readonly upushySourceService: UpushySourceService,
@@ -131,11 +125,11 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Delete()
-  async onDeleteSource(@Body() deleteSourceDto: DeleteSourceDto): Promise<BaseResult<DeleteResult>> {
+  @Delete(':id')
+  async onDeleteSource(@Param() { id }: BaseIdDto): Promise<BaseResult<DeleteResult>> {
     const source = await this.upushySourceService.onFindSourceOne({
       where: {
-        id: deleteSourceDto.id,
+        id,
       },
     })
 
@@ -150,17 +144,16 @@ export class UpushySourceController {
       if (count !== 0) {
         return {
           statusCode: 400,
-          message: '有wgt资源依赖该资源，无法删除',
+          message: '有 wgt 资源依赖该资源, 无法删除',
         }
       }
     }
 
-    if (source) {
-      const res = await this.upushySourceService.onDeleteSource(deleteSourceDto)
-      return { statusCode: 200, message: '操作成功', data: res }
-    } else {
+    if (!source) {
       return { statusCode: 200, message: '资源不存在' }
     }
+    const res = await this.upushySourceService.onDeleteSource(id)
+    return { statusCode: 200, message: '操作成功', data: res }
   }
 
   // 更新资源
@@ -169,12 +162,13 @@ export class UpushySourceController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_401)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_403)
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
-  @Put()
+  @Patch(':id')
   async onUpdateSource(
+    @Param() { id }: BaseIdDto,
     @Body() updateSourceDto: UpdateSourceDto,
     @RequestUser() requestUser: UserEntity
   ): Promise<BaseResult<SourceEntity>> {
-    const { id, versionCode } = updateSourceDto
+    const { versionCode } = updateSourceDto
     const source = await this.upushySourceService.onFindSourceOne({
       where: {
         id,
@@ -207,18 +201,17 @@ export class UpushySourceController {
           versionCode: nativeVersionCode,
         },
       })
-      if (nativeSource) {
-        const res = await this.upushySourceService.onUpdateSource(updateSourceDto, requestUser.id)
-        return {
-          statusCode: 200,
-          message: '更新成功',
-          data: res,
-        }
-      } else {
+      if (!nativeSource) {
         return {
           statusCode: 400,
           message: '原生版本资源不存在',
         }
+      }
+      const res = await this.upushySourceService.onUpdateSource(id, requestUser, updateSourceDto)
+      return {
+        statusCode: 200,
+        message: '更新成功',
+        data: res,
       }
     } else {
       if (nativeVersionCode && nativeVersionCode !== 0) {
@@ -228,7 +221,7 @@ export class UpushySourceController {
         }
       }
 
-      const res = await this.upushySourceService.onUpdateSource(updateSourceDto, requestUser.id)
+      const res = await this.upushySourceService.onUpdateSource(id, requestUser, updateSourceDto)
       return {
         statusCode: 200,
         message: '更新成功',

@@ -4,7 +4,8 @@ import { Repository, DeleteResult, FindManyOptions, FindOptionsOrder } from 'typ
 
 import { genSnowFlakeId } from 'src/app-shared/utils'
 import { SourceEntity } from './entities'
-import { CreateSourceDto, UpdateSourceDto, DeleteSourceDto, QuerySourceDto } from './dto'
+import { CreateSourceDto, UpdateSourceDto, QuerySourceDto } from './dto'
+import type { UserEntity } from 'src/app-system/app-user/entities'
 
 @Injectable()
 export class UpushySourceService {
@@ -24,19 +25,21 @@ export class UpushySourceService {
   }
 
   // 删除资源
-  async onDeleteSource({ id }: DeleteSourceDto): Promise<DeleteResult> {
-    return await this.sourceRepo.delete(id)
+  async onDeleteSource(id: string): Promise<DeleteResult> {
+    return await this.sourceRepo.delete({
+      id,
+    })
   }
 
   // 更新资源
-  async onUpdateSource(updateSourceDto: UpdateSourceDto, userId: string): Promise<SourceEntity> {
+  async onUpdateSource(id: string, requestUser: UserEntity, updateSourceDto: UpdateSourceDto): Promise<SourceEntity> {
     const toUpdateSource = await this.sourceRepo.findOne({
       where: {
-        id: updateSourceDto.id,
+        id,
       },
     })
     Object.assign(toUpdateSource, updateSourceDto)
-    toUpdateSource.updatedBy = userId
+    toUpdateSource.updatedBy = requestUser.id
     toUpdateSource.updatedTime = new Date()
 
     return await this.sourceRepo.save(toUpdateSource)
