@@ -11,15 +11,14 @@ import { Entity, Column } from 'typeorm'
 import { BaseEntity } from 'src/app-shared/base'
 
 @Entity({
-  name: 'app_user_permission',
+  name: 'app_config',
   engine: 'InnoDB',
 })
-export class ConfigEntity extends BaseEntity {
+export class AppConfigEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     name: 'config_key',
     nullable: false,
-    unsigned: true,
     unique: true,
     comment: '配置键名',
   })
@@ -29,7 +28,6 @@ export class ConfigEntity extends BaseEntity {
     type: 'char',
     name: 'config_value',
     nullable: true,
-    unsigned: true,
     length: 2,
     comment: '配置值',
   })

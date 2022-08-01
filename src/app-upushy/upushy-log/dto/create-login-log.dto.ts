@@ -47,7 +47,7 @@ export class CreateLoginLogDto {
 
   @ApiProperty({
     type: String,
-    description: '登录状态（0失败 1成功）',
+    description: '登录状态 0 失败 1 成功',
   })
   @Length(1)
   @IsNotEmpty()
@@ -59,11 +59,4 @@ export class CreateLoginLogDto {
   })
   @IsNotEmpty()
   readonly msg: string
-
-  @ApiProperty({
-    type: Date,
-    description: '访问时间',
-  })
-  @IsNotEmpty()
-  readonly createdTime: Date
 }

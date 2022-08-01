@@ -12,6 +12,6 @@ import { IsNotEmpty, Length } from 'class-validator'
 export class DeleteProjectDto {
   @ApiProperty()
   @IsNotEmpty()
-  @Length(10, 32)
+  @Length(8, 32)
   readonly id: string
 }

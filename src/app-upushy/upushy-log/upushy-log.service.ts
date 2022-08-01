@@ -8,11 +8,12 @@
 
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FindOptionsWhere, ObjectLiteral, Repository } from 'typeorm'
+import { FindOptionsWhere, ObjectLiteral, Repository, MoreThan } from 'typeorm'
 
-import { genSnowFlakeId } from 'src/app-shared/utils'
+import { genSnowFlakeId, dayjs } from 'src/app-shared/utils'
 import { LoginLogEntity, UpdateLogEntity, DeviceInfoLogEntity } from './entities'
 import { CreateLoginLogDto, QueryLoginLogDto, CreateDeviceInfoLogDto, CreateUpdateLogDto } from './dto'
+import { DateStatsItem } from 'src/app-shared/interface'
 
 @Injectable()
 export class UpushyLogService {
@@ -30,9 +31,19 @@ export class UpushyLogService {
    */
   // 创建登录记录
   async onCreateLoginLog(createLogLoginDto: CreateLoginLogDto): Promise<LoginLogEntity> {
+    // const result = []
+    // for (let i = 0; i < 100; i++) {
+    //   const loginLog = new LoginLogEntity()
+    //   Object.assign(loginLog, createLogLoginDto)
+    //   loginLog.id = genSnowFlakeId()
+    //   loginLog.createdTime = dayjs().subtract(i, 'day').toDate()
+    //   result[i] = await this.loginLogRepo.save(loginLog)
+    // }
+
     const loginLog = new LoginLogEntity()
     Object.assign(loginLog, createLogLoginDto)
     loginLog.id = genSnowFlakeId()
+    loginLog.createdTime = new Date()
     return await this.loginLogRepo.save(loginLog)
   }
 
@@ -63,6 +74,52 @@ export class UpushyLogService {
   // 获取登录记录总数
   async onFindLoginLogCount(): Promise<number> {
     return await this.loginLogRepo.count()
+  }
+
+  // 获取指定时间段内登录的总次数
+  async onFindLoginLogCountByDuration(duration: number = 7): Promise<number> {
+    // 今天从零时开始的日期
+    const today = new Date(new Date().setHours(0, 0, 0, 0))
+    const todayDayjs = dayjs(today)
+    // 获取开始的日期
+    const startDate = todayDayjs.subtract(duration - 1, 'days').toDate()
+    return await this.loginLogRepo.count({
+      where: {
+        createdTime: MoreThan(startDate),
+      },
+    })
+  }
+
+  // 获取指定天数内的登录次数 包括今天
+  async onFindLoginLogByDays(duration: number = 7) {
+    // 今天从零时开始的日期
+    const today = new Date(new Date().setHours(0, 0, 0, 0))
+    const todayDayjs = dayjs(today)
+    // 获取开始的日期
+    const startDate = todayDayjs.subtract(duration - 1, 'days').toDate()
+    // 结果集
+    const resultList = {}
+    for (let i = 0; i < duration; i++) {
+      const flagDate = todayDayjs.subtract(i, 'day').toDate()
+      resultList[flagDate.getTime()] = {
+        date: flagDate,
+        amount: 0,
+      }
+    }
+    const queryResult = await this.loginLogRepo
+      .createQueryBuilder('loginLog')
+      .select('DATE(DATE_FORMAT( created_time, "%Y-%m-%d" ))', 'date')
+      .addSelect('COUNT(*)', 'amount')
+      .where('created_time > :startDate', {
+        startDate,
+      })
+      .groupBy('date')
+      .orderBy('date')
+      .getRawMany<DateStatsItem>()
+    for (const item of queryResult) {
+      resultList[dayjs(item.date).toDate().getTime()].amount = item?.amount ? Number(item.amount) : 0
+    }
+    return resultList
   }
 
   // 创建设备记录

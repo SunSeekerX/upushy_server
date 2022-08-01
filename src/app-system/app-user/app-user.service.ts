@@ -9,6 +9,8 @@
 import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, DeleteResult, UpdateResult } from 'typeorm'
+import type { FindOneOptions } from 'typeorm'
+
 import { validate } from 'class-validator'
 import * as jwt from 'jsonwebtoken'
 import * as argon2 from 'argon2'
@@ -33,23 +35,12 @@ export class AppUserService {
   }
 
   // 查找单个用户
-  async onFindUserOne({ username }: LoginUserDto): Promise<UserEntity> {
-    return await this.userRepo.findOne({
-      where: { username },
-    })
+  async onFindUserOne(options: FindOneOptions<UserEntity>): Promise<UserEntity | null> {
+    return await this.userRepo.findOne(options)
   }
 
   // 创建用户
   async onCreateUser({ username, password, nickname, email }: CreateUserDto): Promise<UserEntity> {
-    const user = await this.userRepo.findOne({
-      where: { username },
-    })
-    if (user) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: '用户名已存在',
-      })
-    }
     // create new user
     const hashPassword = await argon2.hash(password)
     const newUser = new UserEntity()
@@ -61,13 +52,15 @@ export class AppUserService {
     newUser.createdBy = newUser.id
     newUser.createdTime = new Date()
 
-    const errors = await validate(newUser)
-    if (errors.length > 0) {
-      const _errors = { username: 'User input is not valid.' }
-      throw new HttpException({ message: 'Input data validation failed', _errors }, HttpStatus.BAD_REQUEST)
-    } else {
-      return await this.userRepo.save(newUser)
-    }
+    return await this.userRepo.save(newUser)
+
+    // const errors = await validate(newUser)
+    // if (errors.length > 0) {
+    //   const _errors = { username: 'User input is not valid.' }
+    //   throw new HttpException({ message: 'Input data validation failed', _errors }, HttpStatus.BAD_REQUEST)
+    // } else {
+    //   return await this.userRepo.save(newUser)
+    // }
   }
 
   // 更新用户

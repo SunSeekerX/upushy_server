@@ -9,10 +9,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, Length } from 'class-validator'
 
-export class ModifyConfigDto {
+export class ModifyAppConfigDto {
   @ApiProperty({
     type: String,
     description: '配置键名',
+    example: 'isEnableRegister',
   })
   @IsNotEmpty()
   readonly configKey: string
@@ -20,6 +21,7 @@ export class ModifyConfigDto {
   @ApiProperty({
     type: String,
     description: '配置值',
+    example: '1',
   })
   @IsNotEmpty()
   readonly configValue: string

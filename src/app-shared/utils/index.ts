@@ -2,6 +2,18 @@ import * as os from 'os'
 import { Request } from 'express'
 import axios from 'axios'
 import * as iconv from 'iconv-lite'
+import * as dayjs from 'dayjs'
+// 加载中文语言包
+import 'dayjs/locale/zh-cn'
+// 引入处理相对时间的插件
+import * as relativeTime from 'dayjs/plugin/relativeTime'
+
+// 配置使用处理相对时间的插件
+dayjs.extend(relativeTime)
+// 配置使用中文语言包
+dayjs.locale('zh-cn')
+
+export { dayjs }
 export * from './rsa-encrypt'
 export * from './base64-encode'
 
@@ -61,12 +73,11 @@ export function isValidValue(val: unknown): boolean {
   return !emptyList.includes(val)
 }
 
-
 /**
  * @name 获取本机ip
  * @returns { String } 当前所在网络的ip地址
  */
- export function getIPAdress(): string {
+export function getIPAdress(): string {
   const interfaces = os.networkInterfaces()
   for (const devName in interfaces) {
     const iface = interfaces[devName]

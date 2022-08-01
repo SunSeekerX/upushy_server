@@ -57,7 +57,10 @@ export class UpushyProjectService {
   }
 
   // 分页查询项目
-  async onFindProjectPaging({ userId, pageNum, pageSize }: QueryProjectDto): Promise<Array<ProjectEntity>> {
+  async onFindProjectPagingByUserId(
+    userId: string,
+    { pageNum, pageSize }: QueryProjectDto
+  ): Promise<Array<ProjectEntity>> {
     return await this.projectRepo.find({
       where: {
         userId,

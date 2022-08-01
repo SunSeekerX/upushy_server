@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Patch, Get, Logger, UseInterceptors, HttpStatus } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { verify } from 'jsonwebtoken'
+import { isNil } from 'lodash'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
 import * as svg64 from 'svg64'
@@ -73,13 +74,8 @@ export class AppAuthController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Post('/register')
   async onCreateUser(@Body() createUserDto: CreateUserDto): Promise<BaseResult> {
-    if (!createUserDto.imgCaptcha) {
-      return {
-        statusCode: HttpStatus.FORBIDDEN,
-        message: '非法请求',
-      }
-    }
     try {
+      // 检查验证码是否正确
       const captchaText = await this.cacheManager.INSTANCE.get<string>(
         `imgCaptcha:register:${createUserDto.imgCaptchaKey}`
       )
@@ -89,11 +85,22 @@ export class AppAuthController {
           message: '验证码错误',
         }
       }
+      // 检查用户是否存在
+      const findUser = this.appUserService.onFindUserOne({
+        where: {
+          username: createUserDto.username,
+        },
+      })
+      if (isNil(findUser)) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: '用户名已存在',
+        }
+      }
 
       const savedUser = await this.appUserService.onCreateUser(createUserDto)
       // 获取用户数量，如果是第一个注册的用户自动成为管理员
       const usersAmount = await this.appUserService.onFindUserAllCount()
-      console.log('usersAmount>>>', usersAmount)
       if (usersAmount !== 1) {
         return {
           statusCode: 200,
@@ -104,8 +111,7 @@ export class AppAuthController {
       const createUserPermissionDto = new CreateUserPermissionDto()
       createUserPermissionDto.permission = UserPermission.Admin
       createUserPermissionDto.userId = savedUser.id
-      const createUserPermissionRes = await this.appAuthService.onCreateUserPermission(createUserPermissionDto)
-      console.log(createUserPermissionRes)
+      await this.appAuthService.onCreateUserPermission(createUserPermissionDto)
       return {
         statusCode: 200,
         message: '注册成功，请登录',
@@ -187,7 +193,11 @@ export class AppAuthController {
           message: '验证码错误',
         }
       }
-      const _user = await this.appUserService.onFindUserOne(loginUserDto)
+      const _user = await this.appUserService.onFindUserOne({
+        where: {
+          username: loginUserDto.username,
+        },
+      })
 
       if (!_user) {
         return {

@@ -119,16 +119,14 @@ export class UpushyProjectController {
     @Query() queryProjectDto: QueryProjectDto,
     @RequestUser() requestUser: UserEntity
   ): Promise<BaseResult> {
-    queryProjectDto.userId = requestUser.id
-
     const count = await this.upushyProjectService.onFindProjectAllCount({
       where: {
-        userId: queryProjectDto.userId,
+        userId: requestUser.id,
       },
     })
     let res = []
     if (queryProjectDto.pageNum && queryProjectDto.pageSize) {
-      res = await this.upushyProjectService.onFindProjectPaging(queryProjectDto)
+      res = await this.upushyProjectService.onFindProjectPagingByUserId(requestUser.id, queryProjectDto)
     } else {
       res = await this.upushyProjectService.onFindUserProjects(requestUser.id)
     }

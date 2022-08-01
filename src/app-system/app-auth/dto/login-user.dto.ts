@@ -30,7 +30,7 @@ export class LoginUserDto {
     type: String,
     description: '图片验证码的key',
   })
-  @Length(10, 32)
+  @Length(8, 32)
   @IsNotEmpty()
   readonly loginCaptchaKey: string
 }

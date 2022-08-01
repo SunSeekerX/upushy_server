@@ -17,7 +17,7 @@ export class UpdateProjectDto {
     type: String,
     description: '项目id',
   })
-  @Length(10, 32)
+  @Length(8, 32)
   @IsNotEmpty()
   readonly id: string
 

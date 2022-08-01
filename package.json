@@ -39,6 +39,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "cross-env": "^7.0.3",
+    "dayjs": "^1.11.4",
     "express-useragent": "^1.0.15",
     "helmet": "^5.1.1",
     "iconv-lite": "^0.6.3",

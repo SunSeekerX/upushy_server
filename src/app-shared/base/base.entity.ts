@@ -14,15 +14,15 @@ export class BaseEntity {
     type: 'char',
     name: 'status',
     nullable: false,
-    default: '0',
+    default: '1',
     length: 1,
-    comment: '状态（0正常 1停用）',
+    comment: '状态 0 停用 1 正常',
   })
   status: string
 
   @Column({
     type: 'varchar',
-    length: 36,
+    length: 20,
     name: 'create_by',
     default: '',
     nullable: true,
@@ -41,7 +41,7 @@ export class BaseEntity {
 
   @Column({
     type: 'varchar',
-    length: 36,
+    length: 20,
     name: 'updated_by',
     default: '',
     nullable: true,

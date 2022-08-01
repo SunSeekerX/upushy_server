@@ -7,7 +7,7 @@ export class UpdateSourceDto {
     type: String,
     description: '资源ID',
   })
-  @Length(10, 32)
+  @Length(8, 32)
   @IsNotEmpty()
   readonly id: string
 
@@ -24,7 +24,7 @@ export class UpdateSourceDto {
   @Type(() => Number)
   @Min(1)
   @IsInt()
-  @ValidateIf(o => ![null, undefined].includes(o.versionCode))
+  @ValidateIf((o) => ![null, undefined].includes(o.versionCode))
   readonly versionCode?: number
 
   @ApiProperty({
@@ -33,7 +33,7 @@ export class UpdateSourceDto {
   })
   @Type(() => Number)
   @IsInt()
-  @ValidateIf(o => ![null, undefined].includes(o.nativeVersionCode))
+  @ValidateIf((o) => ![null, undefined].includes(o.nativeVersionCode))
   readonly nativeVersionCode?: number
 
   // @ApiProperty({
@@ -48,7 +48,7 @@ export class UpdateSourceDto {
   })
   @Type(() => Number)
   @IsInt()
-  @ValidateIf(o => ![null, undefined].includes(o.isForceUpdate))
+  @ValidateIf((o) => ![null, undefined].includes(o.isForceUpdate))
   readonly isForceUpdate?: number
 
   @ApiProperty({
@@ -57,7 +57,7 @@ export class UpdateSourceDto {
   })
   @Type(() => Number)
   @IsInt()
-  @ValidateIf(o => ![null, undefined].includes(o.updateType))
+  @ValidateIf((o) => ![null, undefined].includes(o.updateType))
   readonly updateType?: number
 
   // @ApiProperty({
@@ -71,11 +71,11 @@ export class UpdateSourceDto {
 
   @ApiProperty({
     type: Number,
-    description: '资源状态（0：禁用 1：启用）',
+    description: '资源状态 0 禁用 1 启用',
   })
   @Type(() => Number)
   @IsInt()
-  @ValidateIf(o => ![null, undefined].includes(o.status))
+  @ValidateIf((o) => ![null, undefined].includes(o.status))
   readonly status?: number
 
   @ApiProperty({
@@ -84,7 +84,7 @@ export class UpdateSourceDto {
   })
   @MaxLength(255)
   @IsNotEmpty()
-  @ValidateIf(o => ![null, undefined].includes(o.changelog))
+  @ValidateIf((o) => ![null, undefined].includes(o.changelog))
   readonly changelog?: string
 
   @ApiProperty({
@@ -92,6 +92,6 @@ export class UpdateSourceDto {
     description: '备注',
   })
   @MaxLength(255)
-  @ValidateIf(o => ![null, undefined].includes(o.remark))
+  @ValidateIf((o) => ![null, undefined].includes(o.remark))
   readonly remark?: string
 }

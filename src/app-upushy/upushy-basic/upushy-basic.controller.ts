@@ -122,14 +122,14 @@ export class UpushyBasicController {
     const wgt = await this.upushySourceService.onFindMaxSource({
       projectId: projectId,
       type,
-      status: 0,
+      status: 1,
     })
     wgt && Object.assign(wgt, { url: `${OSS_BASE_URL}/${wgt.url}` })
 
     const native = await this.upushySourceService.onFindMaxSource({
       projectId: projectId,
       type: type + 2,
-      status: 0,
+      status: 1,
     })
     native && native.type !== 4 && Object.assign(native, { url: `${OSS_BASE_URL}/${native.url}` })
 

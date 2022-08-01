@@ -7,3 +7,4 @@
  */
 
 export * from './response.interface'
+export * from './date-stats-item.interface'

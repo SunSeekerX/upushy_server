@@ -9,6 +9,7 @@ import { AppController } from './app.controller'
 
 import { UserPermissionEntity } from 'src/app-system/app-auth/entities'
 import { UserEntity } from 'src/app-system/app-user/entities'
+import { AppConfigEntity } from 'src/app-system/app-config/entities'
 import { DeviceInfoLogEntity, LoginLogEntity, UpdateLogEntity } from 'src/app-upushy/upushy-log/entities'
 import { ProjectEntity } from 'src/app-upushy/upushy-project/entities'
 import { SourceEntity } from 'src/app-upushy/upushy-source/entities'
@@ -26,6 +27,7 @@ import { UpushyBasicModule } from './app-upushy/upushy-basic/upushy-basic.module
 import { AppAuthModule } from './app-system/app-auth/app-auth.module'
 import { AppConfigController } from './app-system/app-config/app-config.controller'
 import { AppConfigModule } from './app-system/app-config/app-config.module'
+import { AppStatsModule } from './app-system/app-stats/app-stats.module'
 @Module({
   imports: [
     // 基础模块
@@ -40,6 +42,7 @@ import { AppConfigModule } from './app-system/app-config/app-config.module'
       // entities: ['dist/**/*.entity.js'],
       entities: [
         UserEntity,
+        AppConfigEntity,
         UserPermissionEntity,
         DeviceInfoLogEntity,
         LoginLogEntity,
@@ -60,6 +63,8 @@ import { AppConfigModule } from './app-system/app-config/app-config.module'
     AppAuthModule,
     // 系统配置模块
     AppConfigModule,
+    // 系统统计数据
+    AppStatsModule,
     // 业务模块
     UpushyProjectModule,
     UpushySourceModule,

@@ -37,11 +37,10 @@ export class LoginInterceptor implements NestInterceptor {
               os: req.useragent.os,
               status: data.statusCode === 200 ? '1' : '0',
               msg: data.message,
-              createdTime: new Date(),
             })
           })
           .catch((err) => {
-            Logger.error(`---解析ip地址失败错误详情：${err.message}---`)
+            Logger.error(`---解析ip地址失败错误: ${err.message}---`)
           })
       })
     )

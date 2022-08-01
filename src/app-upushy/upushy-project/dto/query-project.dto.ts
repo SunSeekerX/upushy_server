@@ -11,14 +11,6 @@ import { Type } from 'class-transformer'
 import { ValidateIf, IsInt, Length } from 'class-validator'
 
 export class QueryProjectDto {
-  // @ApiProperty({
-  //   type: String,
-  //   description: '用户id',
-  // })
-  // @Length(8, 8)
-  // 用户id
-  userId?: string
-  
   @ApiProperty({
     type: Number,
     description: '页码',

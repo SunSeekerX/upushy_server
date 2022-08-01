@@ -15,7 +15,7 @@ export class CreateSourceDto {
     type: String,
     description: '项目ID',
   })
-  @Length(10, 32)
+  @Length(8, 32)
   @IsNotEmpty()
   readonly projectId: string
 
@@ -71,7 +71,7 @@ export class CreateSourceDto {
 
   @ApiProperty({
     type: Number,
-    description: '资源状态 0 启用 1 禁用',
+    description: '资源状态 0 禁用 1 启用',
   })
   @Type(() => Number)
   @IsInt()

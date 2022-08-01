@@ -23,7 +23,6 @@ export class UpushyLogController {
 
   // 获取登录日志
   @ApiOperation({ summary: '获取登录日志' })
-  @ApiResponse({ status: 200, description: '获取成功' })
   @Get('login')
   async onFindLoginLogs(@Query() queryLoginLogDto: QueryLoginLogDto): Promise<BaseResult> {
     const count = await this.upushyLogService.onFindLoginLogCount()
