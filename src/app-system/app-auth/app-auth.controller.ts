@@ -249,7 +249,7 @@ export class AppAuthController {
   async onRefreshToken(@Body() { refreshToken }: RefreshTokenDto): Promise<BaseResult> {
     try {
       // 解码 refreshToken
-      const decoded: any = verify(refreshToken, getEnv<string>('JWT_SECRET'))
+      const decoded: any = verify(refreshToken, getEnv<string>('SERVER_JWT_SECRET'))
       // 获取用户
       const user = await this.appUserService.onFindUserOneById(decoded.id)
       // 判断 token 是否有效

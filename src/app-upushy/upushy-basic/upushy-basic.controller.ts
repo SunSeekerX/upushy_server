@@ -43,7 +43,7 @@ export class UpushyBasicController {
   @ApiResponse(ApiResponseConstant.RESPONSE_CODE_500)
   @Get('oss-sts')
   async assumeRole(): Promise<BaseResult> {
-    if (getEnv('WEB_OSS')) {
+    if (getEnv('SERVER_WEB_OSS')) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
     }
     try {

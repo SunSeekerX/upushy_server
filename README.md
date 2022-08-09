@@ -92,7 +92,7 @@ vim env.production.yaml
 `/etc/upushy/env.production.yaml` 字段说明查看 [全部环境变量](#全部环境变量)
 
 ```yaml
-WEB_OSS: false
+SERVER_WEB_OSS: false
 
 ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
 ALIYUN_OSS_BUCKET: 'upushy'
@@ -224,9 +224,9 @@ SERVER_PORT: 3000
 # 是否打开文档 默认：true
 PRO_DOC: true
 # 是否直接通过前端访问 oss
-WEB_OSS: false
+SERVER_WEB_OSS: false
 # Token 生成加盐 默认：'secret-key'
-JWT_SECRET: 'secret-key'
+SERVER_JWT_SECRET: 'secret-key'
 # Api 加密 RSA 私钥 默认：请查看源码
 API_SIGN_RSA_PRIVATE_KEY: ''
 # Api 加密请求过期间隔，超出即被认为为过期请求 默认：15 单位：s
@@ -239,7 +239,7 @@ ALIYUN_OSS_ENDPOINT: 'oss-cn-xxxxxx'
 # OSS 存储桶名
 ALIYUN_OSS_BUCKET: 'upushy'
 
-# 阿里云账号相关，如果 WEB_OSS 为 true 可以不填写，具体获取方式在下方
+# 阿里云账号相关，如果 SERVER_WEB_OSS 为 true 可以不填写，具体获取方式在下方
 ALIYUN_ACCOUNT_ID: 'xxxxxxxxxxxx'
 ALIYUN_ACCOUNT_RAM_ROLE: 'xxxxxx'
 ALIYUN_RAM_ACCESS_KEY_ID: 'xxxxxx'
@@ -270,7 +270,7 @@ REDIS_PASSWORD: 'password'
 REDIS_PREFIX: ''
 ```
 
-### WEB_OSS
+### SERVER_WEB_OSS
 
 用来标识是否直接通过前端访问 oss，如果设置为 `true`，以下环境变量可以不填写,相关环境变量填写到前端。
 

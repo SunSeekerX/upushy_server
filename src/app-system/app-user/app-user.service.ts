@@ -109,7 +109,7 @@ export class AppUserService {
         username,
         updatedPwdTime: new Date(updatedPwdTime).getTime(),
       },
-      getEnv<string>('JWT_SECRET'),
+      getEnv<string>('SERVER_JWT_SECRET'),
       {
         // 过期时间 seconds
         expiresIn: 1 * 24 * 60 * 60,
@@ -126,7 +126,7 @@ export class AppUserService {
         username: user.username,
         updatedPwdTime: new Date(user.updatedPwdTime).getTime(),
       },
-      getEnv<string>('JWT_SECRET'),
+      getEnv<string>('SERVER_JWT_SECRET'),
       {
         // 过期时间 seconds
         expiresIn: 30 * 24 * 60 * 60,

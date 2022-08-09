@@ -9,3 +9,4 @@
 export * from './log.interceptor'
 export * from './login.interceptor'
 export * from './update.interceptor'
+export * from './local-files.interceptor'

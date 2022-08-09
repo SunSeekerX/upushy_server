@@ -28,6 +28,22 @@ export class EnvConfig {
   SERVER_PORT: string
 
   /**
+   * 服务域名
+   */
+   @Expose()
+   @IsString()
+   @IsNotEmpty()
+   SERVER_DOMAIN: string
+
+   /**
+   * 上传文件限制 单位: mb
+   */
+    @Expose()
+    @IsNumber()
+    @Transform((v) => setDefault(v, defaultEnvConfig.SERVER_UPLOAD_LIMIT), { toClassOnly: true })
+    SERVER_UPLOAD_LIMIT: number
+
+  /**
    * 是否正式环境
    */
   @Expose()
@@ -49,7 +65,7 @@ export class EnvConfig {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  JWT_SECRET: string
+  SERVER_JWT_SECRET: string
 
   /**
    * Token 有效期
@@ -97,7 +113,7 @@ export class EnvConfig {
    */
   @Expose()
   @IsNotEmpty()
-  readonly WEB_OSS: boolean
+  readonly SERVER_WEB_OSS: boolean
 
   @Expose()
   @IsNotEmpty()
@@ -111,27 +127,27 @@ export class EnvConfig {
    * 阿里云账号
    */
   @Expose()
-  @ValidateIf((el) => !el.WEB_OSS)
+  @ValidateIf((el) => !el.SERVER_WEB_OSS)
   @IsNotEmpty()
   readonly ALIYUN_ACCOUNT_ID: string
 
   @Expose()
-  @ValidateIf((el) => !el.WEB_OSS)
+  @ValidateIf((el) => !el.SERVER_WEB_OSS)
   @IsNotEmpty()
   readonly ALIYUN_ACCOUNT_RAM_ROLE: string
 
   @Expose()
-  @ValidateIf((el) => !el.WEB_OSS)
+  @ValidateIf((el) => !el.SERVER_WEB_OSS)
   @IsNotEmpty()
   readonly ALIYUN_RAM_ACCESS_KEY_ID: string
 
   @Expose()
-  @ValidateIf((el) => !el.WEB_OSS)
+  @ValidateIf((el) => !el.SERVER_WEB_OSS)
   @IsNotEmpty()
   readonly ALIYUN_RAM_ACCESS_KEY_SECRET: string
 
   @Expose()
-  @ValidateIf((el) => !el.WEB_OSS && !isNil(el.ALIYUN_RAM_TEMPORARY_EXPIRE))
+  @ValidateIf((el) => !el.SERVER_WEB_OSS && !isNil(el.ALIYUN_RAM_TEMPORARY_EXPIRE))
   @Min(15)
   @IsNotEmpty()
   @IsNumber()

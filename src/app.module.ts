@@ -2,6 +2,7 @@ import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/c
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { join } from 'path'
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { getEnv } from 'src/app-shared/config'
 import { LogInterceptor } from 'src/app-shared/interceptor'
@@ -29,6 +30,9 @@ import { AppConfigController } from './app-system/app-config/app-config.controll
 import { AppConfigModule } from './app-system/app-config/app-config.module'
 import { AppStatsModule } from './app-system/app-stats/app-stats.module'
 import { AppUploadModule } from './app-system/app-upload/app-upload.module'
+
+const globalPrefix = getEnv<string>('API_GLOBAL_PREFIX')
+
 @Module({
   imports: [
     // 基础模块
@@ -58,6 +62,10 @@ import { AppUploadModule } from './app-system/app-upload/app-upload.module'
         charset: 'utf8mb4_general_ci',
       },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static'),
+      exclude: [`${globalPrefix}*`],
+    }),
     // 系统模块
     AppUserModule,
     // 系统认证模块
@@ -69,10 +77,10 @@ import { AppUploadModule } from './app-system/app-upload/app-upload.module'
     // 系统文件上传
     AppUploadModule,
     // 业务模块
+    UpushyBasicModule,
     UpushyProjectModule,
     UpushySourceModule,
     UpushyLogModule,
-    UpushyBasicModule,
   ],
   providers: [
     {

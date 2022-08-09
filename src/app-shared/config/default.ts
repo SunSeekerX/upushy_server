@@ -18,6 +18,11 @@ export const SERVER_PORT = '3000'
 export const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
 /**
+ * 上传文件限制 单位: mb
+ */
+export const SERVER_UPLOAD_LIMIT = 40
+
+/**
  * Api 前缀
  */
 export const API_GLOBAL_PREFIX = '/api'

@@ -31,7 +31,7 @@ export class TokenAuthMiddleware implements NestMiddleware {
     }
     try {
       const token = authorization.split(' ')[1]
-      const decoded: any = verify(token, getEnv<string>('JWT_SECRET'))
+      const decoded: any = verify(token, getEnv<string>('SERVER_JWT_SECRET'))
 
       const user = await this.appUserService.onFindUserOneById(decoded?.id, false)
       // 校验 token 是否有效
