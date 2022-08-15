@@ -116,10 +116,11 @@ export class UpushyLogService {
       .groupBy('date')
       .orderBy('date')
       .getRawMany<DateStatsItem>()
+      console.log(queryResult);
     for (const item of queryResult) {
       resultList[dayjs(item.date).toDate().getTime()].amount = item?.amount ? Number(item.amount) : 0
     }
-    return resultList
+    return Object.values(resultList)
   }
 
   // 创建设备记录

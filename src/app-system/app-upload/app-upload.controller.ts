@@ -35,10 +35,17 @@ export class AppUploadController {
     if (file) {
       const destination = file.destination.replaceAll('./static', '')
       const fileName = file.filename
+      const serverDomain = getEnv('SERVER_DOMAIN')
+      const data = {
+        relativePath: `${destination}${fileName}`,
+      }
+      if (serverDomain) {
+        data['fullPath'] = `${serverDomain}${destination}${fileName}`
+      }
       return {
         statusCode: 200,
         message: '成功',
-        data: `${destination}${fileName}`,
+        data,
       }
     } else {
       return {

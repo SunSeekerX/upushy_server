@@ -10,7 +10,6 @@ import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/c
 import { UpushyBasicService } from './upushy-basic.service'
 import { UpushyBasicController } from './upushy-basic.controller'
 
-import { getEnv } from 'src/app-shared/config'
 import { UpushyProjectModule } from 'src/app-upushy/upushy-project/upushy-project.module'
 import { UpushySourceModule } from 'src/app-upushy/upushy-source/upushy-source.module'
 import { TokenAuthMiddleware } from 'src/app-shared/middleware'
@@ -25,10 +24,6 @@ export class UpushyBasicModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(TokenAuthMiddleware)
-      .exclude({
-        path: `${getEnv('API_GLOBAL_PREFIX')}/basic/config`,
-        method: RequestMethod.GET,
-      })
       .forRoutes(UpushyBasicController)
   }
 }

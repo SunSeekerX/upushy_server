@@ -263,7 +263,15 @@ export class UpushySourceController {
     }
 
     for (const item of res) {
-      item.type !== 4 && Object.assign(item, { url: `${OSS_BASE_URL}/${item.url}` })
+      if(item.type !== 4){
+        if(item.uploadType === 1){
+          // 本地上传拼接
+          Object.assign(item, { url: `${getEnv('SERVER_DOMAIN')}/${item.url}` })
+        } else {
+          // oss 上传
+          Object.assign(item, { url: `${OSS_BASE_URL}/${item.url}` })
+        }
+      }
     }
 
     return {

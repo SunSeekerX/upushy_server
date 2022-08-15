@@ -25,7 +25,7 @@ export class TokenAuthMiddleware implements NestMiddleware {
     const authorization: string = req?.headers?.authorization
     if (!authorization) {
       this.logger.warn(
-        `code: ${HttpStatus.UNAUTHORIZED} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 未登录！`
+        `code: ${HttpStatus.UNAUTHORIZED} | method: ${method} | path: ${originalUrl} | ip: ${ip} | message: 未登录`
       )
       throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED)
     }

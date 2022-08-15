@@ -55,7 +55,7 @@ const globalPrefix = getEnv<string>('API_GLOBAL_PREFIX')
         ProjectEntity,
         SourceEntity,
       ],
-      synchronize: getEnv('DB_TABLE_SYNC'),
+      synchronize: getEnv('SERVER_DB_TABLE_SYNC'),
       logging: true,
       extra: {
         // 不配置这个 emoji 无法保存

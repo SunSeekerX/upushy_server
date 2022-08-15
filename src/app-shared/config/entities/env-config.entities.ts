@@ -154,10 +154,10 @@ export class EnvConfig {
   readonly ALIYUN_RAM_TEMPORARY_EXPIRE: number
 
   @Expose()
-  @Transform((v) => setDefault(v, defaultEnvConfig.DB_TABLE_SYNC), { toClassOnly: true })
-  @ValidateIf((el) => !isNil(el.DB_TABLE_SYNC))
+  @Transform((v) => setDefault(v, defaultEnvConfig.SERVER_DB_TABLE_SYNC), { toClassOnly: true })
+  @ValidateIf((el) => !isNil(el.SERVER_DB_TABLE_SYNC))
   @IsBoolean()
-  readonly DB_TABLE_SYNC: boolean
+  readonly SERVER_DB_TABLE_SYNC: boolean
 
   /**
    * 数据库

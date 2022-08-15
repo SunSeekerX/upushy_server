@@ -35,7 +35,7 @@ export const SERVER_DOC = true
 /**
  * 是否自动同步数据库表格
  */
-export const DB_TABLE_SYNC = false
+export const SERVER_DB_TABLE_SYNC = false
 
 /**
  * 是否使用 Redis 作为缓存

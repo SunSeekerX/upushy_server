@@ -56,6 +56,16 @@ export class SourceEntity extends BaseEntity {
 
   @Column({
     type: 'int',
+    name: 'upload_type',
+    unsigned: true,
+    nullable: false,
+    default: 1,
+    comment: '上传类型 1 本地上传 2 阿里云 oss',
+  })
+  uploadType: number
+
+  @Column({
+    type: 'int',
     unsigned: true,
     comment: '资源类型 1 wgt-android 2 wgt-ios  3 android 4 ios',
   })
