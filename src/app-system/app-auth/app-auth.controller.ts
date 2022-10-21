@@ -262,13 +262,11 @@ export class AppAuthController {
       const token = this.appUserService.onGenerateJWT(_user)
       const refreshToken = this.appUserService.onGenerateRefreshToken(_user)
       const { id, username, nickname } = _user
+      const findUserPermission = await this.appAuthService.onFindUserPermissionByUserId(id)
       const userInfo = {
         username,
         nickname,
-      }
-      const userPermission = await this.appAuthService.onFindUserPermissionByUserId(id)
-      if (userPermission?.permission) {
-        userInfo['permission'] = userPermission.permission
+        permission: findUserPermission?.permission || null,
       }
       return this.responseWithHttpStatus(
         HttpStatus.OK,

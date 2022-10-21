@@ -115,7 +115,7 @@ export class AppUserController {
       data: {
         username: findUser.username,
         nickname: findUser.nickname,
-        permission: findUserPermission.permission,
+        permission: findUserPermission?.permission || null,
       },
     }
   }
