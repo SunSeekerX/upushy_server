@@ -32,7 +32,7 @@ export class UpushyBasicController {
     private readonly upushySourceService: UpushySourceService
   ) {}
   /**
-   * @description OSS授权临时访问
+   * OSS授权临时访问
    * 接口调用有限制，每1S最多100QPS
    * https://help.aliyun.com/document_detail/32077.htm?spm=a2c4g.11186623.2.25.5a1c606c8MMGGB#title-sdv-594-iub
    */

@@ -48,7 +48,7 @@ export class ApiSignMiddleware implements NestMiddleware {
       const nonceArr: string[] = decrypted.split(',')
 
       /**
-       * @description 防止请求过期
+       * 防止请求过期
        */
       const TDOA: number = new Date().getTime() - Number(nonceArr[1])
       if (TDOA > API_SIGN_TIME_OUT * 1000) {
@@ -59,7 +59,7 @@ export class ApiSignMiddleware implements NestMiddleware {
       }
 
       /**
-       * @description 防止请求重放
+       * 防止请求重放
        */
       const uuid = await this.cacheManager.INSTANCE.get(`ApiSign:Nonce:${nonceArr[0]}`)
       if (uuid) {
@@ -68,12 +68,10 @@ export class ApiSignMiddleware implements NestMiddleware {
         )
         throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN)
       }
-      await this.cacheManager.INSTANCE.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], {
-        ttl: API_SIGN_TIME_OUT,
-      })
+      await this.cacheManager.INSTANCE.set(`ApiSign:Nonce:${nonceArr[0]}`, nonceArr[0], API_SIGN_TIME_OUT * 1000)
 
       /**
-       * @description 防止参数被篡改
+       * 防止参数被篡改
        * 这里ts分析req.query可能为对象形式，所以设置为any类型
        */
       let keys: Array<any> = [nonceArr[0], nonceArr[1]]

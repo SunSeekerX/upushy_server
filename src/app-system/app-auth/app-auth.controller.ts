@@ -4,7 +4,7 @@ import { verify } from 'jsonwebtoken'
 import { isNil } from 'lodash'
 import * as argon2 from 'argon2'
 import * as svgCaptcha from 'svg-captcha'
-import * as svg64 from 'svg64'
+import svg64 from 'svg64'
 import type { Response } from 'express'
 
 import { LoginUserDto, RefreshTokenDto } from './dto'
@@ -47,9 +47,7 @@ export class AppAuthController {
 
     const captchaKey = genSnowFlakeId()
     try {
-      await this.cacheManager.INSTANCE.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), {
-        ttl: 60,
-      })
+      await this.cacheManager.INSTANCE.set(`imgCaptcha:register:${captchaKey}`, captcha.text.toLowerCase(), 60 * 1000)
       return {
         statusCode: 200,
         message: '获取验证码成功',
@@ -168,9 +166,7 @@ export class AppAuthController {
 
     const captchaKey = genSnowFlakeId()
     try {
-      await this.cacheManager.INSTANCE.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), {
-        ttl: 60,
-      })
+      await this.cacheManager.INSTANCE.set(`imgCaptcha:login:${captchaKey}`, captcha.text.toLowerCase(), 60 * 1000)
 
       return {
         statusCode: 200,
